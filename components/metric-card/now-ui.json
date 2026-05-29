@@ -5,7 +5,7 @@
 			"uiBuilder": {
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Metric Card",
-				"tileIcon": "./tile-icon/generic-tile-icon.svg",
+				"tileIcon": "./tile-icon/metric-card-tile-icon.svg",
 				"description": "A configurable KPI card: icon, heading, formatted value, and a trend pill (e.g. ↓ 4.2% MoM).",
 				"category": "primitives"
 			},
