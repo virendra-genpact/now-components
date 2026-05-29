@@ -1,0 +1,110 @@
+{
+	"components": {
+		"x-gegis-library-banner": {
+			"innerComponents": ["now-alert"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Banner",
+				"tileIcon": "./tile-icon/banner-tile-icon.svg",
+				"description": "A configurable banner / callout (info, warning, error, success) with an icon, title, up to 4 message lines, an optional link, and an optional dismiss button. Composes now-alert.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "type",
+					"label": "Type",
+					"description": "Banner severity. Sets the color and the default icon.",
+					"fieldType": "choice",
+					"defaultValue": "warning",
+					"options": [
+						{ "label": "Info", "value": "info" },
+						{ "label": "Warning", "value": "warning" },
+						{ "label": "Error", "value": "error" },
+						{ "label": "Success", "value": "success" }
+					]
+				},
+				{
+					"name": "title",
+					"label": "Title",
+					"description": "Bold heading shown at the top of the banner.",
+					"fieldType": "string",
+					"defaultValue": "5 Potential duplicates found"
+				},
+				{
+					"name": "line1",
+					"label": "Line 1",
+					"description": "First message line. Empty lines are skipped. Supports light markup you can type: <b> <i> <u>, <size=12>…</size> for px font size, and :icon-name: for an inline icon (e.g. ':clock-outline: <b>As of:</b> <size=12>Jan 9</size>').",
+					"fieldType": "string",
+					"defaultValue": "The system has identified the following submissions as potential duplicates based on insured details, address, line of business, and exposure criteria."
+				},
+				{
+					"name": "line2",
+					"label": "Line 2",
+					"description": "Second message line.",
+					"fieldType": "string",
+					"defaultValue": "Review and determine whether to proceed or decline."
+				},
+				{
+					"name": "line3",
+					"label": "Line 3",
+					"description": "Third message line.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "line4",
+					"label": "Line 4",
+					"description": "Fourth message line.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "icon",
+					"label": "Icon",
+					"description": "Optional now-icon glyph name. Leave empty to use the default icon for the chosen Type.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "dismissible",
+					"label": "Dismissible",
+					"description": "Show an (X) button that lets the user dismiss the banner.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "expandable",
+					"label": "Show more/less toggle",
+					"description": "When on, long banners show a 'Show more/less' toggle. Turn off to hide it and keep the full message visible.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "linkLabel",
+					"label": "Link label",
+					"description": "Optional inline link text. A link only shows when both label and URL are set.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "linkHref",
+					"label": "Link URL",
+					"description": "Optional inline link URL.",
+					"fieldType": "string",
+					"defaultValue": ""
+				}
+			],
+			"events": [
+				{
+					"name": "BANNER_DISMISSED",
+					"description": "Fired when the user dismisses the banner via the (X) button."
+				},
+				{
+					"name": "BANNER_LINK_CLICKED",
+					"description": "Fired when the user clicks the inline link."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

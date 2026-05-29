@@ -9,6 +9,7 @@ snabbdom renderer.
 | Component | Element tag | Description |
 | --- | --- | --- |
 | [`metric-card`](components/metric-card) | `x-gegis-library-metric-card` | Configurable KPI card — icon, heading, formatted value, and trend pill. |
+| [`banner`](components/banner) | `x-gegis-library-banner` | Configurable banner / callout (info / warning / error / success) — composes `now-alert`. |
 | [`component-template`](components/component-template) | `x-vendor-component-template` | Copy-me starter for new components. |
 
 ## Layout
