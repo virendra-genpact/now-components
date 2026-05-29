@@ -1,0 +1,128 @@
+@import '@servicenow/sass-kit/host';
+
+/* ---- Design tokens (fall back to Next Experience theme vars) ---- */
+$card-bg: var(--now-color--surface, #ffffff);
+$card-border: var(--now-color--divider--secondary, #e9eaee);
+$text-strong: var(--now-color--primary, #1c2331);
+$text-muted: var(--now-color--secondary, #5a6473);
+
+$icon-bg: #eef1fb;
+$icon-fg: #1c2331;
+
+$good-bg: #e4f6ec;
+$good-fg: #18794e;
+$bad-bg: #fde8ec;
+$bad-fg: #d63b5e;
+$neutral-bg: #eef0f4;
+$neutral-fg: #6c7689;
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	color: $text-strong;
+}
+
+/* ---- Card ------------------------------------------------------- */
+.mc-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 20px 24px;
+	background: $card-bg;
+	border: 1px solid $card-border;
+	border-radius: 16px;
+	box-shadow: 0 1px 2px rgba(28, 35, 49, 0.04);
+	box-sizing: border-box;
+}
+
+.mc-card--clickable {
+	cursor: pointer;
+	transition: box-shadow 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
+}
+.mc-card--clickable:hover {
+	box-shadow: 0 4px 14px rgba(28, 35, 49, 0.1);
+	border-color: #d7dae1;
+	transform: translateY(-1px);
+}
+.mc-card--clickable:focus-visible {
+	outline: 2px solid var(--now-color--interactive, #2f6fed);
+	outline-offset: 2px;
+}
+
+/* ---- Icon tile -------------------------------------------------- */
+.mc-icon {
+	flex-shrink: 0;
+	width: 56px;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 14px;
+	background: $icon-bg;
+	color: $icon-fg;
+	--now-icon--size: 24px;
+}
+.mc-icon now-icon {
+	color: inherit;
+}
+
+/* ---- Body ------------------------------------------------------- */
+.mc-body {
+	min-width: 0;
+	flex: 1;
+}
+.mc-heading {
+	font-size: 15px;
+	font-weight: 500;
+	color: $text-muted;
+	line-height: 1.3;
+	margin-bottom: 6px;
+}
+.mc-value {
+	font-size: 34px;
+	font-weight: 700;
+	color: $text-strong;
+	line-height: 1.1;
+	letter-spacing: -0.01em;
+	word-break: break-word;
+}
+
+/* ---- Trend ------------------------------------------------------ */
+.mc-trend {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+.mc-trend-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	white-space: nowrap;
+}
+.mc-trend-arrow {
+	font-size: 13px;
+	line-height: 1;
+}
+.mc-trend-period {
+	font-size: 13px;
+	color: $text-muted;
+}
+
+.mc--good {
+	background: $good-bg;
+	color: $good-fg;
+}
+.mc--bad {
+	background: $bad-bg;
+	color: $bad-fg;
+}
+.mc--neutral {
+	background: $neutral-bg;
+	color: $neutral-fg;
+}

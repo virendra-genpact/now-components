@@ -1,0 +1,127 @@
+{
+	"components": {
+		"x-gegis-library-metric-card": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Metric Card",
+				"tileIcon": "./tile-icon/generic-tile-icon.svg",
+				"description": "A configurable KPI card: icon, heading, formatted value, and a trend pill (e.g. ↓ 4.2% MoM).",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "heading",
+					"label": "Heading",
+					"description": "Title shown above the value.",
+					"fieldType": "string",
+					"defaultValue": "Submissions to Quote Ratio"
+				},
+				{
+					"name": "icon",
+					"label": "Icon",
+					"description": "now-icon glyph name (e.g. currency-dollar-outline, chart-line-outline). Leave empty to hide the icon tile.",
+					"fieldType": "string",
+					"defaultValue": "chart-line-outline"
+				},
+				{
+					"name": "value",
+					"label": "Value",
+					"description": "The headline metric. A number or numeric string; formatted per the Value format property.",
+					"fieldType": "string",
+					"defaultValue": "25"
+				},
+				{
+					"name": "format",
+					"label": "Value format",
+					"description": "How the value is rendered.",
+					"fieldType": "choice",
+					"defaultValue": "percent",
+					"options": [
+						{ "label": "Percent (25.00%)", "value": "percent" },
+						{ "label": "Currency ($25.00)", "value": "currency" },
+						{ "label": "Number (25.00)", "value": "number" },
+						{ "label": "None (as typed)", "value": "none" }
+					]
+				},
+				{
+					"name": "decimals",
+					"label": "Decimal places",
+					"description": "Decimal places for the value and trend magnitude.",
+					"fieldType": "number",
+					"defaultValue": 2
+				},
+				{
+					"name": "currencySymbol",
+					"label": "Currency symbol",
+					"description": "Prefix used when Value format is Currency.",
+					"fieldType": "string",
+					"defaultValue": "$"
+				},
+				{
+					"name": "trendValue",
+					"label": "Trend value",
+					"description": "Change vs the previous period. The sign sets the arrow direction (auto); the magnitude is shown. Leave empty to hide the trend pill.",
+					"fieldType": "string",
+					"defaultValue": "-4.2"
+				},
+				{
+					"name": "trendDirection",
+					"label": "Trend direction",
+					"description": "Arrow direction. Auto derives it from the sign of the trend value.",
+					"fieldType": "choice",
+					"defaultValue": "auto",
+					"options": [
+						{ "label": "Auto (from sign)", "value": "auto" },
+						{ "label": "Up", "value": "up" },
+						{ "label": "Down", "value": "down" },
+						{ "label": "Flat", "value": "flat" }
+					]
+				},
+				{
+					"name": "trendPeriod",
+					"label": "Trend period",
+					"description": "Caption beside the pill, e.g. MoM, YoY, vs last week.",
+					"fieldType": "string",
+					"defaultValue": "MoM"
+				},
+				{
+					"name": "trendPositiveIsGood",
+					"label": "Increase is positive",
+					"description": "When on, an upward trend is green and downward is red. Turn off for lower-is-better metrics (cost, churn, latency).",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "iconColor",
+					"label": "Icon color",
+					"description": "Optional CSS color for the icon glyph. Empty uses the theme default.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "iconBackgroundColor",
+					"label": "Icon background color",
+					"description": "Optional CSS color for the icon tile background. Empty uses the theme default.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "clickable",
+					"label": "Clickable",
+					"description": "When on, the card is focusable and emits a 'Metric card clicked' event.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				}
+			],
+			"events": [
+				{
+					"name": "METRIC_CARD_CLICKED",
+					"label": "Metric card clicked",
+					"description": "Fired when a clickable card is activated by click or keyboard. Payload: { heading, value }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

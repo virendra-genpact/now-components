@@ -1,9 +1,15 @@
 {
-	"name": "@x_vendor_scope/component-template",
+	"name": "@x_gegis_library/metric-card",
 	"version": "0.1.0",
 	"private": false,
-	"description": "Template for a ServiceNow Next Experience custom component.",
-	"keywords": ["ServiceNow", "Next Experience UI Component"],
+	"description": "A configurable KPI / metric card component for ServiceNow Next Experience (UI Builder).",
+	"keywords": [
+		"ServiceNow",
+		"Next Experience UI Component",
+		"metric-card",
+		"kpi",
+		"dashboard"
+	],
 	"readme": "./README.md",
 	"engines": {
 		"node": ">=22"
@@ -15,6 +21,7 @@
 		"test": "snc ui-component test"
 	},
 	"dependencies": {
+		"@servicenow/now-icon": "19.8.2-ecd",
 		"@servicenow/sass-kit": "latest",
 		"@servicenow/ui-core": "24.1.1",
 		"@servicenow/ui-renderer-snabbdom": "24.1.1"
