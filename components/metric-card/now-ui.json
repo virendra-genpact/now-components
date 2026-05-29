@@ -44,12 +44,15 @@
 					"description": "How the value is rendered.",
 					"fieldType": "choice",
 					"defaultValue": "percent",
-					"options": [
-						{ "label": "Percent (25.00%)", "value": "percent" },
-						{ "label": "Currency ($25.00)", "value": "currency" },
-						{ "label": "Number (25.00)", "value": "number" },
-						{ "label": "None (as typed)", "value": "none" }
-					]
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Percent (25.00%)", "value": "percent" },
+							{ "label": "Currency ($25.00)", "value": "currency" },
+							{ "label": "Number (25.00)", "value": "number" },
+							{ "label": "None (as typed)", "value": "none" }
+						],
+						"schema": { "type": "string", "enum": ["percent", "currency", "number", "none"] }
+					}
 				},
 				{
 					"name": "decimals",
@@ -78,12 +81,15 @@
 					"description": "Arrow direction. Auto derives it from the sign of the trend value.",
 					"fieldType": "choice",
 					"defaultValue": "auto",
-					"options": [
-						{ "label": "Auto (from sign)", "value": "auto" },
-						{ "label": "Up", "value": "up" },
-						{ "label": "Down", "value": "down" },
-						{ "label": "Flat", "value": "flat" }
-					]
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Auto (from sign)", "value": "auto" },
+							{ "label": "Up", "value": "up" },
+							{ "label": "Down", "value": "down" },
+							{ "label": "Flat", "value": "flat" }
+						],
+						"schema": { "type": "string", "enum": ["auto", "up", "down", "flat"] }
+					}
 				},
 				{
 					"name": "trendPeriod",

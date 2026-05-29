@@ -1,0 +1,10 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- selected card (top) with filled radio -->
+  <rect x="5" y="8" width="38" height="14" rx="4" fill="none" stroke="#474747" stroke-width="2.5"/>
+  <circle cx="13" cy="15" r="3.2" fill="#474747"/>
+  <rect x="20" y="13.5" width="17" height="3" rx="1.5" fill="#474747"/>
+  <!-- second card (bottom) with empty radio -->
+  <rect x="5" y="26" width="38" height="14" rx="4" fill="none" stroke="#474747" stroke-width="2.5"/>
+  <circle cx="13" cy="33" r="3.2" fill="none" stroke="#474747" stroke-width="2"/>
+  <rect x="20" y="31.5" width="17" height="3" rx="1.5" fill="#474747"/>
+</svg>

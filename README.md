@@ -10,6 +10,7 @@ snabbdom renderer.
 | --- | --- | --- |
 | [`metric-card`](components/metric-card) | `x-gegis-library-metric-card` | Configurable KPI card — icon, heading, formatted value, and trend pill. |
 | [`banner`](components/banner) | `x-gegis-library-banner` | Configurable banner / callout (info / warning / error / success) — composes `now-alert`. |
+| [`product-selector`](components/product-selector) | `x-gegis-library-product-selector` | Radio group of product cards (title, bullets, pill) — composes `now-card` + `now-highlighted-value` + `now-icon`. |
 | [`component-template`](components/component-template) | `x-vendor-component-template` | Copy-me starter for new components. |
 
 ## Layout

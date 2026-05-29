@@ -1,0 +1,34 @@
+{
+	"name": "@x_gegis_library/product-selector",
+	"version": "0.1.0",
+	"private": false,
+	"description": "A single-select (radio) group of product cards for ServiceNow Next Experience. Composes now-card + now-highlighted-value + now-icon.",
+	"keywords": ["ServiceNow", "Next Experience UI Component", "product-selector", "radio", "card"],
+	"readme": "./README.md",
+	"engines": {
+		"node": ">=22"
+	},
+	"module": "src/index.js",
+	"scripts": {
+		"develop": "snc ui-component develop --open",
+		"deploy": "snc ui-component deploy",
+		"test": "snc ui-component test",
+		"develop:au": "snc ui-component develop --open -p australia",
+		"deploy:au": "snc ui-component deploy -p australia"
+	},
+	"dependencies": {
+		"@servicenow/now-card": "19.8.2-ecd",
+		"@servicenow/now-icon": "19.8.2-ecd",
+		"@servicenow/sass-kit": "latest",
+		"@servicenow/ui-core": "24.1.1",
+		"@servicenow/ui-renderer-snabbdom": "24.1.1"
+	},
+	"devDependencies": {
+		"@babel/runtime": "7.25.7",
+		"ajv": "^6.12.6",
+		"sass": "1.53.0"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com/"
+	}
+}

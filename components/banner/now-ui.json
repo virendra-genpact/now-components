@@ -16,12 +16,15 @@
 					"description": "Banner severity. Sets the color and the default icon.",
 					"fieldType": "choice",
 					"defaultValue": "warning",
-					"options": [
-						{ "label": "Info", "value": "info" },
-						{ "label": "Warning", "value": "warning" },
-						{ "label": "Error", "value": "error" },
-						{ "label": "Success", "value": "success" }
-					]
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Info", "value": "info" },
+							{ "label": "Warning", "value": "warning" },
+							{ "label": "Error", "value": "error" },
+							{ "label": "Success", "value": "success" }
+						],
+						"schema": { "type": "string", "enum": ["info", "warning", "error", "success"] }
+					}
 				},
 				{
 					"name": "title",

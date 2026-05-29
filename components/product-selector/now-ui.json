@@ -1,0 +1,43 @@
+{
+	"components": {
+		"x-gegis-library-product-selector": {
+			"innerComponents": ["now-card", "now-icon"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Product Selector",
+				"tileIcon": "./tile-icon/product-selector-tile-icon.svg",
+				"description": "A single-select (radio) group of product cards: each option has a title, optional subtitle + checkmark bullets, and a pill. Composes now-card + now-highlighted-value + now-icon.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "options",
+					"label": "Options",
+					"description": "Array of product options. Each: { id, title, subtitle, bullets:[string], pill, pillTone: info|neutral|positive|warning|error, pillIcon }.",
+					"fieldType": "json"
+				},
+				{
+					"name": "value",
+					"label": "Selected option id",
+					"description": "The id of the currently selected option. Leave empty to select the first option by default.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "bulletsWhenSelectedOnly",
+					"label": "Show details only when selected",
+					"description": "When on, the subtitle and bullet points show only for the selected card.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				}
+			],
+			"events": [
+				{
+					"name": "PRODUCT_SELECTED",
+					"description": "Fired when the user selects an option. Payload: { value }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

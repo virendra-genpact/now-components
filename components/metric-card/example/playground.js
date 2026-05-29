@@ -118,7 +118,7 @@ export function mountPlayground(nowUi) {
 		let input;
 		if (p.fieldType === 'choice') {
 			input = document.createElement('select');
-			(p.options || []).forEach((opt) => {
+			(((p.typeMetadata && p.typeMetadata.choices) || p.options) || []).forEach((opt) => {
 				const o = document.createElement('option');
 				o.value = opt.value;
 				o.textContent = opt.label || opt.value;
