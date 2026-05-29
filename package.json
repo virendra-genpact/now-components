@@ -1,0 +1,13 @@
+{
+  "name": "now-components",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "components/*"
+  ],
+  "scripts": {
+    "bootstrap": "npm install",
+    "build": "echo \"Run builds in individual components: cd components/<name> && npm run build\"",
+    "test": "echo \"Run tests in components\""
+  }
+}

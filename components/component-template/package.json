@@ -1,0 +1,13 @@
+{
+  "name": "@now/component-template",
+  "version": "0.1.0",
+  "description": "Template for a ServiceNow custom component",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('src/index.js','dist/index.js');console.log('built');\"",
+    "test": "echo \"No tests yet\""
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
