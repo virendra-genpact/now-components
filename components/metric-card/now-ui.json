@@ -18,11 +18,18 @@
 					"defaultValue": "Submissions to Quote Ratio"
 				},
 				{
-					"name": "icon",
-					"label": "Icon",
-					"description": "now-icon glyph name (e.g. currency-dollar-outline, chart-line-outline). Leave empty to hide the icon tile.",
+					"name": "iconGlyph",
+					"label": "Icon glyph",
+					"description": "A literal glyph for the icon tile (text or emoji, e.g. $ or 📈). Always renders. Takes precedence over Icon. Leave empty to use a now-icon, or to hide the tile.",
 					"fieldType": "string",
-					"defaultValue": "chart-line-outline"
+					"defaultValue": "$"
+				},
+				{
+					"name": "icon",
+					"label": "Icon (now-icon)",
+					"description": "now-icon glyph name (e.g. currency-dollar-outline, chart-line-outline). Used only when Icon glyph is empty. Resolves from the instance icon library, so may render blank in a disconnected local preview.",
+					"fieldType": "string",
+					"defaultValue": ""
 				},
 				{
 					"name": "value",

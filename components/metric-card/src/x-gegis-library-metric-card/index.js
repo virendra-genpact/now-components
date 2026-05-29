@@ -100,6 +100,7 @@ const view = (state, { dispatch }) => {
 	const {
 		heading,
 		icon,
+		iconGlyph,
 		iconColor,
 		iconBackgroundColor,
 		clickable,
@@ -110,6 +111,15 @@ const view = (state, { dispatch }) => {
 	const iconStyle = {};
 	if (iconColor) iconStyle.color = iconColor;
 	if (iconBackgroundColor) iconStyle.backgroundColor = iconBackgroundColor;
+
+	/* Prefer a literal glyph (always renders); fall back to now-icon, which
+	 * resolves named icons from the instance's icon library. */
+	let iconContent = null;
+	if (iconGlyph) {
+		iconContent = <span className="mc-icon-glyph">{iconGlyph}</span>;
+	} else if (icon) {
+		iconContent = <now-icon icon={icon} size="lg"></now-icon>;
+	}
 
 	const onActivate = clickable
 		? () => dispatch('METRIC_CARD_CLICKED', { heading, value: valueText })
@@ -133,9 +143,9 @@ const view = (state, { dispatch }) => {
 					: undefined
 			}
 		>
-			{icon ? (
+			{iconContent ? (
 				<div className="mc-icon" style={iconStyle} aria-hidden="true">
-					<now-icon icon={icon} size="lg"></now-icon>
+					{iconContent}
 				</div>
 			) : null}
 
@@ -155,9 +165,14 @@ createCustomElement('x-gegis-library-metric-card', {
 	properties: {
 		/* Title shown above the value, e.g. "Submissions to Quote Ratio". */
 		heading: { default: 'Submissions to Quote Ratio' },
-		/* now-icon glyph name rendered in the icon tile (e.g. "chart-line-outline",
-		 * "currency-dollar-outline"). Leave empty to hide the tile. */
-		icon: { default: 'chart-line-outline' },
+		/* A literal glyph shown in the icon tile (text or emoji, e.g. "$", "📈").
+		 * Always renders — no instance icon library needed. Takes precedence over
+		 * `icon`. Leave empty to use a now-icon instead, or hide the tile. */
+		iconGlyph: { default: '$' },
+		/* now-icon glyph name (e.g. "chart-line-outline", "currency-dollar-outline").
+		 * Used only when `iconGlyph` is empty. Resolves from the instance's icon
+		 * library, so it may render blank in a disconnected local preview. */
+		icon: { default: '' },
 		/* Optional icon tile overrides (any CSS color). Empty → theme defaults. */
 		iconColor: { default: '' },
 		iconBackgroundColor: { default: '' },

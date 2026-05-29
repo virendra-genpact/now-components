@@ -54,6 +54,12 @@ npm run develop   # snc ui-component develop — serves example/element.js
 npm test          # snc ui-component test
 ```
 
+`npm run develop` opens an **auto-generated live playground** (from
+`example/playground.js`) that reads your `now-ui.json` and renders a control for
+every declared property — so you can tune the component in real time without
+writing any harness code. Describe each field in `now-ui.json` `properties[]` and it
+shows up automatically.
+
 ## 5. Deploy to an instance
 
 ```bash

@@ -11,7 +11,9 @@ component-template/
 ├── now-ui.json                  # UI Builder metadata + configurable properties
 ├── now-cli.json                 # snc dev-server / proxy config
 ├── package.json                 # deps + develop/deploy/test scripts (wrap snc)
-├── example/element.js           # local preview harness
+├── example/
+│   ├── element.js               # dev entry — calls mountPlayground(nowUi)
+│   └── playground.js            # auto-generates a live editor from now-ui.json
 ├── tile-icon/                   # icon shown in the UI Builder component palette
 └── src/
     ├── index.js                 # registers the element(s)
@@ -45,3 +47,15 @@ npm run develop   # snc ui-component develop — serves example/ for local previ
 npm run deploy    # snc ui-component deploy  — push the component to your instance
 npm test          # snc ui-component test
 ```
+
+## Live playground (out of the box)
+
+`npm run develop` opens an **auto-generated** control panel beside your component.
+`example/playground.js` reads `now-ui.json` and renders one live control per
+declared property (text / number / select / checkbox), plus a log for declared
+events — updating the component in real time as you edit.
+
+You don't touch `example/` to get this: just describe each configurable field in
+`now-ui.json` `properties[]` and it appears as a control automatically. The control
+type follows `fieldType` (`string` / `number` / `boolean` / `choice`) and the
+property `description` becomes the field's hint.
