@@ -1,0 +1,1306 @@
+<?xml version="1.0"?>
+<unload>
+  <sys_remote_update_set action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <application_name>@x_gegis_library/banner</application_name>
+    <application_scope>x_gegis_library</application_scope>
+    <application_version>1.0.0</application_version>
+    <description>Automatically created by the CLI</description>
+    <name>@x_gegis_library/banner_2026-05-30 06:00:38</name>
+    <state>loaded</state>
+    <sys_class_name>sys_remote_update_set</sys_class_name>
+    <sys_id>579205765d5d4985802d62e190ed5455</sys_id>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_remote_update_set>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application display_value="@x_gegis_library/banner">61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_app_61b7b597fbc547d02eacfdd86eefdc94</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<record_update table="sys_app">
+  <sys_app action="INSERT_OR_UPDATE">
+    <name>@x_gegis_library/banner</name>
+    <sys_id>61b7b597fbc547d02eacfdd86eefdc94</sys_id>
+    <scope>x_gegis_library</scope>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+    <active>true</active>
+    <can_edit_in_studio>true</can_edit_in_studio>
+    <enforce_license>none</enforce_license>
+    <hide_on_ui>false</hide_on_ui>
+    <installed_as_dependency>false</installed_as_dependency>
+    <js_level>es_latest</js_level>
+    <licensable>true</licensable>
+    <private>false</private>
+    <scoped_administration>false</scoped_administration>
+    <source>x_gegis_library</source>
+    <sys_class_name>sys_app</sys_class_name>
+    <trackable>true</trackable>
+    <uninstall_blocked>false</uninstall_blocked>
+    <version>1.0.0</version>
+  </sys_app>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>d453628c1bb34c31951c58b1ff0c2698</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Custom Application</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_asset_bf08b94f837d6d92cdaa7eda56f5f016</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_asset action="INSERT_OR_UPDATE">
+    <name>@x_gegis_library/banner/index</name>
+    <mime_type>application/javascript</mime_type>
+    <checksum>0b9b76a68375e0152032ed8186c98106</checksum>
+    <bundled_asset>false</bundled_asset>
+    <category>component</category>
+    <exposed_global_name/>
+    <sys_id>bf08b94f837d6d92cdaa7eda56f5f016</sys_id>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <es_module>true</es_module>
+    <content_meta>{"tectonicVersion":"29.0.2","imports":[{"kind":"import-statement","path":"/uxasset/externals/@servicenow/ui-core/index.jsdbx"},{"kind":"import-statement","path":"/uxasset/externals/@servicenow/ui-renderer-snabbdom/index.jsdbx"}],"exports":[]}</content_meta>
+    <dependencies/>
+    <content>import*as e from"/uxasset/externals/@servicenow/ui-renderer-snabbdom/index.jsdbx";
+import*as n from"/uxasset/externals/@servicenow/ui-core/index.jsdbx";
+/*__ESM_BODY_START__*/
+var t={616:(e,n,t)=&gt;{t.r(n),t.d(n,{default:()=&gt;i});var r=t(258),o=t.n(r),l=t(467),a=t.n(l)()(o());a.push([e.id,':host{box-sizing:border-box;font-family:var(--now-font-family,"Source Sans Pro",sans-serif);line-height:var(--now-line-height,1.25)}:host([hidden]){display:none}*,:after,:before{box-sizing:border-box}:host{color:var(--now-color--primary,#1c2331);display:block;font-family:var(--now-font-family,"Lato",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}.bn{align-items:flex-start;border:1px solid transparent;border-radius:10px;box-sizing:border-box;display:flex;gap:12px;padding:14px 16px}.bn-lead{display:inline-flex;flex-shrink:0;line-height:0;margin-top:1px}.bn-body{flex:1;min-width:0}.bn-title{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:6px}.bn-lines{color:var(--now-color--secondary,#4a5163);font-size:14px;line-height:1.5}.bn-line{word-break:break-word}.bn-lines--clamp{-webkit-line-clamp:2;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.bn-link,.bn-toggle{background:none;border:none;color:var(--now-color--interactive,#2f6fed);cursor:pointer;display:inline-block;font:inherit;font-size:13px;font-weight:600;margin-top:8px;padding:0;text-decoration:none}.bn-link:hover,.bn-toggle:hover{text-decoration:underline}.bn-dismiss{align-items:center;background:none;border:none;border-radius:6px;color:var(--now-color--secondary,#6c7689);cursor:pointer;display:flex;flex-shrink:0;font-size:18px;height:24px;justify-content:center;line-height:1;margin:-2px -4px 0 0;padding:0;width:24px}.bn-dismiss:hover{background:rgba(0,0,0,.06)}',""]);const i=a},127:()=&gt;{"undefined"!=typeof globalThis&amp;&amp;void 0===globalThis.process&amp;&amp;(globalThis.process={env:{NODE_ENV:"production"}})},467:e=&gt;{e.exports=function(e){var n=[];return n.toString=function(){return this.map(function(n){var t="",r=void 0!==n[5];return n[4]&amp;&amp;(t+="@supports (".concat(n[4],") {")),n[2]&amp;&amp;(t+="@media ".concat(n[2]," {")),r&amp;&amp;(t+="@layer".concat(n[5].length&gt;0?" ".concat(n[5]):""," {")),t+=e(n),r&amp;&amp;(t+="}"),n[2]&amp;&amp;(t+="}"),n[4]&amp;&amp;(t+="}"),t}).join("")},n.i=function(e,t,r,o,l){"string"==typeof e&amp;&amp;(e=[[null,e,void 0]]);var a={};if(r)for(var i=0;i&lt;this.length;i++){var s=this[i][0];null!=s&amp;&amp;(a[s]=!0)}for(var d=0;d&lt;e.length;d++){var c=[].concat(e[d]);r&amp;&amp;a[c[0]]||(void 0!==l&amp;&amp;(void 0===c[5]||(c[1]="@layer".concat(c[5].length&gt;0?" ".concat(c[5]):""," {").concat(c[1],"}")),c[5]=l),t&amp;&amp;(c[2]?(c[1]="@media ".concat(c[2]," {").concat(c[1],"}"),c[2]=t):c[2]=t),o&amp;&amp;(c[4]?(c[1]="@supports (".concat(c[4],") {").concat(c[1],"}"),c[4]=o):c[4]="".concat(o)),n.push(c))}},n}},258:e=&gt;{e.exports=function(e){return e[1]}},507:(e,n,t)=&gt;{var r=t(616);r&amp;&amp;r.__esModule&amp;&amp;(r=r.default),e.exports="string"==typeof r?r:r.toString()}},r={};function o(e){var n=r[e];if(void 0!==n)return n.exports;var l=r[e]={id:e,exports:{}};return t[e](l,l.exports,o),l.exports}o.n=e=&gt;{var n=e&amp;&amp;e.__esModule?()=&gt;e.default:()=&gt;e;return o.d(n,{a:n}),n},o.d=(e,n)=&gt;{for(var t in n)o.o(n,t)&amp;&amp;!o.o(e,t)&amp;&amp;Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},o.o=(e,n)=&gt;Object.prototype.hasOwnProperty.call(e,n),o.r=e=&gt;{"undefined"!=typeof Symbol&amp;&amp;Symbol.toStringTag&amp;&amp;Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})};var l={};o.r(l);o(127);const a=(e=&gt;{var n={};return o.d(n,e),n})({createElement:()=&gt;{const n=e.default&amp;&amp;e.__esModule;return n?e.default.createElement:e.createElement||e.default&amp;&amp;e.default.createElement},default:()=&gt;{const n=e.default&amp;&amp;e.__esModule;return n?e.default&amp;&amp;e.default.default?e.default.default:e.default:n?e.default.default:e.default?e.default.default?e.default.default:e.default:e}});const i=(e=&gt;{var n={};return o.d(n,e),n})({createCustomElement:()=&gt;{const e=n.default&amp;&amp;n.__esModule;return e?n.default.createCustomElement:n.createCustomElement||n.default&amp;&amp;n.default.createCustomElement}});var s=o(507),d=o.n(s);const c={warning:"M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z",error:"M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z",info:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z",success:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",check:"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",clock:"M12 2a10 10 0 100 20 10 10 0 000-20zm.5 5H11v6l5.25 3.15.75-1.23-4.5-2.67z",help:"M11 18h2v-2h-2v2zm1-16a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zM12 6a4 4 0 00-4 4h2a2 2 0 114 0c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5a4 4 0 00-4-4z"},f=e=&gt;{let n=e.iconKey,t=e.color,r=e.size;const o=c[n]||c.info;return(0,a.createElement)("svg",{viewBox:"0 0 24 24",width:r,height:r,fill:t,"aria-hidden":"true",style:"display:block;flex-shrink:0"},(0,a.createElement)("path",{d:o}))},u={info:{color:"#1d6fe0",bg:"#eaf2fd",border:"#cfe0fb",iconKey:"info"},warning:{color:"#b5640a",bg:"#fdf6e8",border:"#f3e2bd",iconKey:"warning"},error:{color:"#c8283c",bg:"#fdeef0",border:"#f6ccd3",iconKey:"error"},success:{color:"#1a7f4b",bg:"#e9f7ef",border:"#bfe8cf",iconKey:"success"}};(0,i.createCustomElement)("x-gegis-library-banner",{renderer:{type:a.default},view:(e,n)=&gt;{let t=n.updateState,r=n.dispatch;if(e.dismissed)return(0,a.createElement)("span",null);const o=e.properties,l=o.type,i=o.title,s=o.line1,d=o.line2,b=o.line3,p=o.line4,m=o.icon,h=o.dismissible,g=o.linkLabel,v=o.linkHref,x=o.expandable,y=(e=&gt;u[e]||u.info)(l),w=m&amp;&amp;c[m.replace(/-(outline|fill)$/,"")]?m.replace(/-(outline|fill)$/,""):y.iconKey,E=[s,d,b,p].filter(e=&gt;e&amp;&amp;""!==String(e).trim()),k=x&amp;&amp;!e.expanded;return(0,a.createElement)("div",{className:`bn bn--${l||"info"}`,role:"status",style:`background-color:${y.bg};border-color:${y.border}`},(0,a.createElement)("span",{className:"bn-lead"},(0,a.createElement)(f,{iconKey:w,color:y.color,size:20})),(0,a.createElement)("div",{className:"bn-body"},i?(0,a.createElement)("div",{className:"bn-title",style:`color:${y.color}`},i):null,E.length?(0,a.createElement)("div",{className:"bn-lines"+(k?" bn-lines--clamp":"")},E.map((e,n)=&gt;(0,a.createElement)("div",{className:"bn-line",style:n?"margin-top:10px":""},e))):null,x&amp;&amp;E.length&gt;1?(0,a.createElement)("button",{className:"bn-toggle",type:"button","on-click":()=&gt;t({expanded:!e.expanded})},e.expanded?"Show less":"Show more"):null,g&amp;&amp;v?(0,a.createElement)("a",{className:"bn-link",href:v,"on-click":e=&gt;{e.preventDefault(),r("BANNER_LINK_CLICKED",{href:v})}},g):null),h?(0,a.createElement)("button",{className:"bn-dismiss",type:"button","aria-label":"Dismiss","on-click":()=&gt;{t({dismissed:!0}),r("BANNER_DISMISSED",{})}},"\xd7"):null)},styles:d(),initialState:{dismissed:!1,expanded:!1},properties:{type:{default:"warning"},title:{default:"5 Potential duplicates found"},line1:{default:"The system has identified the following submissions as potential duplicates based on insured details, address, line of business, and exposure criteria."},line2:{default:"Review and determine whether to proceed or decline."},line3:{default:""},line4:{default:""},icon:{default:""},dismissible:{default:!1},expandable:{default:!1},linkLabel:{default:""},linkHref:{default:""}},actionHandlers:{}}),window.__TECTONIC__$x_gegis_library_banner=l;
+/*__ESM_BODY_END__*/
+//# sourceMappingURL=/uxasset/externals/@x_gegis_library/banner/index.min.js.map.jsdbx</content>
+    <is_attachment>false</is_attachment>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy>read</sys_policy>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <engine>21</engine>
+    <sys_class_name>sys_ux_lib_asset</sys_class_name>
+    <sys_update_name>sys_ux_lib_asset_bf08b94f837d6d92cdaa7eda56f5f016</sys_update_name>
+  </sys_ux_lib_asset>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>bf08b94f837d6d92cdaa7eda56f5f016</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>UX Asset</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_asset_81340d3fab76398dd2d56c800eb2228a</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_asset action="INSERT_OR_UPDATE">
+    <name>@x_gegis_library/banner/index.min.js.map</name>
+    <mime_type>application/json</mime_type>
+    <checksum>26754de1af6a365b22781c1ec820c13d</checksum>
+    <bundled_asset>false</bundled_asset>
+    <category>source_map</category>
+    <exposed_global_name/>
+    <sys_id>81340d3fab76398dd2d56c800eb2228a</sys_id>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <es_module>false</es_module>
+    <content_meta>{"tectonicVersion":"29.0.2","imports":[],"exports":[]}</content_meta>
+    <dependencies/>
+    <content>{"version":3,"file":"externals/@x_gegis_library/banner/index.min.js","mappings":"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","sources":["webpack:///@x_gegis_library\\banner\\src\\x-gegis-library-banner\\styles.scss","webpack:///@x_gegis_library\\banner\\src\\process-shim.js","webpack:///css-loader\\6.7.1\\dist\\runtime\\api.js","webpack:///css-loader\\6.7.1\\dist\\runtime\\noSourceMaps.js","webpack:///./src/x-gegis-library-banner/styles.scss?8fe5","webpack:///webpack/bootstrap","webpack:///webpack/runtime/compat get default export","webpack:///webpack/runtime/define property getters","webpack:///webpack/runtime/hasOwnProperty shorthand","webpack:///webpack/runtime/make namespace object","webpack:///external module \"/uxasset/externals/@servicenow/ui-renderer-snabbdom/index.jsdbx\"","webpack:///external module \"/uxasset/externals/@servicenow/ui-core/index.jsdbx\"","webpack:///@x_gegis_library\\banner\\src\\x-gegis-library-banner\\index.js","webpack:///@x_gegis_library\\banner\\src\\__imaginary__\\entry-wrapper.js"],"sourcesContent":["// Imports\nimport ___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___ from \"../../../../../../../Users/850084674/.snc/.extensions/ui-component/node_modules/@servicenow/cli/node_modules/css-loader/dist/runtime/noSourceMaps.js\";\nimport ___CSS_LOADER_API_IMPORT___ from \"../../../../../../../Users/850084674/.snc/.extensions/ui-component/node_modules/@servicenow/cli/node_modules/css-loader/dist/runtime/api.js\";\nvar ___CSS_LOADER_EXPORT___ = ___CSS_LOADER_API_IMPORT___(___CSS_LOADER_API_NO_SOURCEMAP_IMPORT___);\n// Module\n___CSS_LOADER_EXPORT___.push([module.id, \":host{box-sizing:border-box;font-family:var(--now-font-family,\\\"Source Sans Pro\\\",sans-serif);line-height:var(--now-line-height,1.25)}:host([hidden]){display:none}*,:after,:before{box-sizing:border-box}:host{color:var(--now-color--primary,#1c2331);display:block;font-family:var(--now-font-family,\\\"Lato\\\",-apple-system,BlinkMacSystemFont,\\\"Segoe UI\\\",sans-serif)}.bn{align-items:flex-start;border:1px solid transparent;border-radius:10px;box-sizing:border-box;display:flex;gap:12px;padding:14px 16px}.bn-lead{display:inline-flex;flex-shrink:0;line-height:0;margin-top:1px}.bn-body{flex:1;min-width:0}.bn-title{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:6px}.bn-lines{color:var(--now-color--secondary,#4a5163);font-size:14px;line-height:1.5}.bn-line{word-break:break-word}.bn-lines--clamp{-webkit-line-clamp:2;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.bn-link,.bn-toggle{background:none;border:none;color:var(--now-color--interactive,#2f6fed);cursor:pointer;display:inline-block;font:inherit;font-size:13px;font-weight:600;margin-top:8px;padding:0;text-decoration:none}.bn-link:hover,.bn-toggle:hover{text-decoration:underline}.bn-dismiss{align-items:center;background:none;border:none;border-radius:6px;color:var(--now-color--secondary,#6c7689);cursor:pointer;display:flex;flex-shrink:0;font-size:18px;height:24px;justify-content:center;line-height:1;margin:-2px -4px 0 0;padding:0;width:24px}.bn-dismiss:hover{background:rgba(0,0,0,.06)}\", \"\"]);\n// Exports\nexport default ___CSS_LOADER_EXPORT___;\n","/* Some bundled @servicenow/now-* dependencies (e.g. @servicenow/library-translate)\n * reference the Node global `process`, which is undefined in the instance browser\n * runtime — throwing \"ReferenceError: process is not defined\" and preventing the\n * component from rendering. Define a minimal shim BEFORE those modules evaluate.\n *\n * This MUST be the first import in src/index.js so it runs before the element (and\n * therefore before now-* / library-translate). It is a no-op when `process` already\n * exists (e.g. in local `snc develop`, where webpack provides it). */\nif (typeof globalThis !== 'undefined' &amp;&amp; typeof globalThis.process === 'undefined') {\n\tglobalThis.process = { env: { NODE_ENV: 'production' } };\n}\n","\"use strict\";\n\n/*\n  MIT License http://www.opensource.org/licenses/mit-license.php\n  Author Tobias Koppers @sokra\n*/\nmodule.exports = function (cssWithMappingToString) {\n  var list = []; // return the list of modules as css string\n\n  list.toString = function toString() {\n    return this.map(function (item) {\n      var content = \"\";\n      var needLayer = typeof item[5] !== \"undefined\";\n\n      if (item[4]) {\n        content += \"@supports (\".concat(item[4], \") {\");\n      }\n\n      if (item[2]) {\n        content += \"@media \".concat(item[2], \" {\");\n      }\n\n      if (needLayer) {\n        content += \"@layer\".concat(item[5].length &gt; 0 ? \" \".concat(item[5]) : \"\", \" {\");\n      }\n\n      content += cssWithMappingToString(item);\n\n      if (needLayer) {\n        content += \"}\";\n      }\n\n      if (item[2]) {\n        content += \"}\";\n      }\n\n      if (item[4]) {\n        content += \"}\";\n      }\n\n      return content;\n    }).join(\"\");\n  }; // import a list of modules into the list\n\n\n  list.i = function i(modules, media, dedupe, supports, layer) {\n    if (typeof modules === \"string\") {\n      modules = [[null, modules, undefined]];\n    }\n\n    var alreadyImportedModules = {};\n\n    if (dedupe) {\n      for (var k = 0; k &lt; this.length; k++) {\n        var id = this[k][0];\n\n        if (id != null) {\n          alreadyImportedModules[id] = true;\n        }\n      }\n    }\n\n    for (var _k = 0; _k &lt; modules.length; _k++) {\n      var item = [].concat(modules[_k]);\n\n      if (dedupe &amp;&amp; alreadyImportedModules[item[0]]) {\n        continue;\n      }\n\n      if (typeof layer !== \"undefined\") {\n        if (typeof item[5] === \"undefined\") {\n          item[5] = layer;\n        } else {\n          item[1] = \"@layer\".concat(item[5].length &gt; 0 ? \" \".concat(item[5]) : \"\", \" {\").concat(item[1], \"}\");\n          item[5] = layer;\n        }\n      }\n\n      if (media) {\n        if (!item[2]) {\n          item[2] = media;\n        } else {\n          item[1] = \"@media \".concat(item[2], \" {\").concat(item[1], \"}\");\n          item[2] = media;\n        }\n      }\n\n      if (supports) {\n        if (!item[4]) {\n          item[4] = \"\".concat(supports);\n        } else {\n          item[1] = \"@supports (\".concat(item[4], \") {\").concat(item[1], \"}\");\n          item[4] = supports;\n        }\n      }\n\n      list.push(item);\n    }\n  };\n\n  return list;\n};","\"use strict\";\n\nmodule.exports = function (i) {\n  return i[1];\n};","\n        var result = require(\"!!../../../../../../../Users/850084674/.snc/.extensions/ui-component/node_modules/@servicenow/cli/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!../../../../../../../Users/850084674/.snc/.extensions/ui-component/node_modules/@servicenow/cli/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!../../../../../../../Users/850084674/.snc/.extensions/ui-component/node_modules/resolve-url-loader/index.js??ruleSet[1].rules[2].use[3]!../../../../../../../Users/850084674/.snc/.extensions/ui-component/node_modules/@servicenow/cli/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[2].use[4]!./styles.scss\");\n\n        if (result &amp;&amp; result.__esModule) {\n            result = result.default;\n        }\n\n        if (typeof result === \"string\") {\n            module.exports = result;\n        } else {\n            module.exports = result.toString();\n        }\n    ","// The module cache\nvar __webpack_module_cache__ = {};\n\n// The require function\nfunction __webpack_require__(moduleId) {\n\t// Check if module is in cache\n\tvar cachedModule = __webpack_module_cache__[moduleId];\n\tif (cachedModule !== undefined) {\n\t\treturn cachedModule.exports;\n\t}\n\t// Create a new module (and put it into the cache)\n\tvar module = __webpack_module_cache__[moduleId] = {\n\t\tid: moduleId,\n\t\t// no module.loaded needed\n\t\texports: {}\n\t};\n\n\t// Execute the module function\n\t__webpack_modules__[moduleId](module, module.exports, __webpack_require__);\n\n\t// Return the exports of the module\n\treturn module.exports;\n}\n\n","// getDefaultExport function for compatibility with non-harmony modules\n__webpack_require__.n = (module) =&gt; {\n\tvar getter = module &amp;&amp; module.__esModule ?\n\t\t() =&gt; (module['default']) :\n\t\t() =&gt; (module);\n\t__webpack_require__.d(getter, { a: getter });\n\treturn getter;\n};","// define getter functions for harmony exports\n__webpack_require__.d = (exports, definition) =&gt; {\n\tfor(var key in definition) {\n\t\tif(__webpack_require__.o(definition, key) &amp;&amp; !__webpack_require__.o(exports, key)) {\n\t\t\tObject.defineProperty(exports, key, { enumerable: true, get: definition[key] });\n\t\t}\n\t}\n};","__webpack_require__.o = (obj, prop) =&gt; (Object.prototype.hasOwnProperty.call(obj, prop))","// define __esModule on exports\n__webpack_require__.r = (exports) =&gt; {\n\tif(typeof Symbol !== 'undefined' &amp;&amp; Symbol.toStringTag) {\n\t\tObject.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });\n\t}\n\tObject.defineProperty(exports, '__esModule', { value: true });\n};","var x = y =&gt; { var x = {}; __webpack_require__.d(x, y); return x; }\nvar y = x =&gt; () =&gt; x\nconst __WEBPACK_NAMESPACE_OBJECT__ = x({ [\"createElement\"]: () =&gt; {\n\t\t\t\t\tconst cjsModule = __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__.default &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__.__esModule\n\t\t\t\t\tif (cjsModule &amp;&amp; 'createElement' === 'default') {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] ? __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"];\n\t\t\t\t\t} else if (cjsModule)  {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"].createElement;\n\t\t\t\t\t} else if ('createElement' === 'default') {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] ? (__WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] ? __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"]) : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__;\n\t\t\t\t\t}\n\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__.createElement || __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"].createElement;\n\t\t\t\t}, [\"default\"]: () =&gt; {\n\t\t\t\t\tconst cjsModule = __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__.default &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__.__esModule\n\t\t\t\t\tif (cjsModule &amp;&amp; 'default' === 'default') {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] ? __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"];\n\t\t\t\t\t} else if (cjsModule)  {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"];\n\t\t\t\t\t} else if ('default' === 'default') {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] ? (__WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] ? __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"] : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"]) : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__;\n\t\t\t\t\t}\n\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] || __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"] &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__[\"default\"][\"default\"];\n\t\t\t\t} });","var x = y =&gt; { var x = {}; __webpack_require__.d(x, y); return x; }\nvar y = x =&gt; () =&gt; x\nconst __WEBPACK_NAMESPACE_OBJECT__ = x({ [\"createCustomElement\"]: () =&gt; {\n\t\t\t\t\tconst cjsModule = __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__.default &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__.__esModule\n\t\t\t\t\tif (cjsModule &amp;&amp; 'createCustomElement' === 'default') {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"] &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"][\"default\"] ? __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"][\"default\"] : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"];\n\t\t\t\t\t} else if (cjsModule)  {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"].createCustomElement;\n\t\t\t\t\t} else if ('createCustomElement' === 'default') {\n\t\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"] ? (__WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"][\"default\"] ? __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"][\"default\"] : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"]) : __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__;\n\t\t\t\t\t}\n\t\t\t\t\treturn __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__.createCustomElement || __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"] &amp;&amp; __WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__[\"default\"].createCustomElement;\n\t\t\t\t} });","import { createCustomElement } from '@servicenow/ui-core';\nimport snabbdom from '@servicenow/ui-renderer-snabbdom';\nimport styles from './styles.scss';\n\n/* ------------------------------------------------------------------ *\n * x-gegis-library-banner\n * A configurable banner / callout (info | warning | error | success).\n *\n * FULLY OWNED markup. No now-alert (pulls library-translate → \"process is not\n * defined\"), no now-icon (bundled version renders blank on the instance).\n * SVG icons are rendered as JSX &lt;svg&gt; elements — snabbdom handles them\n * natively with no innerHTML hacks. Text is plain JSX children.\n * Documented §5 exception.\n * ------------------------------------------------------------------ */\n\n/* Inline SVG icon paths (24 × 24, Material-style). */\nconst ICONS = {\n\twarning: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',\n\terror: 'M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z',\n\tinfo: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z',\n\tsuccess: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',\n\tcheck: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',\n\tclock: 'M12 2a10 10 0 100 20 10 10 0 000-20zm.5 5H11v6l5.25 3.15.75-1.23-4.5-2.67z',\n\thelp: 'M11 18h2v-2h-2v2zm1-16a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zM12 6a4 4 0 00-4 4h2a2 2 0 114 0c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5a4 4 0 00-4-4z',\n};\n\n/* JSX SVG element — no innerHTML, snabbdom renders SVG natively. */\nconst Icon = ({ iconKey, color, size }) =&gt; {\n\tconst d = ICONS[iconKey] || ICONS.info;\n\treturn (\n\t\t&lt;svg viewBox=\"0 0 24 24\" width={size} height={size} fill={color} aria-hidden=\"true\"\n\t\t\tstyle=\"display:block;flex-shrink:0\"&gt;\n\t\t\t&lt;path d={d}&gt;&lt;/path&gt;\n\t\t&lt;/svg&gt;\n\t);\n};\n\n/* type → color palette */\nconst TYPE = {\n\tinfo: { color: '#1d6fe0', bg: '#eaf2fd', border: '#cfe0fb', iconKey: 'info' },\n\twarning: { color: '#b5640a', bg: '#fdf6e8', border: '#f3e2bd', iconKey: 'warning' },\n\terror: { color: '#c8283c', bg: '#fdeef0', border: '#f6ccd3', iconKey: 'error' },\n\tsuccess: { color: '#1a7f4b', bg: '#e9f7ef', border: '#bfe8cf', iconKey: 'success' },\n};\nconst typeOf = (t) =&gt; TYPE[t] || TYPE.info;\n\nconst view = (state, { updateState, dispatch }) =&gt; {\n\tif (state.dismissed) return &lt;span&gt;&lt;/span&gt;;\n\n\tconst { type, title, line1, line2, line3, line4, icon, dismissible, linkLabel, linkHref, expandable } = state.properties;\n\tconst t = typeOf(type);\n\tconst iconKey = (icon &amp;&amp; ICONS[icon.replace(/-(outline|fill)$/, '')]) ? icon.replace(/-(outline|fill)$/, '') : t.iconKey;\n\tconst lines = [line1, line2, line3, line4].filter((l) =&gt; l &amp;&amp; String(l).trim() !== '');\n\tconst collapsed = expandable &amp;&amp; !state.expanded;\n\n\treturn (\n\t\t&lt;div className={`bn bn--${type || 'info'}`} role=\"status\"\n\t\t\tstyle={`background-color:${t.bg};border-color:${t.border}`}&gt;\n\n\t\t\t&lt;span className=\"bn-lead\"&gt;\n\t\t\t\t&lt;Icon iconKey={iconKey} color={t.color} size={20}&gt;&lt;/Icon&gt;\n\t\t\t&lt;/span&gt;\n\n\t\t\t&lt;div className=\"bn-body\"&gt;\n\t\t\t\t{title ? &lt;div className=\"bn-title\" style={`color:${t.color}`}&gt;{title}&lt;/div&gt; : null}\n\n\t\t\t\t{lines.length ? (\n\t\t\t\t\t&lt;div className={`bn-lines${collapsed ? ' bn-lines--clamp' : ''}`}&gt;\n\t\t\t\t\t\t{lines.map((l, i) =&gt; (\n\t\t\t\t\t\t\t&lt;div className=\"bn-line\" style={i ? 'margin-top:10px' : ''}&gt;{l}&lt;/div&gt;\n\t\t\t\t\t\t))}\n\t\t\t\t\t&lt;/div&gt;\n\t\t\t\t) : null}\n\n\t\t\t\t{expandable &amp;&amp; lines.length &gt; 1 ? (\n\t\t\t\t\t&lt;button className=\"bn-toggle\" type=\"button\"\n\t\t\t\t\t\ton-click={() =&gt; updateState({ expanded: !state.expanded })}&gt;\n\t\t\t\t\t\t{state.expanded ? 'Show less' : 'Show more'}\n\t\t\t\t\t&lt;/button&gt;\n\t\t\t\t) : null}\n\n\t\t\t\t{linkLabel &amp;&amp; linkHref ? (\n\t\t\t\t\t&lt;a className=\"bn-link\" href={linkHref}\n\t\t\t\t\t\ton-click={(e) =&gt; { e.preventDefault(); dispatch('BANNER_LINK_CLICKED', { href: linkHref }); }}&gt;\n\t\t\t\t\t\t{linkLabel}\n\t\t\t\t\t&lt;/a&gt;\n\t\t\t\t) : null}\n\t\t\t&lt;/div&gt;\n\n\t\t\t{dismissible ? (\n\t\t\t\t&lt;button className=\"bn-dismiss\" type=\"button\" aria-label=\"Dismiss\"\n\t\t\t\t\ton-click={() =&gt; { updateState({ dismissed: true }); dispatch('BANNER_DISMISSED', {}); }}&gt;\n\t\t\t\t\t×\n\t\t\t\t&lt;/button&gt;\n\t\t\t) : null}\n\t\t&lt;/div&gt;\n\t);\n};\n\ncreateCustomElement('x-gegis-library-banner', {\n\trenderer: { type: snabbdom },\n\tview,\n\tstyles,\n\tinitialState: { dismissed: false, expanded: false },\n\tproperties: {\n\t\ttype: { default: 'warning' },\n\t\ttitle: { default: '5 Potential duplicates found' },\n\t\tline1: { default: 'The system has identified the following submissions as potential duplicates based on insured details, address, line of business, and exposure criteria.' },\n\t\tline2: { default: 'Review and determine whether to proceed or decline.' },\n\t\tline3: { default: '' },\n\t\tline4: { default: '' },\n\t\ticon: { default: '' },\n\t\tdismissible: { default: false },\n\t\texpandable: { default: false },\n\t\tlinkLabel: { default: '' },\n\t\tlinkHref: { default: '' },\n\t},\n\tactionHandlers: {},\n});\n","import * as exports from '../index.js';\nwindow.__TECTONIC__$x_gegis_library_banner=exports;\nexport * from '../index.js';\n\n"],"names":["___CSS_LOADER_EXPORT___","push","module","id","globalThis","process","env","NODE_ENV","exports","cssWithMappingToString","list","toString","this","map","item","content","needLayer","concat","length","join","i","modules","media","dedupe","supports","layer","undefined","alreadyImportedModules","k","_k","result","__esModule","default","__webpack_module_cache__","__webpack_require__","moduleId","cachedModule","__webpack_modules__","n","getter","d","a","definition","key","o","Object","defineProperty","enumerable","get","obj","prop","prototype","hasOwnProperty","call","r","Symbol","toStringTag","value","y","x","cjsModule","__WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_renderer_snabbdom_index_jsdbx_9af105b3__","createElement","__WEBPACK_EXTERNAL_MODULE__uxasset_externals_servicenow_ui_core_index_jsdbx_65e0859f__","createCustomElement","ICONS","warning","error","info","success","check","clock","help","Icon","_ref","iconKey","color","size","viewBox","width","height","fill","style","TYPE","bg","border","renderer","type","snabbdom","view","state","_ref2","updateState","dispatch","dismissed","_state$properties","properties","title","line1","line2","line3","line4","icon","dismissible","linkLabel","linkHref","expandable","t","typeOf","replace","lines","filter","l","String","trim","collapsed","expanded","className","role","on-click","href","e","preventDefault","styles","initialState","actionHandlers","window","__TECTONIC__$x_gegis_library_banner"]}</content>
+    <is_attachment>false</is_attachment>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy>read</sys_policy>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <engine>21</engine>
+    <sys_class_name>sys_ux_lib_asset</sys_class_name>
+    <sys_update_name>sys_ux_lib_asset_81340d3fab76398dd2d56c800eb2228a</sys_update_name>
+  </sys_ux_lib_asset>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>81340d3fab76398dd2d56c800eb2228a</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>UX Asset</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component action="INSERT_OR_UPDATE">
+    <required_sys_props/>
+    <required_translation_keys>[]</required_translation_keys>
+    <required_user_prefs/>
+    <source_script_name>@x_gegis_library/banner</source_script_name>
+    <inner_components/>
+    <sys_id>821d1ccc08a02a4fe5e0f63fcd159428</sys_id>
+    <sys_name>x-gegis-library-banner</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <tag>x-gegis-library-banner</tag>
+    <suspend_on_view_change>false</suspend_on_view_change>
+    <source_script/>
+    <iconLabel>list-outline</iconLabel>
+    <specialized>true</specialized>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <sys_class_name>sys_ux_lib_component</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_821d1ccc08a02a4fe5e0f63fcd159428</sys_update_name>
+  </sys_ux_lib_component>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>821d1ccc08a02a4fe5e0f63fcd159428</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>UX Component Definition</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_050dd070119aa422ca1de306047ad150</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>type</column_label>
+    <element>type</element>
+    <internal_type>string</internal_type>
+    <label>Type</label>
+    <default_value>warning</default_value>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>050dd070119aa422ca1de306047ad150</sys_id>
+    <sys_name>type</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_050dd070119aa422ca1de306047ad150</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>050dd070119aa422ca1de306047ad150</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_ffd0c0bb88d0220f9176bb09143b93fb</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>title</column_label>
+    <element>title</element>
+    <internal_type>string</internal_type>
+    <label>Title</label>
+    <default_value>5 Potential duplicates found</default_value>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>ffd0c0bb88d0220f9176bb09143b93fb</sys_id>
+    <sys_name>title</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_ffd0c0bb88d0220f9176bb09143b93fb</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>ffd0c0bb88d0220f9176bb09143b93fb</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_b5263517c6596726c99ff0dc9559a3c3</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>line1</column_label>
+    <element>line1</element>
+    <internal_type>string</internal_type>
+    <label>Line 1</label>
+    <default_value>The system has identified the following submissions as potential duplicates based on insured details, address, line of business, and exposure criteria.</default_value>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>b5263517c6596726c99ff0dc9559a3c3</sys_id>
+    <sys_name>line1</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_b5263517c6596726c99ff0dc9559a3c3</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>b5263517c6596726c99ff0dc9559a3c3</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_d561eb9b6ad08f961541f591ea0811cf</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>line2</column_label>
+    <element>line2</element>
+    <internal_type>string</internal_type>
+    <label>Line 2</label>
+    <default_value>Review and determine whether to proceed or decline.</default_value>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>d561eb9b6ad08f961541f591ea0811cf</sys_id>
+    <sys_name>line2</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_d561eb9b6ad08f961541f591ea0811cf</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>d561eb9b6ad08f961541f591ea0811cf</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_2893bcccafc85a488fbb2a8b373c47c9</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>line3</column_label>
+    <element>line3</element>
+    <internal_type>string</internal_type>
+    <label>Line 3</label>
+    <default_value/>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>2893bcccafc85a488fbb2a8b373c47c9</sys_id>
+    <sys_name>line3</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_2893bcccafc85a488fbb2a8b373c47c9</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>2893bcccafc85a488fbb2a8b373c47c9</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_f4013be70f05d0b98c5019f91db792a7</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>line4</column_label>
+    <element>line4</element>
+    <internal_type>string</internal_type>
+    <label>Line 4</label>
+    <default_value/>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>f4013be70f05d0b98c5019f91db792a7</sys_id>
+    <sys_name>line4</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_f4013be70f05d0b98c5019f91db792a7</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>f4013be70f05d0b98c5019f91db792a7</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_66187d4468bc9417ee0c7327ca7ffbfa</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>icon</column_label>
+    <element>icon</element>
+    <internal_type>string</internal_type>
+    <label>Icon</label>
+    <default_value/>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>66187d4468bc9417ee0c7327ca7ffbfa</sys_id>
+    <sys_name>icon</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_66187d4468bc9417ee0c7327ca7ffbfa</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>66187d4468bc9417ee0c7327ca7ffbfa</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_050dd8cfd8538592f9335398902a1d66</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>dismissible</column_label>
+    <element>dismissible</element>
+    <internal_type>boolean</internal_type>
+    <label>Dismissible</label>
+    <default_value>false</default_value>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>050dd8cfd8538592f9335398902a1d66</sys_id>
+    <sys_name>dismissible</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_050dd8cfd8538592f9335398902a1d66</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>050dd8cfd8538592f9335398902a1d66</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_b3a1850b3ff765544ee0063c93fc48b1</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>expandable</column_label>
+    <element>expandable</element>
+    <internal_type>boolean</internal_type>
+    <label>Show more/less toggle</label>
+    <default_value>false</default_value>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>b3a1850b3ff765544ee0063c93fc48b1</sys_id>
+    <sys_name>expandable</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_b3a1850b3ff765544ee0063c93fc48b1</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>b3a1850b3ff765544ee0063c93fc48b1</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_6c0973a05e65ab63196e126606ef550c</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>linkLabel</column_label>
+    <element>linkLabel</element>
+    <internal_type>string</internal_type>
+    <label>Link label</label>
+    <default_value/>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>6c0973a05e65ab63196e126606ef550c</sys_id>
+    <sys_name>linkLabel</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_6c0973a05e65ab63196e126606ef550c</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>6c0973a05e65ab63196e126606ef550c</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_attr_d5c9d5559de3e7777eb7e007f894cff9</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_attr action="INSERT_OR_UPDATE">
+    <column_label>linkHref</column_label>
+    <element>linkHref</element>
+    <internal_type>string</internal_type>
+    <label>Link URL</label>
+    <default_value/>
+    <mandatory>false</mandatory>
+    <read_only>false</read_only>
+    <max_length>255</max_length>
+    <model>821d1ccc08a02a4fe5e0f63fcd159428</model>
+    <name>var__m_sys_ux_lib_component_attr_821d1ccc08a02a4fe5e0f63fcd159428</name>
+    <order>NaN</order>
+    <sys_id>d5c9d5559de3e7777eb7e007f894cff9</sys_id>
+    <sys_name>linkHref</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <active>true</active>
+    <array>false</array>
+    <array_denormalized>false</array_denormalized>
+    <attributes/>
+    <audit>false</audit>
+    <calculation/>
+    <choice/>
+    <choice_field/>
+    <choice_table/>
+    <comments/>
+    <create_roles/>
+    <default_sort/>
+    <delete_roles/>
+    <dependent/>
+    <dependent_on_field/>
+    <display>false</display>
+    <dynamic_creation>false</dynamic_creation>
+    <dynamic_creation_script/>
+    <dynamic_default_value/>
+    <dynamic_ref_qual/>
+    <element_reference>false</element_reference>
+    <foreign_database/>
+    <function_definition/>
+    <function_field>false</function_field>
+    <help/>
+    <hint/>
+    <next_element/>
+    <primary>false</primary>
+    <read_roles/>
+    <reference/>
+    <reference_cascade_rule/>
+    <reference_floats>false</reference_floats>
+    <reference_key/>
+    <reference_qual/>
+    <reference_qual_condition/>
+    <reference_type/>
+    <size_class/>
+    <spell_check>false</spell_check>
+    <staged>false</staged>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <table_reference>false</table_reference>
+    <text_index>false</text_index>
+    <unique>false</unique>
+    <use_dependent_field>false</use_dependent_field>
+    <use_dynamic_default>false</use_dynamic_default>
+    <use_reference_qualifier>simple</use_reference_qualifier>
+    <virtual>false</virtual>
+    <widget/>
+    <write_roles/>
+    <xml_view>false</xml_view>
+    <sys_class_name>sys_ux_lib_component_attr</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_attr_d5c9d5559de3e7777eb7e007f894cff9</sys_update_name>
+  </sys_ux_lib_component_attr>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>d5c9d5559de3e7777eb7e007f894cff9</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Component Attribute</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_macroponent_0dc60d8ebc37f78a64a7699ff0ddc0dc</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_macroponent action="INSERT_OR_UPDATE">
+    <name>Banner</name>
+    <props>[{"name":"type","label":"Type","fieldType":"choice","typeMetadata":{"choices":[{"label":"Info","value":"info"},{"label":"Warning","value":"warning"},{"label":"Error","value":"error"},{"label":"Success","value":"success"}],"schema":{"type":"string","enum":["info","warning","error","success"]}},"defaultValue":"warning","description":"Banner severity. Sets the color and the default icon.","valueType":"string"},{"name":"title","label":"Title","fieldType":"string","defaultValue":"5 Potential duplicates found","description":"Bold heading shown at the top of the banner.","valueType":"string"},{"name":"line1","label":"Line 1","fieldType":"string","defaultValue":"The system has identified the following submissions as potential duplicates based on insured details, address, line of business, and exposure criteria.","description":"First message line. Empty lines are skipped. Supports light markup you can type: &lt;b&gt; &lt;i&gt; &lt;u&gt;, &lt;size=12&gt;…&lt;/size&gt; for px font size, and :icon-name: for an inline icon (e.g. ':clock-outline: &lt;b&gt;As of:&lt;/b&gt; &lt;size=12&gt;Jan 9&lt;/size&gt;').","valueType":"string"},{"name":"line2","label":"Line 2","fieldType":"string","defaultValue":"Review and determine whether to proceed or decline.","description":"Second message line.","valueType":"string"},{"name":"line3","label":"Line 3","fieldType":"string","defaultValue":"","description":"Third message line.","valueType":"string"},{"name":"line4","label":"Line 4","fieldType":"string","defaultValue":"","description":"Fourth message line.","valueType":"string"},{"name":"icon","label":"Icon","fieldType":"string","defaultValue":"","description":"Optional now-icon glyph name. Leave empty to use the default icon for the chosen Type.","valueType":"string"},{"name":"dismissible","label":"Dismissible","fieldType":"boolean","defaultValue":false,"description":"Show an (X) button that lets the user dismiss the banner.","valueType":"string"},{"name":"expandable","label":"Show more/less toggle","fieldType":"boolean","defaultValue":false,"description":"When on, the body is clamped to 2 lines with a 'Show more/less' toggle. Off (default) shows all lines.","valueType":"string"},{"name":"linkLabel","label":"Link label","fieldType":"string","defaultValue":"","description":"Optional inline link text. A link only shows when both label and URL are set.","valueType":"string"},{"name":"linkHref","label":"Link URL","fieldType":"string","defaultValue":"","description":"Optional inline link URL.","valueType":"string"}]</props>
+    <root_component>821d1ccc08a02a4fe5e0f63fcd159428</root_component>
+    <root_component_config>{"type":"@context/type","title":"@context/title","line1":"@context/line1","line2":"@context/line2","line3":"@context/line3","line4":"@context/line4","icon":"@context/icon","dismissible":"@context/dismissible","expandable":"@context/expandable","linkLabel":"@context/linkLabel","linkHref":"@context/linkHref"}</root_component_config>
+    <sys_id>0dc60d8ebc37f78a64a7699ff0ddc0dc</sys_id>
+    <sys_name>Banner</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <associated_types>d8899a0473000010f7353c78caf6a750,c1251a89db4c1010793ddf6b5e96199c</associated_types>
+    <category>GEGIS Library</category>
+    <root_component_definition>{"availableSlots":[]}</root_component_definition>
+    <dispatched_events/>
+    <handled_events/>
+    <composition>[]</composition>
+    <layout>{}</layout>
+    <schema_version>1.0.0</schema_version>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <sys_class_name>sys_ux_macroponent</sys_class_name>
+    <sys_update_name>sys_ux_macroponent_0dc60d8ebc37f78a64a7699ff0ddc0dc</sys_update_name>
+  </sys_ux_macroponent>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>0dc60d8ebc37f78a64a7699ff0ddc0dc</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>UX Macroponent Definition</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_uib_toolbox_component_9b876a2fa0a398d8c28165ea7bc6ccd1</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_uib_toolbox_component action="INSERT_OR_UPDATE">
+    <description>A configurable banner / callout (info, warning, error, success) with an icon, title, up to 4 message lines, an optional link, and an optional dismiss button. Owned markup with inline SVG icons (renders identically on the instance).</description>
+    <icon/>
+    <label>Banner</label>
+    <macroponent>0dc60d8ebc37f78a64a7699ff0ddc0dc</macroponent>
+    <internal_component>false</internal_component>
+    <config_layout/>
+    <external_configuration_sources>[]</external_configuration_sources>
+    <sys_id>9b876a2fa0a398d8c28165ea7bc6ccd1</sys_id>
+    <sys_name>Banner</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <scripted_config_policy/>
+    <component_config>{}</component_config>
+    <category/>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <image_icon>e78d639b75e7b52c7670190bb08579df</image_icon>
+    <sys_class_name>sys_uib_toolbox_component</sys_class_name>
+    <sys_update_name>sys_uib_toolbox_component_9b876a2fa0a398d8c28165ea7bc6ccd1</sys_update_name>
+  </sys_uib_toolbox_component>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>9b876a2fa0a398d8c28165ea7bc6ccd1</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>Builder Component</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>sys_ux_lib_component_m2m_asset_ca0fc6ff7244166c0917fcdc7b226688</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_ux_lib_component_m2m_asset action="INSERT_OR_UPDATE">
+    <component>821d1ccc08a02a4fe5e0f63fcd159428</component>
+    <asset>bf08b94f837d6d92cdaa7eda56f5f016</asset>
+    <sys_id>ca0fc6ff7244166c0917fcdc7b226688</sys_id>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy>read</sys_policy>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <sys_class_name>sys_ux_lib_component_m2m_asset</sys_class_name>
+    <sys_update_name>sys_ux_lib_component_m2m_asset_ca0fc6ff7244166c0917fcdc7b226688</sys_update_name>
+  </sys_ux_lib_component_m2m_asset>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>ca0fc6ff7244166c0917fcdc7b226688</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type>UX Component Assets</type>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+  <sys_update_xml action="INSERT_OR_UPDATE">
+    <application>61b7b597fbc547d02eacfdd86eefdc94</application>
+    <category>customer</category>
+    <name>db_image_e78d639b75e7b52c7670190bb08579df</name>
+    <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <db_image action="INSERT_OR_UPDATE">
+    <sys_class_name>db_image</sys_class_name>
+    <sys_update_name>db_image_e78d639b75e7b52c7670190bb08579df</sys_update_name>
+    <name>sn_tile_icon/x-gegis-library-banner.svg</name>
+    <image>537855ee17a3e6f748530adcb3276c58</image>
+    <size_bytes>383</size_bytes>
+    <sys_id>e78d639b75e7b52c7670190bb08579df</sys_id>
+    <sys_name>sn_tile_icon/x-gegis-library-banner.svg</sys_name>
+    <sys_package>61b7b597fbc547d02eacfdd86eefdc94</sys_package>
+    <sys_scope>61b7b597fbc547d02eacfdd86eefdc94</sys_scope>
+    <sys_update_name>db_image_e78d639b75e7b52c7670190bb08579df</sys_update_name>
+    <active>true</active>
+    <category>tectonic</category>
+    <format>svg</format>
+    <height/>
+    <sys_class_name>db_image</sys_class_name>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_policy/>
+    <sys_updated_name/>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <thumbnail/>
+    <width/>
+  </db_image>
+  <sys_attachment action="INSERT_OR_UPDATE">
+    <sys_id>537855ee17a3e6f748530adcb3276c58</sys_id>
+    <file_name>sn_tile_icon/x-gegis-library-banner.svg</file_name>
+    <hash>7d08ca8130fb517f2c97f0388fcb292d1f3b75b1888a706fdb9ff3c5b095ed6b</hash>
+    <size_bytes>383</size_bytes>
+    <table_name>ZZ_YYdb_image</table_name>
+    <table_sys_id>e78d639b75e7b52c7670190bb08579df</table_sys_id>
+    <compressed>true</compressed>
+    <content_type>image/svg+xml</content_type>
+    <size_compressed>241</size_compressed>
+    <chunk_size_bytes>700000</chunk_size_bytes>
+    <average_image_color/>
+    <image_height/>
+    <image_width/>
+    <state>available</state>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_updated_by>tectonic</sys_updated_by>
+    <sys_class_name>sys_attachment</sys_class_name>
+    <sys_update_name>sys_attachment_537855ee17a3e6f748530adcb3276c58</sys_update_name>
+  </sys_attachment>
+  <sys_attachment_doc action="INSERT_OR_UPDATE">
+    <sys_id>c0f7e1ab535bc1bfe20f7e199ee274b3</sys_id>
+    <data>H4sIAAAAAAAACm3QzU7EIBAH8Ps+xThe9EChH/uh6exhEx+EILZEFgwlhX17w9a6agyXycDM/xf6aR4gmdc4EnYHhFGbYYxLPRudTj4TChDQHaD03oy1hM47jZDP1k2EY4wfz5ynlKrUVj4MvBFC8Gke8LgB6O8Yg5N0TgdQ3kVpSsXY9S5oFSETbhEuhHWNq6X9YWl2CCET7n7HTzH4d0143+3LWRvsa0NTbZF/A16ysvIso/EOHqTVIT7+NTRl4srY3xg3xdOCqMujhbEGLynKBGU1qLKpQ1AXwlYgBMLmn4G+/M9x8wmKI0DHfwEAAA==</data>
+    <position>0</position>
+    <length>324</length>
+    <sys_attachment>537855ee17a3e6f748530adcb3276c58</sys_attachment>
+    <sys_created_by>tectonic</sys_created_by>
+    <sys_class_name>sys_attachment_doc</sys_class_name>
+    <sys_update_name>sys_attachment_doc_c0f7e1ab535bc1bfe20f7e199ee274b3</sys_update_name>
+  </sys_attachment_doc>
+</record_update>]]></payload>
+    <remote_update_set>579205765d5d4985802d62e190ed5455</remote_update_set>
+    <sys_id>e78d639b75e7b52c7670190bb08579df</sys_id>
+    <target_name>@x_gegis_library/banner</target_name>
+    <type/>
+    <sys_created_by>CLI</sys_created_by>
+    <sys_created_on>2026-05-30 06:00:38</sys_created_on>
+    <sys_updated_by>CLI</sys_updated_by>
+    <sys_updated_on>2026-05-30 06:00:38</sys_updated_on>
+  </sys_update_xml>
+</unload>
