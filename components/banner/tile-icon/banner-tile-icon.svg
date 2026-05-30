@@ -1,7 +1,0 @@
-<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Banner container -->
-  <rect x="5" y="11" width="38" height="26" rx="6" fill="none" stroke="#474747" stroke-width="2.5"/>
-  <!-- Exclamation (alert) -->
-  <rect x="22.5" y="17" width="3" height="9" rx="1.5" fill="#474747"/>
-  <circle cx="24" cy="30" r="2" fill="#474747"/>
-</svg>
