@@ -1,0 +1,94 @@
+{
+	"components": {
+		"x-gegis-library-endorsement-card": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Endorsement Card",
+				"tileIcon": "./tile-icon/endorsement-card-tile-icon.svg",
+				"description": "A single endorsement/clause card: title, colored category pills, description, gray meta tags, and a required / add / remove action button. Drop several to build a clause library grid.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "title",
+					"label": "Title",
+					"description": "Endorsement / clause name.",
+					"fieldType": "string",
+					"defaultValue": "Commercial General Liability Coverage"
+				},
+				{
+					"name": "categoryTags",
+					"label": "Category pills (JSON array)",
+					"description": "Colored status/category pills. Each item: { label, color }. color = blue | red | green | purple | orange | gray.",
+					"fieldType": "json",
+					"defaultValue": []
+				},
+				{
+					"name": "description",
+					"label": "Description",
+					"description": "Short description shown under the pills.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "metaTags",
+					"label": "Meta tags (JSON array)",
+					"description": "Plain gray tags, e.g. Auto-applied, Suggested, Requires approval. Array of strings or { label }.",
+					"fieldType": "json",
+					"defaultValue": []
+				},
+				{
+					"name": "actionType",
+					"label": "Action type",
+					"description": "Which action button to show.",
+					"fieldType": "choice",
+					"defaultValue": "required",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Required (gray, disabled)", "value": "required" },
+							{ "label": "Add (blue)", "value": "add" },
+							{ "label": "Remove (red)", "value": "remove" },
+							{ "label": "None (no button)", "value": "none" }
+						],
+						"schema": { "type": "string", "enum": ["required", "add", "remove", "none"] }
+					}
+				},
+				{
+					"name": "actionLabel",
+					"label": "Action button text",
+					"description": "Override the button text. Empty uses the default for the action type (Required / + Add / × Remove).",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "collapsible",
+					"label": "Collapsible",
+					"description": "When on, the chevron toggles the card body. Off (default) shows everything; the chevron is decorative.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "expanded",
+					"label": "Expanded",
+					"description": "When Collapsible is on, whether the body starts open.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				}
+			],
+			"events": [
+				{
+					"name": "ACTION_CLICKED",
+					"label": "Action clicked",
+					"description": "Fired when Add or Remove is clicked (not for Required). Payload: { type }."
+				},
+				{
+					"name": "TOGGLED",
+					"label": "Card toggled",
+					"description": "Fired when a collapsible card is expanded/collapsed. Payload: { expanded }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

@@ -1,0 +1,59 @@
+{
+	"components": {
+		"x-gegis-library-toggle-card": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Toggle Card",
+				"tileIcon": "./tile-icon/toggle-card-tile-icon.svg",
+				"description": "A single titled card with a list of on/off toggle rows (with optional required asterisk). Driven by a JSON array; drop several to build a grid.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "title",
+					"label": "Card title",
+					"description": "Heading shown at the top of the card.",
+					"fieldType": "string",
+					"defaultValue": "Core Property"
+				},
+				{
+					"name": "items",
+					"label": "Items (JSON array)",
+					"description": "Toggle rows. Each item: { label, on (boolean), required (boolean) }. Bind a data resource or paste JSON.",
+					"fieldType": "json",
+					"defaultValue": []
+				},
+				{
+					"name": "onLabel",
+					"label": "On text",
+					"description": "Text shown next to a toggle when it is on.",
+					"fieldType": "string",
+					"defaultValue": "On"
+				},
+				{
+					"name": "offLabel",
+					"label": "Off text",
+					"description": "Text shown next to a toggle when it is off.",
+					"fieldType": "string",
+					"defaultValue": "Off"
+				},
+				{
+					"name": "showStateText",
+					"label": "Show On/Off text",
+					"description": "When on, shows the On/Off label beside each toggle.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				}
+			],
+			"events": [
+				{
+					"name": "TOGGLE_CHANGED",
+					"label": "Toggle changed",
+					"description": "Fired when a row's toggle is switched. Payload: { index, label, on }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}
