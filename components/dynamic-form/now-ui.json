@@ -1,0 +1,64 @@
+{
+	"components": {
+		"x-gegis-library-dynamic-form": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Dynamic Form",
+				"tileIcon": "./tile-icon/dynamic-form-tile-icon.svg",
+				"description": "A metadata-driven sectioned form: section cards with a multi-column grid of select / text / read-only fields. Values bind to a record; Save fires FORM_SAVED for a REST data resource.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "sections",
+					"label": "Sections (JSON array)",
+					"description": "Grouping metadata. Each: { sectionName, fields:[{ label, name, type:'select'|'text', options, placeholder, readonly, value }] }. Bind your external metadata here.",
+					"fieldType": "json",
+					"defaultValue": []
+				},
+				{
+					"name": "values",
+					"label": "Values (JSON object)",
+					"description": "Current field values keyed by field name. Bind your table record here; the form updates this as the user edits.",
+					"fieldType": "json",
+					"defaultValue": {}
+				},
+				{
+					"name": "columns",
+					"label": "Columns",
+					"description": "Number of fields per row in each section.",
+					"fieldType": "number",
+					"defaultValue": 3
+				},
+				{
+					"name": "saveLabel",
+					"label": "Save button text",
+					"description": "Label for the Save button.",
+					"fieldType": "string",
+					"defaultValue": "Save"
+				},
+				{
+					"name": "showSave",
+					"label": "Show Save button",
+					"description": "When on, shows the Save button that fires FORM_SAVED.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				}
+			],
+			"events": [
+				{
+					"name": "FIELD_CHANGED",
+					"label": "Field changed",
+					"description": "Fired when any field changes. Payload: { name, value }."
+				},
+				{
+					"name": "FORM_SAVED",
+					"label": "Form saved",
+					"description": "Fired when Save is clicked. Payload: { values }. Bind to a REST/transform data resource to perform the HTTP save."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}
