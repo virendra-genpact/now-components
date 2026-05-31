@@ -27,10 +27,10 @@ const STYLES = `
 	}
 	@media (max-width: 880px) { .pg { grid-template-columns: 1fr; } }
 	.pg-preview {
-		display: flex; align-items: center; justify-content: center;
-		padding: 40px; background: #f4f5f7;
+		display: flex; align-items: flex-start; justify-content: center;
+		padding: 24px; background: #f4f5f7;
 	}
-	.pg-stage { width: 100%; max-width: 460px; }
+	.pg-stage { width: 100%; }
 	.pg-controls {
 		padding: 28px 24px; border-left: 1px solid #e3e6ec;
 		background: #fff; overflow-y: auto;

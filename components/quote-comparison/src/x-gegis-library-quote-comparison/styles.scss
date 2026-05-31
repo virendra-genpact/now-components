@@ -1,0 +1,201 @@
+@import '@servicenow/sass-kit/host';
+
+/* 100% owned markup (justified in index.js). Colors matched to the supplied
+ * design (hardcoded hex is a documented exception for a pixel-exact repro).
+ * No now-* deps. CSS grid: 1 label column + one column per version. */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	color: #2a3242;
+}
+
+.qc-grid {
+	display: grid;
+	/* gridTemplateColumns set inline (label width + repeat(n, 1fr)) */
+	border: 1px solid #e3e6ec;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #ffffff;
+	font-size: 14px;
+}
+
+/* Title — spans all columns. */
+.qc-title {
+	grid-column: 1 / -1;
+	padding: 14px 16px;
+	background: #f7f8fa;
+	border-bottom: 1px solid #e3e6ec;
+	font-size: 16px;
+	font-weight: 700;
+	color: #1c2433;
+}
+
+/* Version header row. */
+.qc-headlabel {
+	padding: 16px 14px;
+	font-weight: 700;
+	color: #1c2433;
+	background: #fbfcfd;
+	border-bottom: 1px solid #e3e6ec;
+	display: flex;
+	align-items: center;
+}
+.qc-headcell {
+	padding: 14px;
+	background: #fbfcfd;
+	border-bottom: 1px solid #e3e6ec;
+	border-left: 1px solid #eef0f3;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	text-align: center;
+}
+.qc-option {
+	color: #2f6fed;
+	font-weight: 600;
+	font-size: 15px;
+}
+.qc-select {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 14px;
+	border: 1px solid #cfd4dd;
+	border-radius: 6px;
+	background: #ffffff;
+	font-size: 13px;
+	color: #2a3242;
+	cursor: pointer;
+}
+.qc-select input {
+	margin: 0;
+	cursor: pointer;
+}
+
+/* Section band — spans all columns. */
+.qc-band {
+	grid-column: 1 / -1;
+	padding: 8px 14px;
+	background: #eef0f3;
+	font-size: 13px;
+	font-weight: 700;
+	color: #2a3242;
+}
+
+/* Row label (left column) + value cells. */
+.qc-rowlabel {
+	padding: 11px 14px;
+	color: #5a6473;
+	border-bottom: 1px solid #ececf0;
+	display: flex;
+	align-items: center;
+}
+.qc-cell {
+	padding: 11px 14px;
+	color: #2a3242;
+	border-bottom: 1px solid #ececf0;
+	border-left: 1px solid #f3f4f6;
+	display: block;
+}
+.qc-cell--center {
+	text-align: center;
+}
+
+/* Aggregation rows (Total TIV, Estimated Annual Premium). */
+.qc-rowlabel--agg,
+.qc-cell--agg {
+	background: #eef2fb;
+	font-weight: 700;
+	color: #1c2433;
+}
+
+.qc-val--bold {
+	font-weight: 700;
+	color: #1c2433;
+}
+.qc-val--trunc {
+	display: inline-block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: bottom;
+}
+
+/* tick / cross */
+.qc-tick {
+	color: #1f9d57;
+	font-size: 15px;
+	font-weight: 700;
+}
+.qc-cross {
+	color: #d23f54;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+/* Trend (small arrow + optional "vs baseline"). */
+.qc-trend {
+	margin-left: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+.qc-trend--green {
+	color: #1f9d57;
+}
+.qc-trend--red {
+	color: #d23f54;
+}
+
+/* Pills */
+.qc-pill {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #ffffff;
+	line-height: 1.5;
+}
+.qc-pill--green { background: #1fa463; }
+.qc-pill--blue { background: #2f6fed; }
+.qc-pill--gray { background: #6b7280; }
+.qc-pill--red { background: #d23f54; }
+.qc-pill--orange { background: #e8833a; }
+
+/* Action buttons */
+.qc-actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.qc-btn {
+	font: inherit;
+	font-size: 13px;
+	padding: 7px 14px;
+	border-radius: 6px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.qc-btn--secondary {
+	background: #ffffff;
+	border: 1px solid #cfd4dd;
+	color: #2a3242;
+}
+.qc-btn--secondary:hover {
+	background: #f7f8f9;
+}
+.qc-btn--primary {
+	background: #2f6fed;
+	border: 1px solid #2f6fed;
+	color: #ffffff;
+}
+
+.qc-empty {
+	padding: 16px;
+	font-size: 14px;
+	color: #6b7280;
+}

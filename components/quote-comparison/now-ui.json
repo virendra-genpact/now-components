@@ -1,0 +1,50 @@
+{
+	"components": {
+		"x-gegis-library-quote-comparison": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Quote Versions Comparison",
+				"tileIcon": "./tile-icon/quote-comparison-tile-icon.svg",
+				"description": "A custom comparison grid: each version (v1/v2/v3 — records from the same table) is a column; fields grouped by section are rows. Handles tick/cross, currency, aggregation, pills, percentage, and trend. Driven by a JSON array.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "versions",
+					"label": "Versions (JSON array)",
+					"description": "Array of version objects, one per column. Each: { header:{title,option,status,selectable}, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[] }. The first version defines the rows; bind a data resource with your v1/v2/v3 records.",
+					"fieldType": "json",
+					"defaultValue": []
+				},
+				{
+					"name": "title",
+					"label": "Title",
+					"description": "Fallback title shown if the first version has no header.title.",
+					"fieldType": "string",
+					"defaultValue": "Quote Versions Comparison"
+				},
+				{
+					"name": "labelWidth",
+					"label": "Label column width",
+					"description": "CSS width of the left (field-label) column, e.g. 200px or 16rem.",
+					"fieldType": "string",
+					"defaultValue": "200px"
+				}
+			],
+			"events": [
+				{
+					"name": "VERSION_SELECTED",
+					"label": "Version selected",
+					"description": "Fired when a column's Select checkbox changes. Payload: { index, checked }."
+				},
+				{
+					"name": "ACTION_CLICKED",
+					"label": "Action clicked",
+					"description": "Fired when a footer action button is clicked. Payload: { index, action }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}
