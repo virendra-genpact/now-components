@@ -1,0 +1,69 @@
+{
+	"components": {
+		"x-gegis-library-extraction-summary": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Extraction Summary Card",
+				"tileIcon": "./tile-icon/extraction-summary-tile-icon.svg",
+				"description": "A custom version/extraction summary: a version dropdown plus a green summary card (name, CURRENT badge, created/triggered-by, document & field stats, low-confidence warning). Driven by a JSON array; the dropdown switches the displayed version.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "versions",
+					"label": "Versions (JSON array)",
+					"description": "Array of version objects. Each item: { id, label, name, current, created, triggeredBy, documents, totalFields, newFields, modified, lowConfidence }. Bind a data resource here.",
+					"fieldType": "json",
+					"defaultValue": []
+				},
+				{
+					"name": "selectedId",
+					"label": "Selected version id",
+					"description": "Which version's id is shown. Empty shows the first item. Updated automatically when the dropdown changes.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "versionLabel",
+					"label": "Picker label",
+					"description": "Small label shown above the dropdown.",
+					"fieldType": "string",
+					"defaultValue": "Version:"
+				},
+				{
+					"name": "button1Label",
+					"label": "Button 1 label",
+					"description": "Left action button (has a clock icon).",
+					"fieldType": "string",
+					"defaultValue": "View Extraction Timeline"
+				},
+				{
+					"name": "button2Label",
+					"label": "Button 2 label",
+					"description": "Right action button.",
+					"fieldType": "string",
+					"defaultValue": "Proceed to Data Audit"
+				}
+			],
+			"events": [
+				{
+					"name": "VERSION_CHANGED",
+					"label": "Version changed",
+					"description": "Fired when the dropdown selection changes. Payload: { id }."
+				},
+				{
+					"name": "VIEW_TIMELINE_CLICKED",
+					"label": "View timeline clicked",
+					"description": "Fired when button 1 is clicked. Payload: { id }."
+				},
+				{
+					"name": "PROCEED_TO_AUDIT_CLICKED",
+					"label": "Proceed to audit clicked",
+					"description": "Fired when button 2 is clicked. Payload: { id }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}
