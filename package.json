@@ -8,6 +8,7 @@
   "scripts": {
     "bootstrap": "npm install",
     "build": "echo \"Run builds in individual components: cd components/<name> && npm run build\"",
-    "test": "echo \"Run tests in components\""
+    "test": "echo \"Run tests in components\"",
+    "set-scope": "node scripts/set-scope.js"
   }
 }

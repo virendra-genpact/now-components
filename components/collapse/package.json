@@ -1,9 +1,15 @@
 {
-	"name": "@x_vendor_scope/component-template",
-	"version": "0.1.0",
+	"name": "@x_gegis_library/collapse",
+	"version": "0.1.1",
 	"private": false,
-	"description": "Template for a ServiceNow Next Experience custom component.",
-	"keywords": ["ServiceNow", "Next Experience UI Component"],
+	"description": "A configurable, fully custom expand/collapse (accordion) panel for ServiceNow Next Experience (UI Builder).",
+	"keywords": [
+		"ServiceNow",
+		"Next Experience UI Component",
+		"collapse",
+		"expand",
+		"accordion"
+	],
 	"readme": "./README.md",
 	"engines": {
 		"node": ">=22"
@@ -12,7 +18,8 @@
 	"scripts": {
 		"develop": "snc ui-component develop --open",
 		"deploy": "snc ui-component deploy",
-		"test": "snc ui-component test"
+		"test": "snc ui-component test",
+		"develop:au": "snc ui-component develop --open -p australia"
 	},
 	"dependencies": {
 		"@servicenow/sass-kit": "latest",

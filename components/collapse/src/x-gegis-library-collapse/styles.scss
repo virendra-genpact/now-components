@@ -1,0 +1,172 @@
+@import '@servicenow/sass-kit/host';
+
+/* 100% owned markup (justified in index.js). Themed only through Now design
+ * tokens with safe fallbacks — no shadow-DOM piercing, no hardcoded brand
+ * colors where a token exists.
+ *
+ * Look: flat & borderless by default (no card/button chrome) — a clean modern
+ * accordion row: muted name on the left, thin chevron anchor on the right,
+ * separated by a hairline. `bordered` is an opt-in card variant. */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	color: var(--now-color--primary, #1c2331);
+}
+
+.cp-panel {
+	display: block;
+	background: transparent;
+}
+
+/* Default (flat): a faint hairline separates stacked rows — not a box border. */
+.cp-panel:not(.cp-panel--bordered) {
+	border-bottom: 1px solid var(--now-color-divider--secondary, #ededf1);
+}
+
+/* Opt-in card variant. */
+.cp-panel--bordered {
+	background: var(--now-color--surface, #ffffff);
+	border: 1px solid var(--now-color-divider--secondary, #dfe2e8);
+	border-radius: var(--now-actionable-border-radius, 10px);
+	overflow: hidden;
+}
+
+/* Header: a real <button> for a11y, but stripped of all native button chrome. */
+.cp-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	margin: 0;
+	padding: 16px 2px;
+	background: transparent;
+	border: 0;
+	border-radius: 8px;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: color 0.15s ease;
+}
+
+.cp-panel--bordered .cp-header {
+	padding: 14px 16px;
+}
+
+/* Trendy, soft focus ring — not a hard inset box. */
+.cp-header:focus-visible {
+	outline: 2px solid var(--now-color-interactive, #3b82f6);
+	outline-offset: 2px;
+}
+
+/* Subtle hover affordance: name + anchor darken slightly. No background fill. */
+.cp-header:hover .cp-heading,
+.cp-header:hover .cp-trigger {
+	color: var(--now-color--primary, #4a525f);
+}
+
+/* Name: muted gray, regular weight, a touch of tracking (per the reference). */
+.cp-heading {
+	flex: 1;
+	min-width: 0;
+	font-size: 15px;
+	font-weight: 400;
+	letter-spacing: 0.01em;
+	color: var(--now-color--secondary, #8a9099);
+	line-height: 1.4;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	transition: color 0.15s ease;
+}
+
+/* Anchor (trigger icon) wrapper — light gray to match the name. */
+.cp-trigger {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	color: var(--now-color--secondary, #8a9099);
+	transition: color 0.15s ease;
+}
+
+/* Chevron drawn in pure CSS (no SVG — see TriggerIcon in index.js). A thin
+ * box with two borders, rotated 45deg to point down (closed) / up (open). */
+.cp-chevron {
+	display: inline-block;
+	width: 9px;
+	height: 9px;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(45deg);
+	transition: transform 0.2s ease;
+	margin-top: -4px;
+}
+.cp-chevron--open {
+	transform: rotate(-135deg);
+	margin-top: 4px;
+}
+
+.cp-plusminus {
+	font-size: 20px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+/* Content: aligned flush with the name, airy bottom spacing. No top line. */
+.cp-content-inner {
+	padding: 2px 2px 18px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var(--now-color--primary, #1c2331);
+}
+
+.cp-panel--bordered .cp-content-inner {
+	padding: 4px 16px 16px;
+}
+
+/* GROW mode (default): the area grows with the content; `contentHeight` (if set)
+ * is only a minimum floor. A slotted component that sizes to its parent (e.g. a
+ * Playbook) fills at least that floor via min-height:100%, but can grow taller —
+ * the page scrolls, not an inner box. */
+.cp-panel--grow .cp-content-inner {
+	overflow: visible;
+	box-sizing: border-box;
+}
+.cp-panel--grow ::slotted(*) {
+	min-height: 100%;
+	box-sizing: border-box;
+}
+
+/* FIXED mode: exact height from `contentHeight`; the area scrolls inside, and a
+ * fill-parent slotted component fills it exactly. */
+.cp-panel--fixed-height .cp-content-inner {
+	overflow: auto;
+	box-sizing: border-box;
+}
+.cp-panel--fixed-height ::slotted(*) {
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.cp-bodytext {
+	color: var(--now-color--secondary, #6b7280);
+}
+
+/* Disabled */
+.cp-panel--disabled .cp-header {
+	cursor: not-allowed;
+}
+.cp-panel--disabled .cp-heading,
+.cp-panel--disabled .cp-trigger {
+	color: var(--now-color--tertiary, #b6bcc6);
+}
+.cp-panel--disabled .cp-header:hover .cp-heading,
+.cp-panel--disabled .cp-header:hover .cp-trigger {
+	color: var(--now-color--tertiary, #b6bcc6);
+}

@@ -1,0 +1,150 @@
+{
+	"components": {
+		"x-gegis-library-collapse": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": [
+					"global.core",
+					"global.landing-page"
+				],
+				"label": "Collapse / Expand Panel",
+				"tileIcon": "./tile-icon/collapse-tile-icon.svg",
+				"description": "A fully custom collapsible panel: a clickable header with a chevron or +/- trigger that shows or hides its content. Stack several to build an accordion.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "headingText",
+					"label": "Heading",
+					"description": "The label shown in the header. Selecting the header toggles the content.",
+					"fieldType": "string",
+					"defaultValue": "Section title"
+				},
+				{
+					"name": "bodyText",
+					"label": "Body text",
+					"description": "Fallback text shown in the content area when nothing is placed in the component's slot. Leave empty if you only want slotted content.",
+					"fieldType": "string",
+					"defaultValue": "Place any content here. In UI Builder you can drop other components into this panel's slot; this text shows when the slot is empty."
+				},
+				{
+					"name": "expanded",
+					"label": "Expanded by default",
+					"description": "Whether the panel starts open when the page loads.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "triggerIcon",
+					"label": "Trigger icon",
+					"description": "The icon that indicates open/closed state.",
+					"fieldType": "choice",
+					"defaultValue": "chevron",
+					"typeMetadata": {
+						"choices": [
+							{
+								"label": "Chevron",
+								"value": "chevron"
+							},
+							{
+								"label": "Plus / minus",
+								"value": "plusminus"
+							}
+						],
+						"schema": {
+							"type": "string",
+							"enum": [
+								"chevron",
+								"plusminus"
+							]
+						}
+					}
+				},
+				{
+					"name": "iconPosition",
+					"label": "Icon position",
+					"description": "Whether the trigger icon sits on the left or right of the heading.",
+					"fieldType": "choice",
+					"defaultValue": "right",
+					"typeMetadata": {
+						"choices": [
+							{
+								"label": "Right",
+								"value": "right"
+							},
+							{
+								"label": "Left",
+								"value": "left"
+							}
+						],
+						"schema": {
+							"type": "string",
+							"enum": [
+								"right",
+								"left"
+							]
+						}
+					}
+				},
+				{
+					"name": "bordered",
+					"label": "Show border",
+					"description": "Optional. When on, the panel is wrapped in a rounded border/card. Off by default for the clean, flat look.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "disabled",
+					"label": "Disabled",
+					"description": "When on, the header can't be toggled.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "contentSizing",
+					"label": "Content sizing",
+					"description": "How the content area is sized. Grow to fit: the area grows with the content (use Content height as a minimum floor) — best for a Playbook. Fixed: exact height, scrolls inside.",
+					"fieldType": "choice",
+					"defaultValue": "grow",
+					"typeMetadata": {
+						"choices": [
+							{
+								"label": "Grow to fit content",
+								"value": "grow"
+							},
+							{
+								"label": "Fixed height (scroll inside)",
+								"value": "fixed"
+							}
+						],
+						"schema": {
+							"type": "string",
+							"enum": [
+								"grow",
+								"fixed"
+							]
+						}
+					}
+				},
+				{
+					"name": "contentHeight",
+					"label": "Content height",
+					"description": "A CSS length, e.g. 60vh or 500px. In Grow to fit mode it's the MINIMUM height (the area grows taller as needed). In Fixed mode it's the exact height. Required when embedding a component that sizes to its parent (like a Playbook), which otherwise renders at ~0 height.",
+					"fieldType": "string",
+					"defaultValue": "60vh"
+				}
+			],
+			"events": [
+				{
+					"name": "COLLAPSE_TOGGLED",
+					"label": "Panel toggled",
+					"description": "Fired when the panel is expanded or collapsed. Payload: { expanded, heading }."
+				}
+			],
+			"slots": [
+				"content"
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

@@ -12,30 +12,36 @@ node -v                       # >= 22
 snc configure profile         # point snc at your instance (one-time)
 ```
 
-## 1. Copy the template
+## 1. Copy an existing component
+
+Start from a working component — `collapse` is a clean, dependency-free example:
 
 ```bash
-cp -r components/component-template components/my-component
+cp -r components/collapse components/my-component
 cd components/my-component
 ```
 
-## 2. Rename placeholders
+## 2. Rename identifiers
 
-The template ships with placeholder identifiers. Replace them everywhere
-(`package.json`, `now-ui.json`, `src/**`, `example/**`) **and** rename the
-`src/x-vendor-component-template/` folder to match your element tag:
+Replace the copied component's name and element tag everywhere (`package.json`,
+`now-ui.json`, `src/**`, `example/**`) **and** rename the `src/<tag>/` folder to
+match your new element tag:
 
-| Placeholder | Replace with | Example |
+| From (copied) | Replace with | Example |
 | --- | --- | --- |
-| `x-vendor-component-template` | element tag `x-<scope>-<name>` | `x-gegis-library-metric-card` |
-| `x_vendor_scope` | application scope | `x_gegis_library` |
+| base name `collapse` | your component name | `my-component` |
+| element tag `x-gegis-library-collapse` | `x-<scope>-<name>` | `x-gegis-library-my-component` |
 
 > The element tag **must** begin with your scope (underscores → hyphens).
 > Scope `x_gegis_library` → tag `x-gegis-library-…`. UI Builder rejects tags that
 > don't match the scope.
 
 Also update `package.json` `name`, `version`, `description` and the `now-ui.json`
-`label` / `description` / `category`.
+`label` / `description` / `category`, and clear out the example component's
+`properties` / `view` to start fresh.
+
+> To retarget the **scope** (not the name) across components for a different PDI,
+> use `npm run set-scope` from the repo root — see the [README](README.md#changing-scope-deploy-to-any-pdi).
 
 ## 3. Implement
 

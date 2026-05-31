@@ -1,8 +1,7 @@
-import '../src/x-vendor-component-template';
+import '../src/x-gegis-library-collapse';
 import nowUi from '../now-ui.json';
 import { mountPlayground } from './playground';
 
 /* Auto-generates a live control panel from now-ui.json — see playground.js.
- * No edits needed here when you add properties; just describe them in
- * now-ui.json and they appear as controls automatically. */
+ * Every property and event declared there shows up automatically. */
 mountPlayground(nowUi);
