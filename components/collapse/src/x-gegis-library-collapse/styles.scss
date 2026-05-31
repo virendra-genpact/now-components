@@ -117,8 +117,13 @@
 	line-height: 1;
 }
 
-/* Content: aligned flush with the name, airy bottom spacing. No top line. */
+/* Content: aligned flush with the name, airy bottom spacing. No top line.
+ * Flex column (the same fill pattern UI Builder layout containers use:
+ * flex-direction:column + flex:1 children) so a slotted fill-parent component
+ * (e.g. a Playbook) stretches to the content area's height. */
 .cp-content-inner {
+	display: flex;
+	flex-direction: column;
 	padding: 2px 2px 18px;
 	font-size: 14px;
 	font-weight: 400;
@@ -130,27 +135,25 @@
 	padding: 4px 16px 16px;
 }
 
+/* Slotted content fills the flex column. min-height:0 lets it both shrink within
+ * a fixed area and grow past the floor in grow mode. */
+.cp-panel--grow ::slotted(*),
+.cp-panel--fixed-height ::slotted(*) {
+	flex: 1 1 auto;
+	min-height: 0;
+	box-sizing: border-box;
+}
+
 /* GROW mode (default): the area grows with the content; `contentHeight` (if set)
- * is only a minimum floor. A slotted component that sizes to its parent (e.g. a
- * Playbook) fills at least that floor via min-height:100%, but can grow taller —
- * the page scrolls, not an inner box. */
+ * is a minimum floor. The page scrolls, not an inner box. */
 .cp-panel--grow .cp-content-inner {
 	overflow: visible;
 	box-sizing: border-box;
 }
-.cp-panel--grow ::slotted(*) {
-	min-height: 100%;
-	box-sizing: border-box;
-}
 
-/* FIXED mode: exact height from `contentHeight`; the area scrolls inside, and a
- * fill-parent slotted component fills it exactly. */
+/* FIXED mode: exact height from `contentHeight`; the area scrolls inside. */
 .cp-panel--fixed-height .cp-content-inner {
 	overflow: auto;
-	box-sizing: border-box;
-}
-.cp-panel--fixed-height ::slotted(*) {
-	height: 100%;
 	box-sizing: border-box;
 }
 
