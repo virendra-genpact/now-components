@@ -1,0 +1,49 @@
+@import '@servicenow/sass-kit/host';
+
+/* now-button (+ its now-icon) own their look; we style ONLY our own toolbar layout and
+ * the now-button host boxes, using design tokens. No shadow-DOM piercing. */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	color: var(--now-color--primary, #20242c);
+}
+
+/* Toolbar surface (owned layout). */
+.qab {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 10px 12px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	background: var(--now-color--surface, #ffffff);
+	border: 1px solid var(--now-color--divider--secondary, #e3e6ec);
+}
+
+.qab-left,
+.qab-right {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.qab-count {
+	font-size: 14px;
+	color: var(--now-color--secondary, #6b7280);
+	white-space: nowrap;
+}
+
+/* Each button wrapper carries the click; keep it a tight inline box. */
+.qab-btn {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* Disabled action wrappers: the now-button is already greyed via `disabled`; we just
+ * stop the wrapper showing a clickable cursor. */
+.qab-btn.is-off {
+	cursor: default;
+}

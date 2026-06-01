@@ -1,0 +1,134 @@
+{
+	"components": {
+		"x-gegis-library-quote-action-bar": {
+			"innerComponents": ["now-button", "now-icon"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Quote Options Action Bar",
+				"tileIcon": "./tile-icon/quote-action-bar-tile-icon.svg",
+				"description": "Action bar for quote options: Select All + selected count, Approve Selected and Share to Broker (enabled when 1+ selected), and an always-on Generate New Option. Holds the selection and emits events. Composes now-button + now-icon.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "options",
+					"label": "Quote options",
+					"description": "The quote options. An object with an `items` array of { id, label }. The count shows X of items.length; Select All selects all their ids. (Object-wrapped — a bare top-level array default breaks the production build.)",
+					"fieldType": "json",
+					"defaultValue": {
+						"items": [
+							{ "id": "opt1", "label": "Option 1 v: 1.0" },
+							{ "id": "opt2", "label": "Option 2 v: 2.3" },
+							{ "id": "opt3", "label": "Option 3 v: 3.0" },
+							{ "id": "opt4", "label": "Option 4 v: 1.0" }
+						]
+					}
+				},
+				{
+					"name": "selectedIds",
+					"label": "Selected ids",
+					"description": "Initial / externally-bound selection. An object with an `ids` array. Select All updates the selection internally from here.",
+					"fieldType": "json",
+					"defaultValue": { "ids": [] }
+				},
+				{
+					"name": "showCount",
+					"label": "Show selected count",
+					"description": "When on, shows \"X of N selected\" next to Select All.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "selectAllLabel",
+					"label": "Select All label",
+					"description": "Label for the select-all button.",
+					"fieldType": "string",
+					"defaultValue": "Select All"
+				},
+				{
+					"name": "deselectAllLabel",
+					"label": "Deselect All label",
+					"description": "Label shown on the select-all button when everything is already selected (toggles to clear). Set equal to Select All label to keep it constant.",
+					"fieldType": "string",
+					"defaultValue": "Deselect All"
+				},
+				{
+					"name": "approveLabel",
+					"label": "Approve button label",
+					"description": "Label for the Approve Selected action.",
+					"fieldType": "string",
+					"defaultValue": "Approve Selected"
+				},
+				{
+					"name": "shareLabel",
+					"label": "Share button label",
+					"description": "Label for the Share to Broker action.",
+					"fieldType": "string",
+					"defaultValue": "Share to Broker"
+				},
+				{
+					"name": "generateLabel",
+					"label": "Generate button label",
+					"description": "Label for the always-enabled Generate New Option action.",
+					"fieldType": "string",
+					"defaultValue": "Generate New Option"
+				},
+				{
+					"name": "approveIcon",
+					"label": "Approve icon",
+					"description": "now-icon name for the Approve Selected button. Leave empty for no icon.",
+					"fieldType": "string",
+					"defaultValue": "circle-check-outline"
+				},
+				{
+					"name": "shareIcon",
+					"label": "Share icon",
+					"description": "now-icon name for the Share to Broker button. Leave empty for no icon.",
+					"fieldType": "string",
+					"defaultValue": "share-outline"
+				},
+				{
+					"name": "generateIcon",
+					"label": "Generate icon",
+					"description": "now-icon name for the Generate New Option button. Leave empty for no icon.",
+					"fieldType": "string",
+					"defaultValue": "plus-outline"
+				}
+			],
+			"actions": [
+				{
+					"name": "SELECTION_CHANGED",
+					"label": "Selection changed",
+					"description": "Fired when Select All toggles the selection. Payload: { selected:[ids], count }.",
+					"payload": [
+						{ "name": "selected", "label": "Selected ids", "description": "Array of selected option ids.", "fieldType": "json" },
+						{ "name": "count", "label": "Count", "description": "Number of selected options.", "fieldType": "number" }
+					]
+				},
+				{
+					"name": "APPROVE_SELECTED",
+					"label": "Approve selected",
+					"description": "Fired when Approve Selected is clicked (only when 1+ selected). Payload: { selected:[ids] }.",
+					"payload": [
+						{ "name": "selected", "label": "Selected ids", "description": "Array of selected option ids to approve.", "fieldType": "json" }
+					]
+				},
+				{
+					"name": "SHARE_TO_BROKER",
+					"label": "Share to broker",
+					"description": "Fired when Share to Broker is clicked (only when 1+ selected). Payload: { selected:[ids] }.",
+					"payload": [
+						{ "name": "selected", "label": "Selected ids", "description": "Array of selected option ids to share.", "fieldType": "json" }
+					]
+				},
+				{
+					"name": "GENERATE_NEW_OPTION",
+					"label": "Generate new option",
+					"description": "Fired when Generate New Option is clicked (always enabled).",
+					"payload": []
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}
