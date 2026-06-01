@@ -31,10 +31,19 @@
 					"defaultValue": true
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "PRODUCT_SELECTED",
-					"description": "Fired when the user selects an option. Payload: { value }."
+					"label": "Product selected",
+					"description": "Fired when the user selects an option. Payload: { value }.",
+					"payload": [
+						{
+							"name": "value",
+							"label": "Selected option id",
+							"description": "The id of the option the user selected.",
+							"fieldType": "string"
+						}
+					]
 				}
 			]
 		}

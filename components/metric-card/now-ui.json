@@ -127,11 +127,15 @@
 					"defaultValue": false
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "METRIC_CARD_CLICKED",
 					"label": "Metric card clicked",
-					"description": "Fired when a clickable card is activated by click or keyboard. Payload: { heading, value }."
+					"description": "Fired when a clickable card is activated by click or keyboard. Payload: { heading, value }.",
+					"payload": [
+						{ "name": "heading", "label": "Heading", "description": "The card heading.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "The formatted value shown.", "fieldType": "string" }
+					]
 				}
 			]
 		}

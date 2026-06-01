@@ -67,11 +67,18 @@
 					}
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "PERIL_DEDUCTIBLE_CHANGED",
 					"label": "Peril deductible changed",
-					"description": "Fired when a row's override toggle, value, or unit changes. Payload: { id, name, enabled, value, unit }."
+					"description": "Fired when a row's override toggle, value, or unit changes. Payload: { id, name, enabled, value, unit }.",
+					"payload": [
+						{ "name": "id", "label": "Peril id", "description": "Identifier of the changed peril row.", "fieldType": "string" },
+						{ "name": "name", "label": "Peril name", "description": "Display name of the peril.", "fieldType": "string" },
+						{ "name": "enabled", "label": "Override enabled", "description": "Whether the override toggle is on.", "fieldType": "boolean" },
+						{ "name": "value", "label": "Value", "description": "The deductible value.", "fieldType": "string" },
+						{ "name": "unit", "label": "Unit", "description": "The selected unit id.", "fieldType": "string" }
+					]
 				}
 			]
 		}

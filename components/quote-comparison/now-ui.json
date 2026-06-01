@@ -32,16 +32,24 @@
 					"defaultValue": "200px"
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "VERSION_SELECTED",
 					"label": "Version selected",
-					"description": "Fired when a column's Select checkbox changes. Payload: { index, checked }."
+					"description": "Fired when a column's Select checkbox changes. Payload: { index, checked }.",
+					"payload": [
+						{ "name": "index", "label": "Column index", "description": "Zero-based index of the version column.", "fieldType": "number" },
+						{ "name": "checked", "label": "Checked", "description": "Whether the Select checkbox is checked.", "fieldType": "boolean" }
+					]
 				},
 				{
 					"name": "ACTION_CLICKED",
 					"label": "Action clicked",
-					"description": "Fired when a footer action button is clicked. Payload: { index, action }."
+					"description": "Fired when a footer action button is clicked. Payload: { index, action }.",
+					"payload": [
+						{ "name": "index", "label": "Column index", "description": "Zero-based index of the version column.", "fieldType": "number" },
+						{ "name": "action", "label": "Action label", "description": "Label of the clicked action button.", "fieldType": "string" }
+					]
 				}
 			]
 		}
