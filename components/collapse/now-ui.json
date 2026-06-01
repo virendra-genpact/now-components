@@ -134,13 +134,6 @@
 					"defaultValue": "60vh"
 				}
 			],
-			"events": [
-				{
-					"name": "COLLAPSE_TOGGLED",
-					"label": "Panel toggled",
-					"description": "Fired when the panel is expanded or collapsed. Payload: { expanded, heading }."
-				}
-			],
 			"slots": [
 				"content"
 			]

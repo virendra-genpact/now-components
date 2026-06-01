@@ -46,21 +46,30 @@
 					"defaultValue": "Proceed to Data Audit"
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "VERSION_CHANGED",
 					"label": "Version changed",
-					"description": "Fired when the dropdown selection changes. Payload: { id }."
+					"description": "Fired when the dropdown selection changes. Payload: { id }.",
+					"payload": [
+						{ "name": "id", "label": "Version id", "description": "Id of the newly selected version.", "fieldType": "string" }
+					]
 				},
 				{
 					"name": "VIEW_TIMELINE_CLICKED",
 					"label": "View timeline clicked",
-					"description": "Fired when button 1 is clicked. Payload: { id }."
+					"description": "Fired when the View timeline button is clicked. Payload: { id }.",
+					"payload": [
+						{ "name": "id", "label": "Version id", "description": "Id of the selected version.", "fieldType": "string" }
+					]
 				},
 				{
 					"name": "PROCEED_TO_AUDIT_CLICKED",
 					"label": "Proceed to audit clicked",
-					"description": "Fired when button 2 is clicked. Payload: { id }."
+					"description": "Fired when the Proceed to audit button is clicked. Payload: { id }.",
+					"payload": [
+						{ "name": "id", "label": "Version id", "description": "Id of the selected version.", "fieldType": "string" }
+					]
 				}
 			]
 		}

@@ -46,16 +46,23 @@
 					"defaultValue": true
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "FIELD_CHANGED",
 					"label": "Field changed",
-					"description": "Fired when any field changes. Payload: { name, value }."
+					"description": "Fired when any field changes. Payload: { name, value }.",
+					"payload": [
+						{ "name": "name", "label": "Field name", "description": "Name of the changed field.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "New value of the field.", "fieldType": "string" }
+					]
 				},
 				{
 					"name": "FORM_SAVED",
 					"label": "Form saved",
-					"description": "Fired when Save is clicked. Payload: { values }. Bind to a REST/transform data resource to perform the HTTP save."
+					"description": "Fired when Save is clicked. Payload: { values }. Bind to a REST/transform data resource to perform the HTTP save.",
+					"payload": [
+						{ "name": "values", "label": "Form values", "description": "Object of all field values keyed by field name.", "fieldType": "json" }
+					]
 				}
 			]
 		}

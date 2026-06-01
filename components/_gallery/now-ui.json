@@ -1,0 +1,15 @@
+{
+	"components": {
+		"x-gegis-library-gallery": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core"],
+				"label": "Gallery (dev only)",
+				"description": "Dev-only screenshot harness. Not for deployment.",
+				"category": "primitives"
+			},
+			"properties": []
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

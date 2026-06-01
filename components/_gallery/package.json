@@ -1,0 +1,28 @@
+{
+	"name": "@x_gegis_library/_gallery",
+	"version": "0.0.0",
+	"private": true,
+	"description": "DEV-ONLY screenshot harness — renders all library components on one page for the docs catalog. Not a deployable component.",
+	"module": "src/index.js",
+	"scripts": {
+		"develop": "snc ui-component develop"
+	},
+	"dependencies": {
+		"@servicenow/now-button": "19.8.2-ecd",
+		"@servicenow/now-card": "19.8.2-ecd",
+		"@servicenow/now-dropdown": "19.8.2-ecd",
+		"@servicenow/now-highlighted-value": "19.8.2-ecd",
+		"@servicenow/now-icon": "19.8.2-ecd",
+		"@servicenow/now-input": "19.8.2-ecd",
+		"@servicenow/now-modal": "19.8.2-ecd",
+		"@servicenow/now-toggle": "19.8.2-ecd",
+		"@servicenow/sass-kit": "latest",
+		"@servicenow/ui-core": "24.1.1",
+		"@servicenow/ui-renderer-snabbdom": "24.1.1"
+	},
+	"devDependencies": {
+		"@babel/runtime": "7.25.7",
+		"ajv": "^6.12.6",
+		"sass": "1.53.0"
+	}
+}
