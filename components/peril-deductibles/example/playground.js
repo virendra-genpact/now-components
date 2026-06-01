@@ -30,7 +30,7 @@ const STYLES = `
 		display: flex; align-items: center; justify-content: center;
 		padding: 40px; background: #f4f5f7;
 	}
-	.pg-stage { width: 100%; max-width: 760px; }
+	.pg-stage { width: 100%; max-width: none; }
 	.pg-controls {
 		padding: 28px 24px; border-left: 1px solid #e3e6ec;
 		background: #fff; overflow-y: auto;

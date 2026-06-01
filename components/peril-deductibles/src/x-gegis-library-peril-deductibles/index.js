@@ -1,13 +1,21 @@
 import { createCustomElement } from '@servicenow/ui-core';
 import snabbdom from '@servicenow/ui-renderer-snabbdom';
-import '@servicenow/now-card/src/now-card';
-import '@servicenow/now-card/src/now-card-divider';
-import '@servicenow/now-icon/src/now-icon';
-import '@servicenow/now-highlighted-value/src/now-highlighted-value';
-import '@servicenow/now-toggle/src/now-toggle';
-import '@servicenow/now-input/src/now-input';
-import '@servicenow/now-dropdown/src/now-dropdown';
 import styles from './styles.scss';
+
+/* HORIZON-ONLY: we do NOT bundle the now-* source here. The instance (Australia /
+ * Horizon) provides the real Horizon now-card / now-card-divider / now-icon /
+ * now-highlighted-value / now-toggle / now-input / now-dropdown, declared as
+ * dependencies in now-ui.json `innerComponents`. The JSX tags below resolve to those
+ * instance-registered components.
+ *
+ * Why not import them: bundling the public-npm (Rome-era) now-* (a) renders the OLD
+ * look (e.g. the legacy toggle instead of the Horizon pill), and (b) drags in
+ * @servicenow/library-translate, which throws "ReferenceError: process is not defined"
+ * in the instance browser and stops the whole component from rendering.
+ *
+ * Local `snc develop` won't register these tags on its own — preview with
+ * `snc ui-component develop --fetch-assets-from-instance` (or `npm run develop:au`)
+ * so the instance supplies the Horizon components. */
 
 /* ------------------------------------------------------------------ *
  * x-gegis-library-peril-deductibles
