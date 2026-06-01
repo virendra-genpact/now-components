@@ -1,0 +1,80 @@
+{
+	"components": {
+		"x-gegis-library-peril-deductibles": {
+			"innerComponents": [
+				"now-card",
+				"now-card-divider",
+				"now-icon",
+				"now-highlighted-value",
+				"now-toggle",
+				"now-input",
+				"now-dropdown"
+			],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Peril-Specific Deductibles",
+				"tileIcon": "./tile-icon/peril-deductibles-tile-icon.svg",
+				"description": "A collapsible card that lists perils, each with an override toggle, a value, and a unit (e.g. % TIV). Composed entirely of standard now-* components.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "title",
+					"label": "Title",
+					"description": "Heading shown in the card header.",
+					"fieldType": "string",
+					"defaultValue": "Peril-Specific Deductibles"
+				},
+				{
+					"name": "expanded",
+					"label": "Expanded",
+					"description": "When on, the list of perils is shown. The header chevron toggles this at runtime.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showOverrideCount",
+					"label": "Show override count",
+					"description": "When on, the header shows how many perils currently have their override toggle enabled (e.g. \"3 overrides applied\").",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "unitOptions",
+					"label": "Unit options",
+					"description": "Choices offered by each row's unit dropdown. An object with an `items` array of { id, label }.",
+					"fieldType": "json",
+					"defaultValue": {
+						"items": [
+							{ "id": "pct_tiv", "label": "% TIV" },
+							{ "id": "amount", "label": "$ Amount" },
+							{ "id": "pct_limit", "label": "% Limit" }
+						]
+					}
+				},
+				{
+					"name": "perils",
+					"label": "Perils",
+					"description": "The list of perils. An object with an `items` array; each item: { id, name, required, zone, defaultText, enabled, value, unit }. (Wrapped in an object — a bare top-level array default breaks the production build.)",
+					"fieldType": "json",
+					"defaultValue": {
+						"items": [
+							{ "id": "wind", "name": "Wind / Hurricane", "required": true, "zone": "Coastal Zone", "defaultText": "Default: 2% of TIV", "enabled": true, "value": "2", "unit": "pct_tiv" },
+							{ "id": "flood", "name": "Flood", "required": true, "zone": "Flood Zone A", "defaultText": "Default: 5% of TIV", "enabled": true, "value": "5", "unit": "pct_tiv" },
+							{ "id": "earthquake", "name": "Earthquake", "required": false, "zone": "", "defaultText": "Default: 10% of TIV", "enabled": false, "value": "10", "unit": "pct_tiv" },
+							{ "id": "hail", "name": "Hail", "required": false, "zone": "", "defaultText": "Default: 1% of TIV", "enabled": true, "value": "1", "unit": "pct_tiv" }
+						]
+					}
+				}
+			],
+			"events": [
+				{
+					"name": "PERIL_DEDUCTIBLE_CHANGED",
+					"label": "Peril deductible changed",
+					"description": "Fired when a row's override toggle, value, or unit changes. Payload: { id, name, enabled, value, unit }."
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

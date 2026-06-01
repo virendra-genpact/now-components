@@ -1,0 +1,16 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card frame -->
+  <rect x="5" y="8" width="38" height="32" rx="5" fill="none" stroke="#474747" stroke-width="2.5"/>
+  <!-- Header divider -->
+  <line x1="5" y1="18" x2="43" y2="18" stroke="#474747" stroke-width="2"/>
+  <!-- Row line -->
+  <line x1="11" y1="26" x2="24" y2="26" stroke="#474747" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Toggle (on) -->
+  <rect x="29" y="23" width="11" height="6" rx="3" fill="#474747"/>
+  <circle cx="37" cy="26" r="2" fill="#fff"/>
+  <!-- Row line 2 -->
+  <line x1="11" y1="33" x2="24" y2="33" stroke="#474747" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Toggle (off) -->
+  <rect x="29" y="30" width="11" height="6" rx="3" fill="none" stroke="#474747" stroke-width="1.5"/>
+  <circle cx="32" cy="33" r="1.6" fill="#474747"/>
+</svg>
