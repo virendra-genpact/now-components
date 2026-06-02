@@ -13,7 +13,7 @@
 				{
 					"name": "versions",
 					"label": "Versions (JSON array)",
-					"description": "Array of version objects, one per column. Each: { header:{title,option,status,selectable}, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[] }. The first version defines the rows; bind a data resource with your v1/v2/v3 records.",
+					"description": "Array of version objects, one per column. Each: { header:{title,option,status,selectable,versionId}, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[{key,label,style}] }. Set header.versionId (e.g. the sys_id) so VERSION_SELECTED/ACTION_CLICKED can identify WHICH version; give each action a stable key (clone/view/copy/send) to branch on. The first version defines the rows; bind a data resource with your v1/v2/v3 records.",
 					"fieldType": "json",
 					"defaultValue": []
 				},
@@ -36,19 +36,23 @@
 				{
 					"name": "VERSION_SELECTED",
 					"label": "Version selected",
-					"description": "Fired when a column's Select checkbox changes. Payload: { index, checked }.",
+					"description": "Fired when a column's Select checkbox changes. Payload: { index, versionId, option, checked }.",
 					"payload": [
 						{ "name": "index", "label": "Column index", "description": "Zero-based index of the version column.", "fieldType": "number" },
+						{ "name": "versionId", "label": "Version id", "description": "Stable id of the version (header.versionId or header.id); use this to identify the record, not the index.", "fieldType": "string" },
+						{ "name": "option", "label": "Option label", "description": "The version's display label, e.g. 'Option 2 v: 2.0'.", "fieldType": "string" },
 						{ "name": "checked", "label": "Checked", "description": "Whether the Select checkbox is checked.", "fieldType": "boolean" }
 					]
 				},
 				{
 					"name": "ACTION_CLICKED",
 					"label": "Action clicked",
-					"description": "Fired when a footer action button is clicked. Payload: { index, action }.",
+					"description": "Fired when a footer action button is clicked. Payload: { index, versionId, option, action }.",
 					"payload": [
 						{ "name": "index", "label": "Column index", "description": "Zero-based index of the version column.", "fieldType": "number" },
-						{ "name": "action", "label": "Action label", "description": "Label of the clicked action button.", "fieldType": "string" }
+						{ "name": "versionId", "label": "Version id", "description": "Stable id of the version (header.versionId or header.id); use this to know WHICH version's button was clicked, not the index.", "fieldType": "string" },
+						{ "name": "option", "label": "Option label", "description": "The version's display label, e.g. 'Option 2 v: 2.0'.", "fieldType": "string" },
+						{ "name": "action", "label": "Action key", "description": "The clicked button's stable key (action.key) or its label if no key. Branch on this: clone / view / copy / send.", "fieldType": "string" }
 					]
 				}
 			]
