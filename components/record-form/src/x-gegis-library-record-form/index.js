@@ -326,8 +326,8 @@ const loadFormAndRecord = (table, sysId, formView) => {
 	const sectionsPromise = viewPromise.then(({ internalName, viewSysId }) =>
 		snFetch(
 			`/api/now/table/sys_ui_form` +
-			`?sysparm_query=name=${enc(table)}^view=${enc(viewSysId)}^ORname=${enc(table)}^viewISEMPTY` +
-			`&sysparm_fields=sys_id,view&sysparm_limit=20`
+			`?sysparm_query=name=${enc(table)}` +
+			`&sysparm_fields=sys_id,view&sysparm_orderby=view&sysparm_limit=50`
 		).then((formRes) => {
 			/* sys_ui_form.view is a REFERENCE (sys_id) — match on viewSysId, not the view
 			 * name. Prefer the view-specific form; else the table's default (empty-view)
@@ -342,7 +342,11 @@ const loadFormAndRecord = (table, sysId, formView) => {
 					`?sysparm_query=sys_ui_form=${enc(form.sys_id)}` +
 					`&sysparm_fields=sys_ui_section,position&sysparm_orderby=position&sysparm_limit=50`
 				).then((fsRes) => {
-					const orderedIds = (fsRes.result || []).map((fs) => refVal(fs.sys_ui_section)).filter(Boolean);
+					const orderedIds = (fsRes.result || [])
+							.slice()
+							.sort((a, b) => (parseInt(a.position, 10) || 0) - (parseInt(b.position, 10) || 0))
+							.map((fs) => refVal(fs.sys_ui_section))
+							.filter(Boolean);
 					if (!orderedIds.length) return { sectionList: [], orderedIds: [] };
 					return snFetch(
 						`/api/now/table/sys_ui_section` +
@@ -351,7 +355,9 @@ const loadFormAndRecord = (table, sysId, formView) => {
 					).then((secRes) => {
 						const byId = {};
 						(secRes.result || []).forEach((s) => { byId[s.sys_id] = s; });
-						return { sectionList: orderedIds.map((id) => byId[id]).filter(Boolean), orderedIds };
+						const sectionList = orderedIds.map((id) => byId[id]).filter(Boolean);
+						try { console.warn('[record-form] section order:', sectionList.map((s) => s.caption).join(' > ')); } catch (e) { /* noop */ }
+						return { sectionList, orderedIds };
 					});
 				});
 			}
@@ -361,7 +367,10 @@ const loadFormAndRecord = (table, sysId, formView) => {
 				`&sysparm_fields=sys_id,caption,position,columns` +
 				`&sysparm_orderby=position^sys_id&sysparm_limit=50`
 			).then((secRes) => {
-				const sectionList = secRes.result || [];
+				const sectionList = (secRes.result || [])
+					.slice()
+					.sort((a, b) => (parseInt(a.position, 10) || 0) - (parseInt(b.position, 10) || 0));
+				try { console.warn('[record-form] section order (fallback):', sectionList.map((s) => s.caption).join(' > ')); } catch (e) { /* noop */ }
 				return { sectionList, orderedIds: sectionList.map((s) => s.sys_id) };
 			});
 		})
