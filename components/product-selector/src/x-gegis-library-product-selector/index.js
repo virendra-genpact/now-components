@@ -15,7 +15,9 @@ import styles from './styles.scss';
  * rectangle with no settable radius/padding) are owned + styled. The radio-group
  * roles, selection, and title/subtitle/bullet text are managed/owned here.
  *
- * Configure via the `options` array; the selected option id is `value`.
+ * Configure via the `options` array; the selected option id is `value`. Each option:
+ * { id, sys_id, title, subtitle, bullets:[], pill, pillTone, pillIcon }. On selection the
+ * component dispatches PRODUCT_SELECTED with the ENTIRE selected option (plus `value`).
  * ------------------------------------------------------------------ */
 
 const parseOptions = (raw) => {
@@ -49,7 +51,20 @@ const view = (state, { updateState, dispatch }) => {
 	const select = (id) => {
 		if (id === effective) return;
 		updateState({ selectedId: id });
-		dispatch('PRODUCT_SELECTED', { value: id });
+		// Emit the ENTIRE selected option so a consumer (e.g. selected-product) can
+		// display it without a second lookup. `value` is kept for back-compat (=== id).
+		const o = opts.find((x) => x.id === id) || { id };
+		dispatch('PRODUCT_SELECTED', {
+			value: id,
+			id: o.id,
+			sys_id: o.sys_id,
+			title: o.title,
+			subtitle: o.subtitle,
+			pill: o.pill,
+			pillTone: o.pillTone,
+			pillIcon: o.pillIcon,
+			bullets: Array.isArray(o.bullets) ? o.bullets : [],
+		});
 	};
 
 	return (
@@ -102,12 +117,13 @@ createCustomElement('x-gegis-library-product-selector', {
 	styles,
 	initialState: { selectedId: null },
 	properties: {
-		/* Array of product options. Each: { id, title, subtitle, bullets:[],
+		/* Array of product options. Each: { id, sys_id, title, subtitle, bullets:[],
 		 * pill, pillTone: info|neutral|positive|warning|error, pillIcon }. */
 		options: {
 			default: [
 				{
 					id: 'commercial',
+					sys_id: 'a1b2c3d4e5f600000000000commercial',
 					title: 'Commercial Property – Standard Plan',
 					pill: 'AI Recommended',
 					pillTone: 'info',
@@ -119,8 +135,8 @@ createCustomElement('x-gegis-library-product-selector', {
 						'Balanced premium vs coverage',
 					],
 				},
-				{ id: 'flood', title: 'Flood Insurance', pill: 'Higher Protection', pillTone: 'neutral', bullets: [] },
-				{ id: 'business', title: 'Business Interruption', pill: 'Lower Premium', pillTone: 'neutral', bullets: [] },
+				{ id: 'flood', sys_id: 'a1b2c3d4e5f6000000000000000flood', title: 'Flood Insurance', pill: 'Higher Protection', pillTone: 'neutral', bullets: [] },
+				{ id: 'business', sys_id: 'a1b2c3d4e5f60000000000000business', title: 'Business Interruption', pill: 'Lower Premium', pillTone: 'neutral', bullets: [] },
 			],
 		},
 		/* Selected option id. Empty / unmatched → the first option is selected. */
