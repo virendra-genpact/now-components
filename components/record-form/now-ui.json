@@ -87,7 +87,7 @@
 			],
 			"actions": [
 				{
-					"name": "FIELD_CHANGED",
+					"name": "RECORD_FORM_FIELD_CHANGED",
 					"label": "Field changed",
 					"description": "Fired when any field value changes (on blur). Payload: { name, value }.",
 					"payload": [
@@ -96,7 +96,7 @@
 					]
 				},
 				{
-					"name": "FIELD_AUTO_SAVED",
+					"name": "RECORD_FORM_FIELD_AUTO_SAVED",
 					"label": "Field auto-saved",
 					"description": "Fired when an auto-save field is successfully PATCHed. Payload: { name, value }.",
 					"payload": [
@@ -105,7 +105,7 @@
 					]
 				},
 				{
-					"name": "FORM_SAVED",
+					"name": "RECORD_FORM_SAVED",
 					"label": "Form saved",
 					"description": "Fired when Save successfully PATCHes all non-auto-save dirty fields. Payload: { values }.",
 					"payload": [
@@ -113,7 +113,7 @@
 					]
 				},
 				{
-					"name": "UI_ACTION_TRIGGERED",
+					"name": "RECORD_FORM_UI_ACTION_TRIGGERED",
 					"label": "UI action triggered",
 					"description": "Fired when the user clicks a sys_ui_action button. Bind to a REST/transform to execute the action. Payload: { name, actionName, sysId, table, values }.",
 					"payload": [
@@ -125,7 +125,7 @@
 					]
 				},
 				{
-					"name": "FORM_LOAD_ERROR",
+					"name": "RECORD_FORM_LOAD_ERROR",
 					"label": "Form load error",
 					"description": "Fired when form layout or record fetch fails. Payload: { error }.",
 					"payload": [
@@ -133,7 +133,7 @@
 					]
 				},
 				{
-					"name": "FORM_SAVE_ERROR",
+					"name": "RECORD_FORM_SAVE_ERROR",
 					"label": "Form save error",
 					"description": "Fired when a PATCH (auto-save or Save button) fails. Payload: { error }.",
 					"payload": [

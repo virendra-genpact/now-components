@@ -10,6 +10,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--now-spacing-6, 16px);
+	/* Establish a query container so the grid below responds to the COMPONENT's
+	 * own width (e.g. a narrow workspace panel), not the browser window. */
+	container-type: inline-size;
+	container-name: rf;
 }
 
 /* ── Form header (title + optional top action bar) ───────────── */
@@ -101,33 +105,32 @@
 	transform: rotate(180deg);
 }
 
-/* ── Responsive field grid ────────────────────────────────────── *
- * Default columns come from sys_ui_section.columns (1-4).
- * Responsive breakpoints cap columns on smaller screens.
+/* ── Field columns ────────────────────────────────────────────── *
+ * Layout mirrors the classic form: columns are split by the `.split`
+ * element, each column fills top→bottom (NOT row-major). Columns sit
+ * side by side and collapse to a single stack in a narrow container.
  * ─────────────────────────────────────────────────────────────── */
-.rf-grid {
-	display: grid;
+.rf-columns {
+	display: flex;
+	gap: var(--now-spacing-7, 20px);
+	align-items: flex-start;
+}
+
+.rf-column {
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
 	gap: var(--now-spacing-5, 14px);
-	align-items: start;
 }
 
-/* Column variants from sys_ui_section.columns */
-.rf-grid--cols-1 { grid-template-columns: 1fr; }
-.rf-grid--cols-2 { grid-template-columns: repeat(2, 1fr); }
-.rf-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
-.rf-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
-
-/* Tablet — cap at 2 columns */
-@media (max-width: 1024px) {
-	.rf-grid--cols-3,
-	.rf-grid--cols-4 { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* Mobile — single column */
-@media (max-width: 640px) {
-	.rf-grid--cols-2,
-	.rf-grid--cols-3,
-	.rf-grid--cols-4 { grid-template-columns: 1fr; }
+/* Responsive to the COMPONENT's container width (container query), so the form
+ * stacks inside narrow panels even when the browser window is wide. */
+@container rf (max-width: 640px) {
+	.rf-columns {
+		flex-direction: column;
+		gap: var(--now-spacing-5, 14px);
+	}
 }
 
 /* ── Field wrappers (choice + toggle need custom label) ──────── */
@@ -231,4 +234,17 @@
 	text-align: center;
 	color: var(--now-color--text-tertiary, #6b7488);
 	font-size: var(--now-font-size-body-sm, 13px);
+}
+
+.rf-empty-title {
+	font-size: var(--now-font-size-h6, 16px);
+	font-weight: var(--now-font-weight-semibold, 600);
+	color: var(--now-color--text-secondary, #2e3338);
+	margin-block-end: var(--now-spacing-2, 6px);
+}
+
+.rf-empty-hint {
+	max-width: 42ch;
+	margin-inline: auto;
+	line-height: 1.5;
 }

@@ -47,7 +47,9 @@ const parseAutoSave = (raw) => {
 
 const INPUT_TYPE_MAP = {
 	integer: 'number', float: 'number', decimal: 'number', currency: 'number',
-	email: 'email', url: 'url', phone_number: 'tel',
+	email: 'email', url: 'url',
+	phone_number: 'tel', ph_number: 'tel', phone_number_e164: 'tel',
+	password: 'password', password2: 'password',
 	glide_date: 'date', due_date: 'date',
 	glide_date_time: 'datetime-local', glide_time: 'time',
 };
@@ -72,26 +74,42 @@ const isTruthy = (v) => v === true || v === 'true' || v === '1';
 
 const refVal = (v) => (v && typeof v === 'object' ? v.value : v) || '';
 
+/* The Next Experience REST API requires the session user token (g_ck) on XHR/fetch —
+ * the session cookie ALONE returns 401 (the platform's own graphql / /api/now/ui calls
+ * succeed because they attach it automatically). A raw fetch must add it explicitly.
+ * (The platform-blessed alternative is ui-core's createHttpEffect or a Data Resource,
+ * which wire auth for you — see the README note.) */
+const userToken = () =>
+	(typeof window !== 'undefined' && (window.g_ck || (window.NOW && window.NOW.g_ck))) || '';
+
 const snFetch = (url) =>
-	fetch(url, { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+	fetch(url, { headers: { Accept: 'application/json', 'X-UserToken': userToken() }, credentials: 'same-origin' })
 		.then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status} — ${url}`); return r.json(); });
 
-const flatValues = (raw) => {
-	if (!raw || typeof raw !== 'object') return {};
-	const out = {};
+/* With sysparm_display_value=all each field is { value, display_value }. We keep BOTH:
+ * `values` (raw) drive the editable controls + saves (a choice's "2", a reference sys_id);
+ * `displays` (human text) are shown for read-only reference fields. */
+const splitValues = (raw) => {
+	const values = {};
+	const displays = {};
+	if (!raw || typeof raw !== 'object') return { values, displays };
 	Object.keys(raw).forEach((k) => {
 		const v = raw[k];
-		out[k] = v && typeof v === 'object'
-			? String(v.display_value != null ? v.display_value : (v.value != null ? v.value : ''))
-			: String(v == null ? '' : v);
+		if (v && typeof v === 'object') {
+			values[k] = String(v.value != null ? v.value : '');
+			displays[k] = String(v.display_value != null ? v.display_value : values[k]);
+		} else {
+			values[k] = String(v == null ? '' : v);
+			displays[k] = values[k];
+		}
 	});
-	return out;
+	return { values, displays };
 };
 
 const patchRecord = (table, sysId, payload) =>
 	fetch(`/api/now/table/${encodeURIComponent(table)}/${encodeURIComponent(sysId)}`, {
 		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+		headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-UserToken': userToken() },
 		credentials: 'same-origin',
 		body: JSON.stringify(payload),
 	}).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
@@ -149,9 +167,20 @@ const applyPolicies = (policies, values) => {
 			if (!action.field) return;
 			if (!overrides[action.field]) overrides[action.field] = { mandatory: null, readOnly: null, visible: null };
 			const o = overrides[action.field];
+			/* sys_ui_policy_action mandatory/visible/read_only are 3-state:
+			 * "true" / "false" / "ignore". "ignore" (and empty/unknown) means LEAVE
+			 * ALONE — it must NOT be coerced to false, or an action that only sets e.g.
+			 * `mandatory` (leaving visible="ignore") would wrongly HIDE the field. This
+			 * is exactly why `title` disappeared while classic UI kept showing it. */
+			const triState = (av) => {
+				const s = String(av == null ? '' : av).toLowerCase();
+				if (s === 'true' || s === '1') return true;
+				if (s === 'false' || s === '0') return false;
+				return null; // 'ignore', '', anything else → no change
+			};
 			const resolve = (av) => {
-				if (av === '' || av == null) return null;
-				const base = isTruthy(av);
+				const base = triState(av);
+				if (base === null) return null;
 				if (condMet) return base;
 				return policy.reverseOnFalse ? !base : null;
 			};
@@ -189,7 +218,7 @@ const loadFormAndRecord = (table, sysId, formView) => {
 
 	/* ① Record values — fully independent, starts immediately */
 	const recordPromise = snFetch(
-		`/api/now/table/${enc(table)}/${enc(sysId)}?sysparm_display_value=true`
+		`/api/now/table/${enc(table)}/${enc(sysId)}?sysparm_display_value=all`
 	);
 
 	/* ② Resolve view → needed by all other layout/policy/action fetches */
@@ -292,35 +321,44 @@ const loadFormAndRecord = (table, sysId, formView) => {
 			});
 		})
 		.then(({ sectionList, orderedIds }) => {
-			if (!orderedIds.length) return { sectionList: [], elementList: [], dictMap: {}, choicesMap: {} };
+			if (!orderedIds.length) return { sectionList: [], allElements: [], elementList: [], dictMap: {}, choicesMap: {} };
 			return snFetch(
 				`/api/now/table/sys_ui_element` +
 				`?sysparm_query=sys_ui_sectionIN${orderedIds.join(',')}` +
 				`&sysparm_fields=element,type,position,sys_ui_section` +
 				`&sysparm_orderby=position&sysparm_limit=500`
 			).then((elRes) => {
-				const elementList = (elRes.result || [])
-					.filter((el) => el.element && !el.element.startsWith('.'))
+				const allElements = (elRes.result || [])
+					.filter((el) => el.element)
 					.sort((a, b) => parseInt(a.position, 10) - parseInt(b.position, 10));
+				const elementList = allElements.filter((el) => el.element.charAt(0) !== '.');
 				const fieldNames = [...new Set(elementList.map((el) => el.element))];
-				if (!fieldNames.length) return { sectionList, elementList, dictMap: {}, choicesMap: {} };
-				/* No sysparm_display_value: internal_type must stay raw ('boolean', 'choice'…) */
+				if (!fieldNames.length) return { sectionList, allElements, elementList, dictMap: {}, choicesMap: {} };
+				/* internal_type & reference are REFERENCE fields → read `.value` via refVal()
+				 * (the raw object's value is the canonical name, e.g. "boolean"/"reference").
+				 * `choice` is the dictionary attribute (1/2/3) that marks a dropdown — the
+				 * type alone never says "choice" (e.g. `notification` is internal_type integer
+				 * with choice=3). No display_value: raw values are what we want here. */
 				return snFetch(
 					`/api/now/table/sys_dictionary` +
 					`?sysparm_query=name=${enc(table)}^elementIN${fieldNames.join(',')}` +
-					`&sysparm_fields=element,column_label,internal_type,mandatory,read_only&sysparm_limit=500`
+					`&sysparm_fields=element,column_label,internal_type,choice,reference,mandatory,read_only&sysparm_limit=500`
 				).then((dictRes) => {
 					const dictMap = {};
 					(dictRes.result || []).forEach((d) => {
+						const type = refVal(d.internal_type) || 'string';
+						const choiceAttr = String(d.choice == null ? '' : d.choice);
 						dictMap[d.element] = {
 							label: d.column_label || toLabel(d.element),
-							type: d.internal_type || 'string',
+							type: type,
+							isChoice: choiceAttr === '1' || choiceAttr === '2' || choiceAttr === '3' || isChoice(type),
+							reference: refVal(d.reference) || '',
 							mandatory: isTruthy(d.mandatory),
 							readOnly: isTruthy(d.read_only),
 						};
 					});
-					const choiceFields = fieldNames.filter((f) => dictMap[f] && isChoice(dictMap[f].type));
-					if (!choiceFields.length) return { sectionList, elementList, dictMap, choicesMap: {} };
+					const choiceFields = fieldNames.filter((f) => dictMap[f] && dictMap[f].isChoice);
+					if (!choiceFields.length) return { sectionList, allElements, elementList, dictMap, choicesMap: {} };
 					return snFetch(
 						`/api/now/table/sys_choice` +
 						`?sysparm_query=name=${enc(table)}^elementIN${choiceFields.join(',')}^inactive=false` +
@@ -331,45 +369,64 @@ const loadFormAndRecord = (table, sysId, formView) => {
 							if (!choicesMap[c.element]) choicesMap[c.element] = [];
 							choicesMap[c.element].push({ value: c.value, label: c.label });
 						});
-						return { sectionList, elementList, dictMap, choicesMap };
+						return { sectionList, allElements, elementList, dictMap, choicesMap };
 					});
 				});
 			});
 		})
-		.then(({ sectionList, elementList, dictMap, choicesMap }) => {
+		.then(({ sectionList, allElements, elementList, dictMap, choicesMap }) => {
 			const bySection = {};
+			const fieldByKey = {};
 			(elementList || []).forEach((el) => {
 				const sid = refVal(el.sys_ui_section);
 				if (!sid) return;
-				if (!bySection[sid]) bySection[sid] = [];
-				const dict = (dictMap || {})[el.element] || { label: toLabel(el.element), type: 'string', mandatory: false, readOnly: false };
-				bySection[sid].push({
+				const dict = (dictMap || {})[el.element] || { label: toLabel(el.element), type: 'string', isChoice: false, reference: '', mandatory: false, readOnly: false };
+				const fieldObj = {
 					name: el.element,
 					label: dict.label,
 					fieldType: dict.type,
+					isChoice: dict.isChoice,
+					reference: dict.reference,
 					mandatory: dict.mandatory,
 					readOnly: dict.readOnly,
 					choices: (choicesMap || {})[el.element] || [],
-				});
+				};
+				if (!bySection[sid]) bySection[sid] = [];
+				bySection[sid].push(fieldObj);
+				fieldByKey[sid + '|' + el.element] = fieldObj;
+			});
+			/* Column groups honour the classic `.split` break: fields before a `.split`
+			 * fill the left column (top→bottom), fields after it fill the next column. */
+			const colsBySection = {};
+			(allElements || []).forEach((el) => {
+				const sid = refVal(el.sys_ui_section);
+				if (!sid) return;
+				if (!colsBySection[sid]) colsBySection[sid] = [[]];
+				const nm = el.element;
+				if (nm === '.split') { colsBySection[sid].push([]); return; }
+				if (nm.charAt(0) === '.') return; // ignore .begin_split/.end_split/.section/…
+				const fo = fieldByKey[sid + '|' + nm];
+				if (fo) colsBySection[sid][colsBySection[sid].length - 1].push(fo);
 			});
 			return (sectionList || [])
-				.map((s) => ({
-					sys_id: s.sys_id,
-					caption: s.caption || 'Details',
-					columns: Math.min(Math.max(parseInt(s.columns, 10) || 2, 1), 4),
-					fields: bySection[s.sys_id] || [],
-				}))
+				.map((s) => {
+					const groups = (colsBySection[s.sys_id] || [[]]).filter((c) => c.length > 0);
+					return {
+						sys_id: s.sys_id,
+						caption: s.caption || 'Details',
+						fields: bySection[s.sys_id] || [],
+						columnGroups: groups.length ? groups : [bySection[s.sys_id] || []],
+					};
+				})
 				.filter((s) => s.fields.length > 0);
 		})
 	);
 
 	return Promise.all([sectionsPromise, policiesPromise, uiActionsPromise, recordPromise])
-		.then(([sections, policies, uiActions, recRes]) => ({
-			sections,
-			policies,
-			uiActions,
-			values: flatValues(recRes.result),
-		}));
+		.then(([sections, policies, uiActions, recRes]) => {
+			const { values, displays } = splitValues(recRes.result);
+			return { sections, policies, uiActions, values, displayValues: displays };
+		});
 };
 
 /* ── Shared field-change logic (dirty track + auto-save + policy re-eval) */
@@ -380,12 +437,12 @@ const applyFieldChange = (name, value, state, updateState, dispatch) => {
 		: [...state.dirtyFields, name];
 	updateState({ values: newValues, dirtyFields: dirty, saveError: null });
 	dispatch('RF_EVALUATE_POLICIES', { values: newValues });
-	dispatch('FIELD_CHANGED', { name, value });
+	dispatch('RECORD_FORM_FIELD_CHANGED', { name, value });
 	const autoSave = parseAutoSave(state.properties.autoSaveFields);
 	if (autoSave.includes(name)) {
 		patchRecord(state.properties.table, state.properties.sysId, { [name]: value })
-			.then(() => dispatch('FIELD_AUTO_SAVED', { name, value }))
-			.catch((err) => { updateState({ saveError: err.message }); dispatch('FORM_SAVE_ERROR', { error: err.message }); });
+			.then(() => dispatch('RECORD_FORM_FIELD_AUTO_SAVED', { name, value }))
+			.catch((err) => { updateState({ saveError: err.message }); dispatch('RECORD_FORM_SAVE_ERROR', { error: err.message }); });
 	}
 };
 
@@ -399,7 +456,18 @@ const view = (state, { dispatch }) => {
 		dispatch('RF_LOAD', {});
 	}
 
-	if (!table || !sysId) return <div className="rf-empty">Set table and sysId to load the form.</div>;
+	if (!table || !sysId) {
+		return (
+			<div className="rf-empty">
+				<div className="rf-empty-title">Record Form</div>
+				<div className="rf-empty-hint">
+					Set <strong>Table</strong> and <strong>Record Sys ID</strong> in the Configure panel
+					(or bind them to page data), then click <strong>Preview</strong> to load the record.
+					This placeholder only appears in the design canvas — the form renders at runtime.
+				</div>
+			</div>
+		);
+	}
 
 	if (state.loading || (!state.loaded && !state.error)) {
 		return (
@@ -422,6 +490,7 @@ const view = (state, { dispatch }) => {
 	}
 
 	const values = state.values || {};
+	const displayValues = state.displayValues || {};
 	const expanded = state.expandedSections || {};
 	const policyOvr = state.policyOverrides || {};
 	const isFormReadOnly = Boolean(readonly);
@@ -495,8 +564,10 @@ const view = (state, { dispatch }) => {
 							</button>
 
 							{isOpen ? (
-								<div className={`rf-grid rf-grid--cols-${section.columns}`}>
-									{section.fields.map((field) => {
+								<div className="rf-columns">
+									{section.columnGroups.map((col) => (
+										<div className="rf-column">
+											{col.map((field) => {
 										const ovr = policyOvr[field.name] || {};
 										const isMandatory = ovr.mandatory != null ? ovr.mandatory : field.mandatory;
 										const isReadOnly = isFormReadOnly || (ovr.readOnly != null ? ovr.readOnly : field.readOnly);
@@ -529,7 +600,7 @@ const view = (state, { dispatch }) => {
 										}
 
 										/* ── Choice → now-dropdown ── */
-										if (isChoice(field.fieldType) && field.choices.length) {
+										if (field.isChoice && field.choices.length) {
 											const items = field.choices.map((c) => ({ id: encodeChoice(field.name, c.value), label: c.label }));
 											const encodedCurrent = encodeChoice(field.name, strVal);
 											const selectedItems = items.some((i) => i.id === encodedCurrent) ? [encodedCurrent] : [];
@@ -546,7 +617,8 @@ const view = (state, { dispatch }) => {
 
 										/* ── Reference → readonly display ── */
 										if (isRef(field.fieldType)) {
-											return <now-input name={field.name} label={field.label} value={strVal} readonly={true} size="md" />;
+											const refText = displayValues[field.name] || strVal;
+											return <now-input name={field.name} label={field.label} value={refText} readonly={true} size="md" />;
 										}
 
 										/* ── All other types → now-input ── */
@@ -562,6 +634,8 @@ const view = (state, { dispatch }) => {
 											/>
 										);
 									})}
+									</div>
+								))}
 								</div>
 							) : null}
 						</now-card>
@@ -603,6 +677,7 @@ createCustomElement('x-gegis-library-record-form', {
 		saveError: null,
 		sections: [],
 		values: {},
+		displayValues: {},
 		origValues: {},
 		dirtyFields: [],
 		expandedSections: {},
@@ -633,15 +708,15 @@ createCustomElement('x-gegis-library-record-form', {
 			_loadTimer = setTimeout(() => {
 				updateState({ loading: true, error: null, saveError: null, sections: [], values: {}, dirtyFields: [], expandedSections: {}, policies: [], policyOverrides: {}, uiActions: [] });
 				loadFormAndRecord(table, sysId, formView)
-					.then(({ sections, policies, uiActions, values }) => {
+					.then(({ sections, policies, uiActions, values, displayValues }) => {
 						const expandedSections = {};
 						sections.forEach((s) => { expandedSections[s.sys_id] = true; });
 						const policyOverrides = applyPolicies(policies, values);
-						updateState({ sections, policies, uiActions, values, origValues: values, loading: false, loaded: true, expandedSections, policyOverrides });
+						updateState({ sections, policies, uiActions, values, displayValues, origValues: values, loading: false, loaded: true, expandedSections, policyOverrides });
 					})
 					.catch((err) => {
 						updateState({ loading: false, error: err.message });
-						dispatch('FORM_LOAD_ERROR', { error: err.message });
+						dispatch('RECORD_FORM_LOAD_ERROR', { error: err.message });
 					});
 			}, 800);
 		},
@@ -675,18 +750,18 @@ createCustomElement('x-gegis-library-record-form', {
 				.then(() => {
 					const remaining = (state.dirtyFields || []).filter((f) => !toSave.includes(f));
 					updateState({ saving: false, dirtyFields: remaining });
-					dispatch('FORM_SAVED', { values: payload });
+					dispatch('RECORD_FORM_SAVED', { values: payload });
 				})
 				.catch((err) => {
 					updateState({ saving: false, saveError: err.message });
-					dispatch('FORM_SAVE_ERROR', { error: err.message });
+					dispatch('RECORD_FORM_SAVE_ERROR', { error: err.message });
 				});
 		},
 
 		/* UI Action button clicked → emit external event with full context */
 		RF_UI_ACTION: ({ action: dispatchedAction, state, dispatch }) => {
 			const uiAction = dispatchedAction.payload.action;
-			dispatch('UI_ACTION_TRIGGERED', {
+			dispatch('RECORD_FORM_UI_ACTION_TRIGGERED', {
 				name: uiAction.name,
 				actionName: uiAction.action_name,
 				sysId: state.properties.sysId,
