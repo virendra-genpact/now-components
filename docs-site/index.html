@@ -252,15 +252,16 @@
     <p class="inner"><strong>Standard components used:</strong> <span class="chip chip-now">now-card</span> <span class="chip chip-now">now-icon</span></p>
     <figure class="shot"><img src="screens/product-selector.png" alt="Product Selector preview" loading="lazy" onerror="this.closest('figure').remove()"><figcaption>Sample preview (local).</figcaption></figure>
     <h3>Properties</h3>
-    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>options</code></td><td>Options</td><td>json</td><td><span class="muted">—</span></td><td>Array of product options. Each: { id, title, subtitle, bullets:[string], pill, pillTone: info|neutral|positive|warning|error, pillIcon }.</td></tr>
+    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>options</code></td><td>Options</td><td>json</td><td><span class="muted">—</span></td><td>Array of product options. Each: { id, sys_id, title, subtitle, bullets:[string], pill, pillTone: info|neutral|positive|warning|error, pillIcon }.</td></tr>
 <tr><td><code>value</code></td><td>Selected option id</td><td>string</td><td><code></code></td><td>The id of the currently selected option. Leave empty to select the first option by default.</td></tr>
 <tr><td><code>bulletsWhenSelectedOnly</code></td><td>Show details only when selected</td><td>boolean</td><td><code>true</code></td><td>When on, the subtitle and bullet points show only for the selected card.</td></tr></tbody></table>
     <h3>Events</h3>
     
-    <table class="tbl"><thead><tr><th>Event</th><th>Label</th><th>Payload</th><th>When / use</th></tr></thead><tbody><tr><td><code>PRODUCT_SELECTED</code></td><td>Product selected</td><td><code>value</code><span class="muted">:string</span></td><td>Fired when the user selects an option. Payload: { value }.</td></tr></tbody></table>
+    <table class="tbl"><thead><tr><th>Event</th><th>Label</th><th>Payload</th><th>When / use</th></tr></thead><tbody><tr><td><code>PRODUCT_SELECTED</code></td><td>Product selected</td><td><code>value</code><span class="muted">:string</span> &nbsp; <code>id</code><span class="muted">:string</span> &nbsp; <code>sys_id</code><span class="muted">:string</span> &nbsp; <code>title</code><span class="muted">:string</span> &nbsp; <code>subtitle</code><span class="muted">:string</span> &nbsp; <code>pill</code><span class="muted">:string</span> &nbsp; <code>pillTone</code><span class="muted">:string</span> &nbsp; <code>pillIcon</code><span class="muted">:string</span> &nbsp; <code>bullets</code><span class="muted">:json</span></td><td>Fired when the user selects an option. Payload is the entire selected option: { value, id, sys_id, title, subtitle, pill, pillTone, pillIcon, bullets }.</td></tr></tbody></table>
     <h3>Sample input JSON</h3><h4><code>options</code> <span class="badge">sample</span></h4><div class="code"><button class="copy" data-target="product-selector-options">Copy</button><pre id="product-selector-options"><code>[
   {
     &quot;id&quot;: &quot;commercial-standard&quot;,
+    &quot;sys_id&quot;: &quot;a1b2c3d4e5f6000000000000000std01&quot;,
     &quot;title&quot;: &quot;Commercial Property – Standard Plan&quot;,
     &quot;pill&quot;: &quot;AI Recommended&quot;,
     &quot;pillTone&quot;: &quot;info&quot;,
@@ -275,6 +276,7 @@
   },
   {
     &quot;id&quot;: &quot;commercial-premium&quot;,
+    &quot;sys_id&quot;: &quot;a1b2c3d4e5f6000000000000000prm02&quot;,
     &quot;title&quot;: &quot;Commercial Property – Premium Plan&quot;,
     &quot;pill&quot;: &quot;Best Coverage&quot;,
     &quot;pillTone&quot;: &quot;positive&quot;,
@@ -288,6 +290,7 @@
   },
   {
     &quot;id&quot;: &quot;flood&quot;,
+    &quot;sys_id&quot;: &quot;a1b2c3d4e5f6000000000000000flood&quot;,
     &quot;title&quot;: &quot;Flood Insurance&quot;,
     &quot;pill&quot;: &quot;Higher Protection&quot;,
     &quot;pillTone&quot;: &quot;neutral&quot;,
@@ -295,6 +298,7 @@
   },
   {
     &quot;id&quot;: &quot;business&quot;,
+    &quot;sys_id&quot;: &quot;a1b2c3d4e5f60000000000000business&quot;,
     &quot;title&quot;: &quot;Business Interruption&quot;,
     &quot;pill&quot;: &quot;Lower Premium&quot;,
     &quot;pillTone&quot;: &quot;neutral&quot;,
@@ -302,6 +306,7 @@
   },
   {
     &quot;id&quot;: &quot;cyber&quot;,
+    &quot;sys_id&quot;: &quot;a1b2c3d4e5f6000000000000000cyber&quot;,
     &quot;title&quot;: &quot;Cyber Liability&quot;,
     &quot;pill&quot;: &quot;Add-on&quot;,
     &quot;pillTone&quot;: &quot;warning&quot;,
@@ -382,13 +387,13 @@
     <p class="inner"><strong>Standard components used:</strong> <span class="muted">none — fully custom</span></p>
     <figure class="shot"><img src="screens/quote-comparison.png" alt="Quote Versions Comparison preview" loading="lazy" onerror="this.closest('figure').remove()"><figcaption>Sample preview (local).</figcaption></figure>
     <h3>Properties</h3>
-    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>versions</code></td><td>Versions (JSON array)</td><td>json</td><td><span class="muted">see sample ▾</span></td><td>Array of version objects, one per column. Each: { header:{title,option,status,selectable}, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[] }. The first version defines the rows; bind a data resource with your v1/v2/v3 records.</td></tr>
+    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>versions</code></td><td>Versions (JSON array)</td><td>json</td><td><span class="muted">see sample ▾</span></td><td>Array of version objects, one per column. Each: { header:{title,option,status,selectable,versionId}, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[{key,label,style}] }. Set header.versionId (e.g. the sys_id) so VERSION_SELECTED/ACTION_CLICKED can identify WHICH version; give each action a stable key (clone/view/copy/send) to branch on. The first version defines the rows; bind a data resource with your v1/v2/v3 records.</td></tr>
 <tr><td><code>title</code></td><td>Title</td><td>string</td><td><code>Quote Versions Comparison</code></td><td>Fallback title shown if the first version has no header.title.</td></tr>
 <tr><td><code>labelWidth</code></td><td>Label column width</td><td>string</td><td><code>200px</code></td><td>CSS width of the left (field-label) column, e.g. 200px or 16rem.</td></tr></tbody></table>
     <h3>Events</h3>
     
-    <table class="tbl"><thead><tr><th>Event</th><th>Label</th><th>Payload</th><th>When / use</th></tr></thead><tbody><tr><td><code>VERSION_SELECTED</code></td><td>Version selected</td><td><code>index</code><span class="muted">:number</span> &nbsp; <code>checked</code><span class="muted">:boolean</span></td><td>Fired when a column's Select checkbox changes. Payload: { index, checked }.</td></tr>
-<tr><td><code>ACTION_CLICKED</code></td><td>Action clicked</td><td><code>index</code><span class="muted">:number</span> &nbsp; <code>action</code><span class="muted">:string</span></td><td>Fired when a footer action button is clicked. Payload: { index, action }.</td></tr></tbody></table>
+    <table class="tbl"><thead><tr><th>Event</th><th>Label</th><th>Payload</th><th>When / use</th></tr></thead><tbody><tr><td><code>VERSION_SELECTED</code></td><td>Version selected</td><td><code>index</code><span class="muted">:number</span> &nbsp; <code>versionId</code><span class="muted">:string</span> &nbsp; <code>option</code><span class="muted">:string</span> &nbsp; <code>checked</code><span class="muted">:boolean</span></td><td>Fired when a column's Select checkbox changes. Payload: { index, versionId, option, checked }.</td></tr>
+<tr><td><code>ACTION_CLICKED</code></td><td>Action clicked</td><td><code>index</code><span class="muted">:number</span> &nbsp; <code>versionId</code><span class="muted">:string</span> &nbsp; <code>option</code><span class="muted">:string</span> &nbsp; <code>action</code><span class="muted">:string</span></td><td>Fired when a footer action button is clicked. Payload: { index, versionId, option, action }.</td></tr></tbody></table>
     <h3>Sample input JSON</h3><h4><code>versions</code> <span class="badge">sample</span></h4><div class="code"><button class="copy" data-target="quote-comparison-versions">Copy</button><pre id="quote-comparison-versions"><code>[
   {
     &quot;header&quot;: {
@@ -963,7 +968,7 @@
     <h3>Sample input JSON</h3><h4><code>items</code></h4><div class="code"><button class="copy" data-target="toggle-card-items">Copy</button><pre id="toggle-card-items"><code>[]</code></pre></div>
   </section>
 
-    <footer>Generated from each component's <code>now-ui.json</code> · 11 components · built 2026-06-01 · scope <code>x_gegis_library</code>.</footer>
+    <footer>Generated from each component's <code>now-ui.json</code> · 11 components · built 2026-06-03 · scope <code>x_gegis_library</code>.</footer>
   </main>
 </div>
 <script>

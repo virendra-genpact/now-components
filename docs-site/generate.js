@@ -40,11 +40,11 @@ const ORDER = [...PREFERRED.filter((d) => discovered.includes(d)), ...discovered
 const SAMPLE_OVERRIDES = {
 	'x-gegis-library-product-selector': {
 		options: [
-			{ id: 'commercial-standard', title: 'Commercial Property – Standard Plan', pill: 'AI Recommended', pillTone: 'info', pillIcon: 'sparkles-outline', subtitle: 'Why we recommend:', bullets: ['Matches industry: Manufacturing', 'Covers key risks: Fire, Machinery', 'Within underwriting guidelines', 'Balanced premium vs coverage'] },
-			{ id: 'commercial-premium', title: 'Commercial Property – Premium Plan', pill: 'Best Coverage', pillTone: 'positive', pillIcon: 'shield-outline', subtitle: "What's included:", bullets: ['Full replacement-cost cover', 'Equipment breakdown included', '24/7 priority claims handling'] },
-			{ id: 'flood', title: 'Flood Insurance', pill: 'Higher Protection', pillTone: 'neutral', bullets: [] },
-			{ id: 'business', title: 'Business Interruption', pill: 'Lower Premium', pillTone: 'neutral', bullets: [] },
-			{ id: 'cyber', title: 'Cyber Liability', pill: 'Add-on', pillTone: 'warning', bullets: [] },
+			{ id: 'commercial-standard', sys_id: 'a1b2c3d4e5f6000000000000000std01', title: 'Commercial Property – Standard Plan', pill: 'AI Recommended', pillTone: 'info', pillIcon: 'sparkles-outline', subtitle: 'Why we recommend:', bullets: ['Matches industry: Manufacturing', 'Covers key risks: Fire, Machinery', 'Within underwriting guidelines', 'Balanced premium vs coverage'] },
+			{ id: 'commercial-premium', sys_id: 'a1b2c3d4e5f6000000000000000prm02', title: 'Commercial Property – Premium Plan', pill: 'Best Coverage', pillTone: 'positive', pillIcon: 'shield-outline', subtitle: "What's included:", bullets: ['Full replacement-cost cover', 'Equipment breakdown included', '24/7 priority claims handling'] },
+			{ id: 'flood', sys_id: 'a1b2c3d4e5f6000000000000000flood', title: 'Flood Insurance', pill: 'Higher Protection', pillTone: 'neutral', bullets: [] },
+			{ id: 'business', sys_id: 'a1b2c3d4e5f60000000000000business', title: 'Business Interruption', pill: 'Lower Premium', pillTone: 'neutral', bullets: [] },
+			{ id: 'cyber', sys_id: 'a1b2c3d4e5f6000000000000000cyber', title: 'Cyber Liability', pill: 'Add-on', pillTone: 'warning', bullets: [] },
 		],
 	},
 	'x-gegis-library-quote-comparison': {
