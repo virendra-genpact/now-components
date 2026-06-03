@@ -73,6 +73,7 @@ it falls back to a humanized column name.
 | `subheading` | string | `""` | Smaller text under the heading (e.g. `Building Coverage`). Blank hides it. |
 | `readOnly` | boolean | `false` | Disable every field; hide Save. |
 | `autosave` | boolean | `false` | PATCH each field on blur/change. |
+| `saveRelated` | boolean | `false` | Also save edits to dot-walked fields to their related records (resolve each record + PATCH it). Needs write ACLs + existing references. |
 | `columns` | number | `2` | Fields per row per section. |
 | `saveLabel` | string | `Save` | Manual Save button text. |
 | `showSave` | boolean | `true` | Show the Save button (when not read-only). |
@@ -90,10 +91,11 @@ it falls back to a humanized column name.
 
 - **Reference fields are read-only** (display value only) — a proper reference
   picker is out of scope for plain REST.
-- **Dot-walked fields are display-only for saving** — they belong to related
-  records, so the base-table PATCH can't write them; they're shown (with resolved
-  labels/types) but excluded from Save. Editing them via the related record is out
-  of scope.
+- **Dot-walked fields** — by default they're display-only (the base PATCH can't
+  write them). Turn on **`saveRelated`** to also save them: the component groups
+  the edits by related record, resolves each record's sys_id (one extra GET), and
+  PATCHes each related record. Needs write ACLs on those records and a non-empty
+  reference; unresolved chains are skipped.
 - **Choices** are read from `sys_choice` for `name={table}`; choices defined only
   on a parent (extended) table may not appear.
 - **ACLs** still apply: the Table API enforces field/record ACLs for the current

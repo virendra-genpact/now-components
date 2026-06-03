@@ -55,8 +55,12 @@ const A = {
 	LAYOUT_OK: 'DF#LAYOUT_OK',
 	LAYOUT_ERR: 'DF#LAYOUT_ERR',
 	SAVE: 'DF#SAVE',
-	SAVE_OK: 'DF#SAVE_OK',
-	SAVE_ERR: 'DF#SAVE_ERR',
+	FETCH_RELATED_TARGETS: 'DF#FETCH_RELATED_TARGETS',
+	RELATED_TARGETS_OK: 'DF#RELATED_TARGETS_OK',
+	RELATED_TARGETS_ERR: 'DF#RELATED_TARGETS_ERR',
+	SAVE_HTTP: 'DF#SAVE_HTTP',
+	SAVE_HTTP_OK: 'DF#SAVE_HTTP_OK',
+	SAVE_HTTP_ERR: 'DF#SAVE_HTTP_ERR',
 };
 
 /* ---- helpers ---- */
@@ -266,6 +270,55 @@ const applyFieldChange = ({ state, updateState, dispatch }, name, value) => {
 	if (state.properties.autosave) dispatch(A.SAVE, { fields: { [name]: value } });
 };
 
+/* Group dirty DOT-WALKED fields by their related record (the path minus the last
+ * segment), resolving each group's target table + column. e.g.
+ * "broker.brokeraddress.address1" -> prefix "broker.brokeraddress", col "address1". */
+const buildRelatedGroups = (dicts, baseTable, related) => {
+	const groups = {}; // prefix -> { table, cols: { col: value } }
+	Object.keys(related).forEach((name) => {
+		const segs = name.split('.');
+		const prefix = segs.slice(0, -1).join('.');
+		const { table, col } = resolveField(dicts, baseTable, name);
+		if (!table) return; // unresolved chain — skip (can't safely target a record)
+		groups[prefix] = groups[prefix] || { table, cols: {} };
+		groups[prefix].cols[col] = related[name];
+	});
+	return groups;
+};
+
+// Fire one PATCH per record group; finalizeSave tracks completion via _savePending.
+const runSaves = (updateState, dispatch, groups) => {
+	const valid = groups.filter((g) => g && g.sysId && g.data && Object.keys(g.data).length);
+	if (!valid.length) {
+		updateState({ saving: false });
+		return;
+	}
+	updateState({ saving: true, error: '', _savePending: valid.length, _saveError: '' });
+	valid.forEach((g) =>
+		dispatch(A.SAVE_HTTP, { table: g.table, sysId: g.sysId, data: g.data, sysparm_display_value: 'all' })
+	);
+};
+
+// Called on each PATCH success/error; when all are done, surface the result once.
+const finalizeSave = ({ state, updateState, dispatch }, patch) => {
+	const pending = (state._savePending || 1) - 1;
+	const saveError = patch.error || state._saveError || '';
+	const merged = {};
+	if (patch.values) merged.values = patch.values;
+	if (patch.display) merged.display = patch.display;
+	if (pending > 0) {
+		updateState({ _savePending: pending, _saveError: saveError, ...merged });
+		return;
+	}
+	if (saveError) {
+		updateState({ saving: false, _savePending: 0, _saveError: '', error: `Save failed: ${saveError}`, ...merged });
+		dispatch('SAVE_ERROR', { message: saveError });
+	} else {
+		updateState({ saving: false, _savePending: 0, dirty: {}, ...merged });
+		dispatch('FORM_SAVED', { table: state.properties.table, sysId: state.properties.sysId });
+	}
+};
+
 /* ------------------------------------------------------------------ *
  * View
  * ------------------------------------------------------------------ */
@@ -460,6 +513,10 @@ createCustomElement('x-gegis-library-dynamic-form', {
 		values: {},
 		display: {},
 		dirty: {},
+		_savePending: 0,
+		_saveError: '',
+		_saveBaseGroup: null,
+		_saveRelGroups: {},
 		_viewName: '',
 		_loadedKey: '',
 		_dicts: {},
@@ -477,6 +534,7 @@ createCustomElement('x-gegis-library-dynamic-form', {
 		subheading: { default: '' },
 		readOnly: { default: false },
 		autosave: { default: false },
+		saveRelated: { default: false },
 		columns: { default: 2 },
 		saveLabel: { default: 'Save' },
 		showSave: { default: true },
@@ -675,44 +733,80 @@ createCustomElement('x-gegis-library-dynamic-form', {
 			updateState({ _layout: [], loading: false, ...assemble(next) });
 		},
 
-		/* Save: PATCH the dirty fields back to the record. Dot-walked fields belong
-		 * to RELATED records, so the base-table PATCH can't write them — drop them
-		 * (otherwise the whole save would fail). See README limitations. */
+		/* Save: PATCH the base record. Dot-walked fields belong to RELATED records,
+		 * so when `saveRelated` is on we group them by related record, resolve each
+		 * record's sys_id, and PATCH it too; when off, they're dropped. */
 		[A.SAVE]: ({ action, state, updateState, dispatch }) => {
 			const all = (action.payload && action.payload.fields) || {};
-			const fields = {};
+			const base = {};
+			const related = {};
 			Object.keys(all).forEach((k) => {
-				if (k.indexOf('.') < 0) fields[k] = all[k];
+				(k.indexOf('.') < 0 ? base : related)[k] = all[k];
 			});
-			if (!Object.keys(fields).length) return;
-			updateState({ saving: true, error: '' });
-			const { table, sysId } = state.properties;
-			dispatch('DF#SAVE_HTTP', { table, sysId, data: fields, sysparm_display_value: 'all' });
+			const { table, sysId, saveRelated } = state.properties;
+			const baseGroup = Object.keys(base).length ? { table, sysId, data: base } : null;
+			const relGroups = saveRelated ? buildRelatedGroups(state._dicts || {}, state._baseTable, related) : {};
+			const prefixes = Object.keys(relGroups);
+
+			if (prefixes.length) {
+				// Resolve each related record's sys_id from the base record first.
+				updateState({ saving: true, error: '', _saveBaseGroup: baseGroup, _saveRelGroups: relGroups });
+				dispatch(A.FETCH_RELATED_TARGETS, {
+					table,
+					sysId,
+					sysparm_fields: prefixes.join(','),
+					sysparm_display_value: 'false',
+				});
+				return;
+			}
+			runSaves(updateState, dispatch, baseGroup ? [baseGroup] : []);
 		},
-		'DF#SAVE_HTTP': createHttpEffect('/api/now/table/:table/:sysId', {
+
+		/* Resolve the sys_id of each related record (value of the dot-walk prefix). */
+		[A.FETCH_RELATED_TARGETS]: createHttpEffect('/api/now/table/:table/:sysId', {
+			method: 'GET',
+			pathParams: ['table', 'sysId'],
+			queryParams: ['sysparm_fields', 'sysparm_display_value'],
+			successActionType: A.RELATED_TARGETS_OK,
+			errorActionType: A.RELATED_TARGETS_ERR,
+		}),
+		[A.RELATED_TARGETS_OK]: ({ action, state, updateState, dispatch }) => {
+			const rec = resultOf(action) || {};
+			const relGroups = state._saveRelGroups || {};
+			const groups = state._saveBaseGroup ? [state._saveBaseGroup] : [];
+			Object.keys(relGroups).forEach((prefix) => {
+				const targetSysId = rawVal(rec[prefix]);
+				if (targetSysId) groups.push({ table: relGroups[prefix].table, sysId: targetSysId, data: relGroups[prefix].cols });
+			});
+			runSaves(updateState, dispatch, groups);
+		},
+		[A.RELATED_TARGETS_ERR]: ({ state, updateState, dispatch }) =>
+			runSaves(updateState, dispatch, state._saveBaseGroup ? [state._saveBaseGroup] : []),
+
+		/* One PATCH per record (base or related); finalizeSave aggregates results. */
+		[A.SAVE_HTTP]: createHttpEffect('/api/now/table/:table/:sysId', {
 			method: 'PATCH',
 			pathParams: ['table', 'sysId'],
 			dataParam: 'data',
 			queryParams: ['sysparm_display_value'],
 			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-			successActionType: A.SAVE_OK,
-			errorActionType: A.SAVE_ERR,
+			successActionType: A.SAVE_HTTP_OK,
+			errorActionType: A.SAVE_HTTP_ERR,
 		}),
-		[A.SAVE_OK]: ({ action, state, updateState, dispatch }) => {
+		[A.SAVE_HTTP_OK]: ({ action, state, updateState, dispatch }) => {
 			const rec = resultOf(action) || {};
 			const values = { ...(state.values || {}) };
 			const display = { ...(state.display || {}) };
+			// Only update keys we already track (base cols match; related plain cols won't).
 			Object.keys(rec).forEach((n) => {
-				values[n] = rawVal(rec[n]);
-				display[n] = dispVal(rec[n]);
+				if (Object.prototype.hasOwnProperty.call(values, n)) {
+					values[n] = rawVal(rec[n]);
+					display[n] = dispVal(rec[n]);
+				}
 			});
-			updateState({ saving: false, dirty: {}, values, display, _record: rec });
-			dispatch('FORM_SAVED', { table: state.properties.table, sysId: state.properties.sysId });
+			finalizeSave({ state, updateState, dispatch }, { values, display });
 		},
-		[A.SAVE_ERR]: ({ action, updateState, dispatch }) => {
-			const message = errOf(action);
-			updateState({ saving: false, error: `Save failed: ${message}` });
-			dispatch('SAVE_ERROR', { message });
-		},
+		[A.SAVE_HTTP_ERR]: ({ action, state, updateState, dispatch }) =>
+			finalizeSave({ state, updateState, dispatch }, { error: errOf(action) }),
 	},
 });

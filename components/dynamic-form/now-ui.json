@@ -68,6 +68,13 @@
 					"defaultValue": false
 				},
 				{
+					"name": "saveRelated",
+					"label": "Save related (dot-walked) fields",
+					"description": "When on, edits to dot-walked fields (e.g. broker.brokeraddress.city) are saved to their related records too — each related record is resolved and PATCHed. Requires write access (ACLs) to those records, and the reference must point to an existing record. Off by default (dot-walked edits are not saved).",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
 					"name": "columns",
 					"label": "Columns",
 					"description": "Number of fields per row in each section.",
