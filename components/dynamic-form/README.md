@@ -5,10 +5,19 @@ component — with a **table**, a record **sys_id** and a form **view** — and 
 component talks to the **ServiceNow Table API** itself to build and save the
 form. It also exposes **Read only** and **Autosave** toggles.
 
-100% custom markup, **zero `now-*` deps**. HTTP is done with
+The **field controls are real Horizon `now-*` components** (`now-input`,
+`now-select`, `now-checkbox`, `now-textarea`, `now-button`, `now-loader`)
+composed inside our own card/section layout — so inputs stay in sync with
+Horizon while the section grouping matches the provided design. HTTP is done with
 `@servicenow/ui-effect-http` (`createHttpEffect`) so the instance
 session / auth / scope are used automatically — there is **no hand-rolled
 `fetch()`**.
+
+> The `now-*` controls are declared in `now-ui.json` `innerComponents` and used
+> by tag only; the deployed `src/` never imports them (the instance supplies the
+> Horizon versions). They are imported **only** in `example/element.js` for the
+> local playground, where they render in legacy styling — validate the true
+> Horizon look on the instance.
 
 ## How it works
 
@@ -36,13 +45,22 @@ PATCH /api/now/table/{table}/{sysId}   { <field>: <value>, ... }
 
 | Dictionary type | Rendered as |
 | --- | --- |
-| choice / has a choice list | dropdown (`<select>`) |
-| true/false | checkbox |
-| integer / decimal / float / currency | number input |
-| date | date input |
-| html / journal / translated | textarea (full-width) |
-| reference / glide list | **read-only** text (display value) — editing references needs a record picker not available over plain REST |
-| everything else | text input |
+| choice / has a choice list | `now-select` (field is encoded into each item id `field::value` so changes can be mapped back, since `now-select` doesn't emit a field name) |
+| true/false | `now-checkbox` (used instead of `now-toggle`, which emits no field name to disambiguate) |
+| integer / decimal / float / currency | `now-input type="number"` |
+| date | `now-date-time type="date"` |
+| date/time | `now-date-time type="date-time"` |
+| html / journal / translated | `now-textarea` (full-width) |
+| reference / glide list | **read-only** `now-input` (display value) — editing references needs a record picker not available over plain REST |
+| everything else | `now-input type="text"` |
+
+### Dot-walked fields
+
+Views often include **dot-walked** fields (e.g. `broker.brokeraddress.address1`).
+Their labels/types aren't in the base table's dictionary, so the component walks
+each reference hop — fetching `sys_dictionary` for the related tables — to resolve
+the real label, type, and choices of the final column. If a hop can't be resolved
+it falls back to a humanized column name.
 
 ## Properties
 
@@ -50,12 +68,15 @@ PATCH /api/now/table/{table}/{sysId}   { <field>: <value>, ... }
 | --- | --- | --- | --- |
 | `table` | string | `""` | Table to load, e.g. `incident`. |
 | `sysId` | string | `""` | Record sys_id to load/save (bind from the page, e.g. a URL param). |
-| `view` | string | `""` | Form view (blank = Default). Pass the view's **sys_id** (from `sys_ui_view`) or its name. A sys_id matches the section layout directly; a name also drives `sysparm_view` on the record fetch. |
+| `view` | string | `""` | Form view (blank = Default). Pass the view's **sys_id** (from `sys_ui_view`) or its name. A sys_id is resolved to its name first, then `sysparm_view={name}` makes the Table API return that view's own field set (so the form actually changes per view). |
+| `heading` | string | `""` | Title at the top of the form (e.g. `Coverage`). Blank hides it. |
+| `subheading` | string | `""` | Smaller text under the heading (e.g. `Building Coverage`). Blank hides it. |
 | `readOnly` | boolean | `false` | Disable every field; hide Save. |
 | `autosave` | boolean | `false` | PATCH each field on blur/change. |
 | `columns` | number | `2` | Fields per row per section. |
 | `saveLabel` | string | `Save` | Manual Save button text. |
 | `showSave` | boolean | `true` | Show the Save button (when not read-only). |
+| `saveButtonPosition` | choice | `bottom` | Place the Save button `top` (beside the heading), `bottom`, or `both`. |
 
 ## Events (UI Builder `actions`)
 
@@ -69,6 +90,10 @@ PATCH /api/now/table/{table}/{sysId}   { <field>: <value>, ... }
 
 - **Reference fields are read-only** (display value only) — a proper reference
   picker is out of scope for plain REST.
+- **Dot-walked fields are display-only for saving** — they belong to related
+  records, so the base-table PATCH can't write them; they're shown (with resolved
+  labels/types) but excluded from Save. Editing them via the related record is out
+  of scope.
 - **Choices** are read from `sys_choice` for `name={table}`; choices defined only
   on a parent (extended) table may not appear.
 - **ACLs** still apply: the Table API enforces field/record ACLs for the current

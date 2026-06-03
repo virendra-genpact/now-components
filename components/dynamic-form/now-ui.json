@@ -1,7 +1,15 @@
 {
 	"components": {
 		"x-gegis-library-dynamic-form": {
-			"innerComponents": [],
+			"innerComponents": [
+				"now-input",
+				"now-select",
+				"now-checkbox",
+				"now-textarea",
+				"now-date-time",
+				"now-button",
+				"now-loader"
+			],
 			"uiBuilder": {
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Dynamic Form",
@@ -28,6 +36,20 @@
 					"name": "view",
 					"label": "Form view",
 					"description": "Form view to render (sections + field order). Pass the view's sys_id (from sys_ui_view) or its name. Leave blank for the Default view.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "heading",
+					"label": "Heading",
+					"description": "Title shown at the top of the form (e.g. \"Coverage\"). Leave blank to hide.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "subheading",
+					"label": "Subheading",
+					"description": "Smaller text under the heading (e.g. \"Building Coverage\"). Leave blank to hide.",
 					"fieldType": "string",
 					"defaultValue": ""
 				},
@@ -65,6 +87,20 @@
 					"description": "When on (and not read-only), shows the Save button.",
 					"fieldType": "boolean",
 					"defaultValue": true
+				},
+				{
+					"name": "saveButtonPosition",
+					"label": "Save button position",
+					"description": "Where to place the Save button: top (next to the heading), bottom, or both.",
+					"fieldType": "choice",
+					"defaultValue": "bottom",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Bottom", "value": "bottom" },
+							{ "label": "Top", "value": "top" },
+							{ "label": "Both", "value": "both" }
+						]
+					}
 				}
 			],
 			"actions": [
