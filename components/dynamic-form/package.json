@@ -2,7 +2,7 @@
 	"name": "@x_gegis_library/dynamic-form",
 	"version": "0.1.0",
 	"private": false,
-	"description": "A fully custom, metadata-driven sectioned form for ServiceNow Next Experience (UI Builder). Sections + fields from metadata, values from a record, Save fires an event for a REST data resource.",
+	"description": "An OOTB-style record form for ServiceNow Next Experience (UI Builder): configure a table, sys_id and view; the component loads field metadata, choices and the form layout over the Table API and PATCHes changes on Save / autosave. Read-only and Autosave toggles included.",
 	"keywords": [
 		"ServiceNow",
 		"Next Experience UI Component",
@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@servicenow/sass-kit": "latest",
 		"@servicenow/ui-core": "24.1.1",
+		"@servicenow/ui-effect-http": "24.1.1",
 		"@servicenow/ui-renderer-snabbdom": "24.1.1"
 	},
 	"devDependencies": {

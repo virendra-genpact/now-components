@@ -45,6 +45,66 @@
 	font-weight: 500;
 	color: #2a3242;
 }
+.ff-req {
+	color: #c0392b;
+	font-weight: 700;
+}
+
+/* Field that should span the full grid row (textarea / html). */
+.ff-field--wide {
+	grid-column: 1 / -1;
+}
+
+/* Boolean field rendered as a checkbox + inline label. */
+.ff-field--bool {
+	justify-content: flex-end;
+}
+.ff-check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	color: #1c2433;
+	cursor: pointer;
+}
+.ff-check input[type='checkbox'] {
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+}
+
+/* Multi-line text. */
+.ff-textarea {
+	min-height: 76px;
+	resize: vertical;
+	line-height: 1.4;
+}
+
+/* Status / message rows. */
+.ff-msg {
+	padding: 24px;
+	color: #6b7280;
+	font-size: 14px;
+	background: #ffffff;
+	border: 1px solid #e6e8ec;
+	border-radius: 10px;
+}
+.ff-error {
+	padding: 12px 16px;
+	margin-bottom: 16px;
+	color: #8a1c1c;
+	background: #fdecec;
+	border: 1px solid #f3c2c2;
+	border-radius: 8px;
+	font-size: 13px;
+}
+.ff-autosave {
+	align-self: center;
+	margin-right: 12px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #2a8a4a;
+}
 
 /* Inputs / selects. */
 .ff-input,
@@ -119,6 +179,11 @@
 }
 .ff-save:hover {
 	background: #2a63d6;
+}
+.ff-save:disabled {
+	background: #a8c0f0;
+	border-color: #a8c0f0;
+	cursor: default;
 }
 .ff-save:focus-visible {
 	outline: 2px solid #1c2433;
