@@ -58,6 +58,9 @@ const inputTypeFor = (ft) => INPUT_TYPE_MAP[ft] || 'text';
 const isBool = (ft) => ft === 'boolean';
 const isChoice = (ft) => ft === 'choice';
 const isRef = (ft) => ft === 'reference' || ft === 'domain_id' || ft === 'glide_list' || ft === 'document_id';
+/* Image / file fields are backed by attachments (db_image / sys_attachment), not a value
+ * you edit in a text box — e.g. sys_user.photo & avatar are `user_image`. */
+const isImage = (ft) => ft === 'user_image' || ft === 'image' || ft === 'file_attachment' || ft === 'photo';
 
 /* Middle-dot separator (·) for encoding fieldName + choice value in dropdown item id */
 const SEP = '·';
@@ -85,6 +88,42 @@ const userToken = () =>
 const snFetch = (url) =>
 	fetch(url, { headers: { Accept: 'application/json', 'X-UserToken': userToken() }, credentials: 'same-origin' })
 		.then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status} — ${url}`); return r.json(); });
+
+/* Editable reference search: as the user types, query the referenced table with a
+ * case-insensitive CONTAINS (`<displayField>LIKE<text>`) on the display field. The
+ * display field is discovered from sys_dictionary (display=true), default `name`. */
+let _refTimer = null;
+const searchReference = (table, text, knownDf) => {
+	const enc = encodeURIComponent;
+	const dfPromise = knownDf
+		? Promise.resolve(knownDf)
+		: snFetch(`/api/now/table/sys_dictionary?sysparm_query=name=${enc(table)}^display=true&sysparm_fields=element&sysparm_limit=1`)
+			.then((r) => (r.result && r.result[0] && r.result[0].element) || 'name')
+			.catch(() => 'name');
+	return dfPromise.then((df) =>
+		snFetch(
+			`/api/now/table/${enc(table)}` +
+			`?sysparm_query=${enc(df)}LIKE${enc(text)}` +
+			`&sysparm_fields=sys_id,${enc(df)}` +
+			`&sysparm_display_value=true&sysparm_orderby=${enc(df)}&sysparm_limit=20`
+		).then((r) => ({
+			displayField: df,
+			items: (r.result || []).map((rec) => ({ id: rec.sys_id, label: String(refVal(rec[df]) || rec.sys_id) })),
+		}))
+	);
+};
+
+/* Find the referenced table for a reference field by name (from loaded sections). */
+const refTableFor = (sections, name) => {
+	const list = sections || [];
+	for (let i = 0; i < list.length; i++) {
+		const fields = list[i].fields || [];
+		for (let j = 0; j < fields.length; j++) {
+			if (fields[j].name === name && fields[j].reference) return fields[j].reference;
+		}
+	}
+	return '';
+};
 
 /* With sysparm_display_value=all each field is { value, display_value }. We keep BOTH:
  * `values` (raw) drive the editable controls + saves (a choice's "2", a reference sys_id);
@@ -287,10 +326,16 @@ const loadFormAndRecord = (table, sysId, formView) => {
 	const sectionsPromise = viewPromise.then(({ internalName, viewSysId }) =>
 		snFetch(
 			`/api/now/table/sys_ui_form` +
-			`?sysparm_query=name=${enc(table)}^view=${enc(internalName)}` +
-			`&sysparm_fields=sys_id&sysparm_limit=1`
+			`?sysparm_query=name=${enc(table)}^view=${enc(viewSysId)}^ORname=${enc(table)}^viewISEMPTY` +
+			`&sysparm_fields=sys_id,view&sysparm_limit=20`
 		).then((formRes) => {
-			const form = formRes.result && formRes.result[0];
+			/* sys_ui_form.view is a REFERENCE (sys_id) — match on viewSysId, not the view
+			 * name. Prefer the view-specific form; else the table's default (empty-view)
+			 * form. Section order then comes from sys_ui_form_section.position. */
+			const forms = formRes.result || [];
+			const form = forms.find((f) => refVal(f.view) === viewSysId)
+				|| forms.find((f) => !refVal(f.view))
+				|| forms[0];
 			if (form) {
 				return snFetch(
 					`/api/now/table/sys_ui_form_section` +
@@ -449,7 +494,7 @@ const applyFieldChange = (name, value, state, updateState, dispatch) => {
 /* ── View ────────────────────────────────────────────────────── */
 
 const view = (state, { dispatch }) => {
-	const { table, sysId, formView, formTitle, saveLabel, readonly, actionBarPosition } = state.properties;
+	const { table, sysId, formView, formTitle, saveLabel, readonly, actionBarPosition, formLayout } = state.properties;
 	const loadKey = `${table}|${sysId}|${formView}`;
 
 	if (table && sysId && loadKey !== state.loadKey && !state.loading) {
@@ -529,45 +574,7 @@ const view = (state, { dispatch }) => {
 		</div>
 	) : null;
 
-	return (
-		<div className="rf-root">
-			{/* Form header: title + action bar (if top/both) */}
-			{formTitle || (showBar && (barPos === 'top' || barPos === 'both')) ? (
-				<div className="rf-form-header">
-					{formTitle ? <span className="rf-form-title">{formTitle}</span> : null}
-					{showBar && (barPos === 'top' || barPos === 'both') ? actionBar : null}
-				</div>
-			) : null}
-
-			{state.saveError ? <div className="rf-save-error">{state.saveError}</div> : null}
-
-			{/* Sections — each wrapped so the named slot renders BETWEEN cards.
-			 *   after-section-0 … after-section-9: drop any component here in UI Builder.
-			 *   Unused slots render nothing and take zero space. */}
-			{state.sections.map((section, idx) => {
-				const isOpen = expanded[section.sys_id] !== false;
-				return (
-					<div className="rf-section-wrap">
-						<now-card className="rf-section" interaction="none">
-							<button
-								type="button"
-								className="rf-section-header"
-								aria-expanded={isOpen ? 'true' : 'false'}
-								on-click={() => dispatch('RF_TOGGLE_SECTION', { sectionId: section.sys_id })}
-							>
-								<span className="rf-section-caption">{section.caption}</span>
-								<now-icon
-									className={`rf-chevron${isOpen ? ' rf-chevron--open' : ''}`}
-									icon="chevron-down-outline"
-									size="sm"
-								/>
-							</button>
-
-							{isOpen ? (
-								<div className="rf-columns">
-									{section.columnGroups.map((col) => (
-										<div className="rf-column">
-											{col.map((field) => {
+	const renderField = (field) => {
 										const ovr = policyOvr[field.name] || {};
 										const isMandatory = ovr.mandatory != null ? ovr.mandatory : field.mandatory;
 										const isReadOnly = isFormReadOnly || (ovr.readOnly != null ? ovr.readOnly : field.readOnly);
@@ -615,13 +622,38 @@ const view = (state, { dispatch }) => {
 											);
 										}
 
-										/* ── Reference → readonly display ── */
+										/* ── Reference → searchable now-typeahead ── */
 										if (isRef(field.fieldType)) {
 											const refText = displayValues[field.name] || strVal;
-											return <now-input name={field.name} label={field.label} value={refText} readonly={true} size="md" />;
+											return (
+													<now-typeahead
+														name={field.name}
+														label={field.label}
+														value={(state.refQuery && state.refQuery[field.name] != null) ? state.refQuery[field.name] : refText}
+														selectedItem={strVal || null}
+														items={(state.refItems && state.refItems[field.name]) || (strVal && refText ? [{ id: strVal, label: refText }] : [])}
+														search="managed"
+														disabled={Boolean(isReadOnly)}
+														configAria={{ input: { 'aria-label': field.label } }}
+													/>
+												);
 										}
 
-										/* ── All other types → now-input ── */
+										/* ── Image / attachment field → read-only indicator (not a text box) ── */
+											if (isImage(field.fieldType)) {
+												const caption = displayValues[field.name] || strVal;
+												return (
+													<div className="rf-field rf-field--image">
+														<span className="rf-field-label">{field.label}</span>
+														<span className="rf-image-box">
+															<now-icon className="rf-image-icon" icon="image-outline" size="md" aria-hidden="true" />
+															<span className="rf-image-text">{caption || 'Attachment — managed in the record’s attachments'}</span>
+														</span>
+													</div>
+												);
+											}
+
+											/* ── All other types → now-input ── */
 										return (
 											<now-input
 												name={field.name}
@@ -633,10 +665,54 @@ const view = (state, { dispatch }) => {
 												size="md"
 											/>
 										);
-									})}
+	};
+
+	return (
+		<div className="rf-root">
+			{/* Form header: title + action bar (if top/both) */}
+			{formTitle || (showBar && (barPos === 'top' || barPos === 'both')) ? (
+				<div className="rf-form-header">
+					{formTitle ? <span className="rf-form-title">{formTitle}</span> : null}
+					{showBar && (barPos === 'top' || barPos === 'both') ? actionBar : null}
+				</div>
+			) : null}
+
+			{state.saveError ? <div className="rf-save-error">{state.saveError}</div> : null}
+
+			{/* Sections — each wrapped so the named slot renders BETWEEN cards.
+			 *   after-section-0 … after-section-9: drop any component here in UI Builder.
+			 *   Unused slots render nothing and take zero space. */}
+			{state.sections.map((section, idx) => {
+				const isOpen = expanded[section.sys_id] !== false;
+				return (
+					<div className="rf-section-wrap">
+						<now-card className="rf-section" interaction="none">
+							<button
+								type="button"
+								className="rf-section-header"
+								aria-expanded={isOpen ? 'true' : 'false'}
+								on-click={() => dispatch('RF_TOGGLE_SECTION', { sectionId: section.sys_id })}
+							>
+								<span className="rf-section-caption">{section.caption}</span>
+								<now-icon
+									className={`rf-chevron${isOpen ? ' rf-chevron--open' : ''}`}
+									icon="chevron-down-outline"
+									size="sm"
+								/>
+							</button>
+
+							{isOpen ? (
+								(formLayout === 'responsive') ? (
+									<div className="rf-flow">
+										{section.fields.map(renderField)}
 									</div>
-								))}
-								</div>
+								) : (
+									<div className="rf-columns">
+										{section.columnGroups.map((col) => (
+											<div className="rf-column">{col.map(renderField)}</div>
+										))}
+									</div>
+								)
 							) : null}
 						</now-card>
 
@@ -678,6 +754,10 @@ createCustomElement('x-gegis-library-record-form', {
 		sections: [],
 		values: {},
 		displayValues: {},
+		refItems: {},
+		refQuery: {},
+		refDisplayField: {},
+		refTableByField: {},
 		origValues: {},
 		dirtyFields: [],
 		expandedSections: {},
@@ -691,6 +771,7 @@ createCustomElement('x-gegis-library-record-form', {
 		formView: { default: 'Default view' },
 		formTitle: { default: '' },
 		actionBarPosition: { default: 'bottom' },
+		formLayout: { default: 'classic' },
 		autoSaveFields: { default: [] },
 		saveLabel: { default: 'Save' },
 		readonly: { default: false },
@@ -712,7 +793,9 @@ createCustomElement('x-gegis-library-record-form', {
 						const expandedSections = {};
 						sections.forEach((s) => { expandedSections[s.sys_id] = true; });
 						const policyOverrides = applyPolicies(policies, values);
-						updateState({ sections, policies, uiActions, values, displayValues, origValues: values, loading: false, loaded: true, expandedSections, policyOverrides });
+						const refTableByField = {};
+						sections.forEach((s) => (s.fields || []).forEach((f) => { if (f.reference) refTableByField[f.name] = f.reference; }));
+						updateState({ sections, policies, uiActions, values, displayValues, origValues: values, loading: false, loaded: true, expandedSections, policyOverrides, refTableByField, refItems: {}, refDisplayField: {}, refQuery: {} });
 					})
 					.catch((err) => {
 						updateState({ loading: false, error: err.message });
@@ -785,6 +868,35 @@ createCustomElement('x-gegis-library-record-form', {
 			const { name, value } = decodeChoice(selected);
 			if (!name) return;
 			applyFieldChange(name, value, state, updateState, dispatch);
+		},
+
+		/* now-typeahead: reference field — type to search the referenced table (debounced) */
+		'NOW_TYPEAHEAD#VALUE_SET': ({ action, state, updateState }) => {
+			const { name, value } = action.payload || {};
+			if (!name) return;
+			updateState({ refQuery: { ...(state.refQuery || {}), [name]: value } });
+			const table = refTableFor(state.sections, name);
+			if (!table) return;
+			if (!value) { updateState({ refItems: { ...(state.refItems || {}), [name]: [] } }); return; }
+			clearTimeout(_refTimer);
+			const knownDf = (state.refDisplayField || {})[name];
+			_refTimer = setTimeout(() => {
+				searchReference(table, value, knownDf)
+					.then(({ items, displayField }) => updateState({
+						refItems: { ...(state.refItems || {}), [name]: items },
+						refDisplayField: { ...(state.refDisplayField || {}), [name]: displayField },
+					}))
+					.catch(() => {});
+			}, 300);
+		},
+
+		/* now-typeahead: reference field — a record was picked (value = sys_id) */
+		'NOW_TYPEAHEAD#SELECTED_ITEM_SET': ({ action, state, updateState, dispatch }) => {
+			const { name, value, item } = action.payload || {};
+			if (!name) return;
+			applyFieldChange(name, value == null ? '' : String(value), state, updateState, dispatch);
+			const label = (item && item.label) || '';
+			updateState({ displayValues: { ...(state.displayValues || {}), [name]: label }, refQuery: { ...(state.refQuery || {}), [name]: label } });
 		},
 	},
 });

@@ -133,6 +133,19 @@
 	}
 }
 
+/* ── Responsive flow layout (formLayout="responsive") ─────────── *
+ * Ignores `.split`; fields flow in document order into 1–4 columns
+ * that adapt to the COMPONENT's container width (row-major). */
+.rf-flow {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--now-spacing-5, 14px);
+	align-items: start;
+}
+@container rf (min-width: 520px)  { .rf-flow { grid-template-columns: repeat(2, 1fr); } }
+@container rf (min-width: 820px)  { .rf-flow { grid-template-columns: repeat(3, 1fr); } }
+@container rf (min-width: 1120px) { .rf-flow { grid-template-columns: repeat(4, 1fr); } }
+
 /* ── Field wrappers (choice + toggle need custom label) ──────── */
 .rf-field {
 	display: flex;
@@ -162,6 +175,28 @@
 /* Required field indicator on wrapper */
 .rf-field--required > .rf-field-label::after {
 	content: '';
+}
+
+/* ── Image / attachment field (read-only indicator) ──────────── */
+.rf-field--image .rf-image-box {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--now-spacing-2, 6px);
+	padding: var(--now-spacing-3, 8px) var(--now-spacing-4, 10px);
+	border: 1px solid var(--now-color--divider, #d0d4da);
+	border-radius: var(--now-border-radius-2, 6px);
+	background: var(--now-color--surface, #fff);
+	color: var(--now-color--text-secondary, #54607a);
+}
+
+.rf-image-icon {
+	color: var(--now-color--text-tertiary, #6b7488);
+	flex: 0 0 auto;
+}
+
+.rf-image-text {
+	font-size: var(--now-font-size-body-sm, 13px);
+	line-height: 1.4;
 }
 
 /* ── Toggle wrapper ───────────────────────────────────────────── */

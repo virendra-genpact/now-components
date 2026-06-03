@@ -6,7 +6,9 @@ Give it a **table name**, **record sys_id**, and **form view** — the component
 the form layout from `sys_ui_section` / `sys_ui_element` (exactly as the form builder
 defines it) and the record values from the Table API. Each field renders **by its
 dictionary type**: booleans → `now-toggle`, choice fields → `now-dropdown`, references →
-read-only display, everything else → `now-input` with the matching HTML input type
+searchable `now-typeahead` (queries the referenced table as you type), image/attachment
+fields (`user_image`/`image`, e.g. Photo) → a read-only attachment indicator (not a text
+box), everything else → `now-input` with the matching HTML input type
 (number / email / tel / date / password / …). Within a section, fields lay out in
 **columns split by the form's `.split`** element — matching the classic form (the left
 column fills top→bottom, then the next), and collapsing to a single column in narrow
@@ -37,6 +39,7 @@ Composes standard components:
 - **`now-input`** — text/number/email/tel/date/password field inputs
 - **`now-toggle`** — boolean fields
 - **`now-dropdown`** — choice fields (options from `sys_choice`)
+- **`now-typeahead`** — reference fields (records searched live in the referenced table)
 - **`now-icon`** — section collapse chevron
 - **`now-button`** — Save + UI-action buttons
 
@@ -60,6 +63,7 @@ instance). On the deployed instance, the same paths are native.
 | `autoSaveFields` | json (array) | `[]` | Field names to PATCH immediately on blur, e.g. `["short_description","priority"]`. |
 | `saveLabel` | string | `'Save'` | Save button label. |
 | `readonly` | boolean | `false` | When `true`, all fields are read-only and Save is hidden. |
+| `formLayout` | choice | `'classic'` | `classic` mirrors the form's `.split` columns; `responsive` flows fields in sequence into 1–4 columns by container width. |
 
 ## Events
 

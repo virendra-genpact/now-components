@@ -1,7 +1,7 @@
 {
 	"components": {
 		"x-gegis-library-record-form": {
-			"innerComponents": ["now-card", "now-input", "now-button", "now-toggle", "now-dropdown", "now-icon"],
+			"innerComponents": ["now-card", "now-input", "now-button", "now-toggle", "now-dropdown", "now-typeahead", "now-icon"],
 			"slots": [
 				"after-section-0",
 				"after-section-1",
@@ -61,6 +61,19 @@
 							{ "label": "Bottom right (default)", "value": "bottom" },
 							{ "label": "Top right", "value": "top" },
 							{ "label": "Both top and bottom", "value": "both" }
+						]
+					}
+				},
+				{
+					"name": "formLayout",
+					"label": "Form layout",
+					"description": "Classic mirrors the form's column splits (the .split layout, default). Responsive ignores splits and flows fields in sequence into 1–4 columns based on the available width.",
+					"fieldType": "choice",
+					"defaultValue": "classic",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Classic (match form splits)", "value": "classic" },
+							{ "label": "Responsive (1–4 columns)", "value": "responsive" }
 						]
 					}
 				},
