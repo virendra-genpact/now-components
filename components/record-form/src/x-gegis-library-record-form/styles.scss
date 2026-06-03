@@ -1,0 +1,85 @@
+@import '@servicenow/sass-kit/host';
+
+:host {
+	display: block;
+}
+
+.rf-root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--now-spacing-6, 16px);
+}
+
+/* Section card inner layout */
+.rf-section-title {
+	font-size: var(--now-font-size-body-md, 14px);
+	font-weight: 600;
+	color: var(--now-color--text-primary, #1b2333);
+	margin: 0 0 var(--now-spacing-5, 14px);
+	padding-bottom: var(--now-spacing-3, 8px);
+	border-bottom: 1px solid var(--now-color--neutral-3, #e4e8ee);
+}
+
+.rf-grid {
+	display: grid;
+	/* grid-template-columns set inline per section from sys_ui_section.columns */
+	gap: var(--now-spacing-5, 14px);
+}
+
+/* Save button row */
+.rf-footer {
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* ── Loading skeleton ─────────────────────────────────────────── */
+
+@keyframes rf-shimmer {
+	0%   { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+
+.rf-loading {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.rf-skeleton {
+	height: 140px;
+	border-radius: var(--now-border-radius-lg, 8px);
+	background: linear-gradient(90deg, #eef0f4 25%, #f5f6f8 50%, #eef0f4 75%);
+	background-size: 200% 100%;
+	animation: rf-shimmer 1.5s ease-in-out infinite;
+}
+
+.rf-skeleton--sm {
+	height: 56px;
+}
+
+/* ── State messages ──────────────────────────────────────────── */
+
+.rf-error {
+	padding: var(--now-spacing-5, 14px) var(--now-spacing-6, 16px);
+	background: #fff5f5;
+	border: 1px solid #fbbfbf;
+	border-radius: var(--now-border-radius-md, 6px);
+	color: #c0341d;
+	font-size: var(--now-font-size-body-sm, 13px);
+}
+
+.rf-empty {
+	padding: var(--now-spacing-8, 24px);
+	text-align: center;
+	color: var(--now-color--text-tertiary, 6b7488);
+	font-size: var(--now-font-size-body-sm, 13px);
+}
+
+.rf-save-error {
+	padding: var(--now-spacing-4, 12px) var(--now-spacing-6, 16px);
+	background: #fff5f5;
+	border: 1px solid #fbbfbf;
+	border-radius: var(--now-border-radius-md, 6px);
+	color: #c0341d;
+	font-size: var(--now-font-size-body-sm, 13px);
+}

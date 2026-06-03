@@ -1,0 +1,102 @@
+{
+	"components": {
+		"x-gegis-library-record-form": {
+			"innerComponents": ["now-card", "now-input", "now-button"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Record Form",
+				"tileIcon": "./tile-icon/record-form-tile-icon.svg",
+				"description": "Experimental self-fetching record form. Reads form layout from sys_ui_section/sys_ui_element and record values from the Table API. Auto-save fields PATCH immediately on blur; all other dirty fields save on the Save button.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "table",
+					"label": "Table",
+					"description": "ServiceNow table name (e.g. incident, change_request).",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "sysId",
+					"label": "Record Sys ID",
+					"description": "The sys_id of the record to display.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "formView",
+					"label": "Form view",
+					"description": "Form view name as configured in the form builder (e.g. Default view).",
+					"fieldType": "string",
+					"defaultValue": "Default view"
+				},
+				{
+					"name": "autoSaveFields",
+					"label": "Auto-save fields",
+					"description": "JSON array of field names that PATCH the record immediately on blur, e.g. [\"short_description\",\"priority\"]. All other dirty fields require the Save button.",
+					"fieldType": "json"
+				},
+				{
+					"name": "saveLabel",
+					"label": "Save button label",
+					"description": "Label on the Save button.",
+					"fieldType": "string",
+					"defaultValue": "Save"
+				},
+				{
+					"name": "readonly",
+					"label": "Read-only",
+					"description": "When on, all fields are read-only and the Save button is hidden.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				}
+			],
+			"actions": [
+				{
+					"name": "FIELD_CHANGED",
+					"label": "Field changed",
+					"description": "Fired when any field value changes (on blur). Payload: { name, value }.",
+					"payload": [
+						{ "name": "name", "label": "Field name", "description": "The field name (column name).", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "The new field value.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "FIELD_AUTO_SAVED",
+					"label": "Field auto-saved",
+					"description": "Fired when an auto-save field has been successfully PATCHed to the record. Payload: { name, value }.",
+					"payload": [
+						{ "name": "name", "label": "Field name", "description": "The auto-saved field name.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "The saved value.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "FORM_SAVED",
+					"label": "Form saved",
+					"description": "Fired when the Save button successfully PATCHes all non-auto-save dirty fields. Payload: { values }.",
+					"payload": [
+						{ "name": "values", "label": "Saved values", "description": "Object of { fieldName: value } that was PATCHed.", "fieldType": "json" }
+					]
+				},
+				{
+					"name": "FORM_LOAD_ERROR",
+					"label": "Form load error",
+					"description": "Fired when the form layout or record fetch fails. Payload: { error }.",
+					"payload": [
+						{ "name": "error", "label": "Error message", "description": "The error message string.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "FORM_SAVE_ERROR",
+					"label": "Form save error",
+					"description": "Fired when a PATCH (auto-save or Save button) fails. Payload: { error }.",
+					"payload": [
+						{ "name": "error", "label": "Error message", "description": "The error message string.", "fieldType": "string" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

@@ -188,6 +188,19 @@
   <line x1="11" y1="32.5" x2="37" y2="32.5" stroke="#474747" stroke-width="2.2" stroke-linecap="round"/>
 </svg>
 </span>Extraction Summary Card</a>
+<a href="#record-form"><span class="nav-ic"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card outline -->
+  <rect x="6" y="8" width="36" height="32" rx="4" fill="none" stroke="#474747" stroke-width="2.5"/>
+  <!-- Section title bar -->
+  <rect x="11" y="14" width="16" height="2.5" rx="1.2" fill="#474747"/>
+  <!-- Field row 1 -->
+  <rect x="11" y="20" width="26" height="2" rx="1" fill="#474747" opacity="0.4"/>
+  <!-- Field row 2 -->
+  <rect x="11" y="25" width="20" height="2" rx="1" fill="#474747" opacity="0.4"/>
+  <!-- Field row 3 -->
+  <rect x="11" y="30" width="23" height="2" rx="1" fill="#474747" opacity="0.4"/>
+</svg>
+</span>Record Form</a>
 <a href="#toggle-card"><span class="nav-ic"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Card -->
   <rect x="5" y="9" width="38" height="30" rx="5" fill="none" stroke="#474747" stroke-width="2.5"/>
@@ -210,8 +223,8 @@
       <h1>ServiceNow Component Catalog</h1>
       <p class="lead">Reference for the <strong>x_gegis_library</strong> Next Experience components — configuration properties, dispatched events (with payloads), and copy-paste sample inputs.</p>
       <div class="stats">
-        <div class="stat"><b>11</b><span>Components</span></div>
-        <div class="stat"><b>19</b><span>Bindable events</span></div>
+        <div class="stat"><b>12</b><span>Components</span></div>
+        <div class="stat"><b>24</b><span>Bindable events</span></div>
         <div class="stat"><b>x_gegis_library</b><span>Scope</span></div>
       </div>
       <div class="rules">
@@ -928,6 +941,51 @@
     <h3>Sample input JSON</h3><h4><code>versions</code></h4><div class="code"><button class="copy" data-target="extraction-summary-versions">Copy</button><pre id="extraction-summary-versions"><code>[]</code></pre></div>
   </section>
 
+  <section class="comp" id="record-form">
+    <div class="comp-head">
+      <span class="comp-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card outline -->
+  <rect x="6" y="8" width="36" height="32" rx="4" fill="none" stroke="#474747" stroke-width="2.5"/>
+  <!-- Section title bar -->
+  <rect x="11" y="14" width="16" height="2.5" rx="1.2" fill="#474747"/>
+  <!-- Field row 1 -->
+  <rect x="11" y="20" width="26" height="2" rx="1" fill="#474747" opacity="0.4"/>
+  <!-- Field row 2 -->
+  <rect x="11" y="25" width="20" height="2" rx="1" fill="#474747" opacity="0.4"/>
+  <!-- Field row 3 -->
+  <rect x="11" y="30" width="23" height="2" rx="1" fill="#474747" opacity="0.4"/>
+</svg>
+</span>
+      <div class="comp-head-main">
+        <h2>Record Form</h2>
+        <div class="tags">
+          <span class="chip chip-tag">&lt;x-gegis-library-record-form&gt;</span>
+          <span class="chip">primitives</span>
+          <span class="chip">6 props</span>
+          <span class="chip">5 events</span>
+        </div>
+      </div>
+    </div>
+    <p class="desc">Experimental self-fetching record form. Reads form layout from sys_ui_section/sys_ui_element and record values from the Table API. Auto-save fields PATCH immediately on blur; all other dirty fields save on the Save button.</p>
+    <p class="inner"><strong>Standard components used:</strong> <span class="chip chip-now">now-card</span> <span class="chip chip-now">now-input</span> <span class="chip chip-now">now-button</span></p>
+    
+    <h3>Properties</h3>
+    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>table</code></td><td>Table</td><td>string</td><td><code></code></td><td>ServiceNow table name (e.g. incident, change_request).</td></tr>
+<tr><td><code>sysId</code></td><td>Record Sys ID</td><td>string</td><td><code></code></td><td>The sys_id of the record to display.</td></tr>
+<tr><td><code>formView</code></td><td>Form view</td><td>string</td><td><code>Default view</code></td><td>Form view name as configured in the form builder (e.g. Default view).</td></tr>
+<tr><td><code>autoSaveFields</code></td><td>Auto-save fields</td><td>json</td><td><span class="muted">—</span></td><td>JSON array of field names that PATCH the record immediately on blur, e.g. [&quot;short_description&quot;,&quot;priority&quot;]. All other dirty fields require the Save button.</td></tr>
+<tr><td><code>saveLabel</code></td><td>Save button label</td><td>string</td><td><code>Save</code></td><td>Label on the Save button.</td></tr>
+<tr><td><code>readonly</code></td><td>Read-only</td><td>boolean</td><td><code>false</code></td><td>When on, all fields are read-only and the Save button is hidden.</td></tr></tbody></table>
+    <h3>Events</h3>
+    
+    <table class="tbl"><thead><tr><th>Event</th><th>Label</th><th>Payload</th><th>When / use</th></tr></thead><tbody><tr><td><code>FIELD_CHANGED</code></td><td>Field changed</td><td><code>name</code><span class="muted">:string</span> &nbsp; <code>value</code><span class="muted">:string</span></td><td>Fired when any field value changes (on blur). Payload: { name, value }.</td></tr>
+<tr><td><code>FIELD_AUTO_SAVED</code></td><td>Field auto-saved</td><td><code>name</code><span class="muted">:string</span> &nbsp; <code>value</code><span class="muted">:string</span></td><td>Fired when an auto-save field has been successfully PATCHed to the record. Payload: { name, value }.</td></tr>
+<tr><td><code>FORM_SAVED</code></td><td>Form saved</td><td><code>values</code><span class="muted">:json</span></td><td>Fired when the Save button successfully PATCHes all non-auto-save dirty fields. Payload: { values }.</td></tr>
+<tr><td><code>FORM_LOAD_ERROR</code></td><td>Form load error</td><td><code>error</code><span class="muted">:string</span></td><td>Fired when the form layout or record fetch fails. Payload: { error }.</td></tr>
+<tr><td><code>FORM_SAVE_ERROR</code></td><td>Form save error</td><td><code>error</code><span class="muted">:string</span></td><td>Fired when a PATCH (auto-save or Save button) fails. Payload: { error }.</td></tr></tbody></table>
+    
+  </section>
+
   <section class="comp" id="toggle-card">
     <div class="comp-head">
       <span class="comp-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -968,7 +1026,7 @@
     <h3>Sample input JSON</h3><h4><code>items</code></h4><div class="code"><button class="copy" data-target="toggle-card-items">Copy</button><pre id="toggle-card-items"><code>[]</code></pre></div>
   </section>
 
-    <footer>Generated from each component's <code>now-ui.json</code> · 11 components · built 2026-06-03 · scope <code>x_gegis_library</code>.</footer>
+    <footer>Generated from each component's <code>now-ui.json</code> · 12 components · built 2026-06-03 · scope <code>x_gegis_library</code>.</footer>
   </main>
 </div>
 <script>
