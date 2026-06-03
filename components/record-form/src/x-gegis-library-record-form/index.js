@@ -179,9 +179,11 @@ const loadFormAndRecord = (table, sysId, formView) => {
 			`&sysparm_fields=element,type,position,sys_ui_section` +
 			`&sysparm_orderby=position&sysparm_limit=500`
 		).then((elRes) => {
-			const elementList = (elRes.result || []).filter(
-				(el) => el.element && el.type !== 'section_annotation' && el.type !== 'split_option'
-			);
+			const elementList = (elRes.result || [])
+				// Skip layout rows: empty element, or element/type starting with '.' (.split, .begin_split, etc.)
+				.filter((el) => el.element && !el.element.startsWith('.'))
+				// Position comes back as a string from REST — sort numerically
+				.sort((a, b) => parseInt(a.position, 10) - parseInt(b.position, 10));
 			const fieldNames = [...new Set(elementList.map((el) => el.element))];
 			if (!fieldNames.length) return { sectionList, elementList, labels: {} };
 
