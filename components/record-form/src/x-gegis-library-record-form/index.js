@@ -472,96 +472,107 @@ const view = (state, { dispatch }) => {
 
 			{state.saveError ? <div className="rf-save-error">{state.saveError}</div> : null}
 
-			{/* Sections */}
-			{state.sections.map((section) => {
+			{/* Sections — each wrapped so the named slot renders BETWEEN cards.
+			 *   after-section-0 … after-section-9: drop any component here in UI Builder.
+			 *   Unused slots render nothing and take zero space. */}
+			{state.sections.map((section, idx) => {
 				const isOpen = expanded[section.sys_id] !== false;
 				return (
-					<now-card className="rf-section" interaction="none">
-						<button
-							type="button"
-							className="rf-section-header"
-							aria-expanded={isOpen ? 'true' : 'false'}
-							on-click={() => dispatch('RF_TOGGLE_SECTION', { sectionId: section.sys_id })}
-						>
-							<span className="rf-section-caption">{section.caption}</span>
-							<now-icon
-								className={`rf-chevron${isOpen ? ' rf-chevron--open' : ''}`}
-								icon="chevron-down-outline"
-								size="sm"
-							/>
-						</button>
+					<div className="rf-section-wrap">
+						<now-card className="rf-section" interaction="none">
+							<button
+								type="button"
+								className="rf-section-header"
+								aria-expanded={isOpen ? 'true' : 'false'}
+								on-click={() => dispatch('RF_TOGGLE_SECTION', { sectionId: section.sys_id })}
+							>
+								<span className="rf-section-caption">{section.caption}</span>
+								<now-icon
+									className={`rf-chevron${isOpen ? ' rf-chevron--open' : ''}`}
+									icon="chevron-down-outline"
+									size="sm"
+								/>
+							</button>
 
-						{isOpen ? (
-							<div className={`rf-grid rf-grid--cols-${section.columns}`}>
-								{section.fields.map((field) => {
-									const ovr = policyOvr[field.name] || {};
-									const isMandatory = ovr.mandatory != null ? ovr.mandatory : field.mandatory;
-									const isReadOnly = isFormReadOnly || (ovr.readOnly != null ? ovr.readOnly : field.readOnly);
-									const isVisible = ovr.visible != null ? ovr.visible : true;
-									if (!isVisible) return null;
+							{isOpen ? (
+								<div className={`rf-grid rf-grid--cols-${section.columns}`}>
+									{section.fields.map((field) => {
+										const ovr = policyOvr[field.name] || {};
+										const isMandatory = ovr.mandatory != null ? ovr.mandatory : field.mandatory;
+										const isReadOnly = isFormReadOnly || (ovr.readOnly != null ? ovr.readOnly : field.readOnly);
+										const isVisible = ovr.visible != null ? ovr.visible : true;
+										if (!isVisible) return null;
 
-									const rawVal = values[field.name];
-									const strVal = rawVal == null ? '' : String(rawVal);
+										const rawVal = values[field.name];
+										const strVal = rawVal == null ? '' : String(rawVal);
 
-									/* ── Boolean → now-toggle ── */
-									if (isBool(field.fieldType)) {
-										const checked = rawVal === 'true' || rawVal === true || rawVal === '1';
+										/* ── Boolean → now-toggle ── */
+										if (isBool(field.fieldType)) {
+											const checked = rawVal === 'true' || rawVal === true || rawVal === '1';
+											return (
+												<div className={`rf-field rf-field--toggle${isMandatory ? ' rf-field--required' : ''}`}>
+													<span className="rf-field-label">
+														{field.label}
+														{isMandatory ? <span className="rf-asterisk" aria-hidden="true"> *</span> : null}
+													</span>
+													<span
+														className="rf-toggle-wrap"
+														on-click={() => {
+															if (isReadOnly) return;
+															dispatch('RF_FIELD_TOGGLE', { name: field.name, value: checked ? 'false' : 'true' });
+														}}
+													>
+														<now-toggle checked={checked} disabled={Boolean(isReadOnly)} size="md" configAria={{ switch: { 'aria-label': field.label } }} />
+													</span>
+												</div>
+											);
+										}
+
+										/* ── Choice → now-dropdown ── */
+										if (isChoice(field.fieldType) && field.choices.length) {
+											const items = field.choices.map((c) => ({ id: encodeChoice(field.name, c.value), label: c.label }));
+											const encodedCurrent = encodeChoice(field.name, strVal);
+											const selectedItems = items.some((i) => i.id === encodedCurrent) ? [encodedCurrent] : [];
+											return (
+												<div className={`rf-field${isMandatory ? ' rf-field--required' : ''}`}>
+													<span className="rf-field-label">
+														{field.label}
+														{isMandatory ? <span className="rf-asterisk" aria-hidden="true"> *</span> : null}
+													</span>
+													<now-dropdown items={items} selectedItems={selectedItems} select="single" size="md" disabled={Boolean(isReadOnly)} configAria={{ trigger: { 'aria-label': field.label } }} />
+												</div>
+											);
+										}
+
+										/* ── Reference → readonly display ── */
+										if (isRef(field.fieldType)) {
+											return <now-input name={field.name} label={field.label} value={strVal} readonly={true} size="md" />;
+										}
+
+										/* ── All other types → now-input ── */
 										return (
-											<div className={`rf-field rf-field--toggle${isMandatory ? ' rf-field--required' : ''}`}>
-												<span className="rf-field-label">
-													{field.label}
-													{isMandatory ? <span className="rf-asterisk" aria-hidden="true"> *</span> : null}
-												</span>
-												<span
-													className="rf-toggle-wrap"
-													on-click={() => {
-														if (isReadOnly) return;
-														dispatch('RF_FIELD_TOGGLE', { name: field.name, value: checked ? 'false' : 'true' });
-													}}
-												>
-													<now-toggle checked={checked} disabled={Boolean(isReadOnly)} size="md" configAria={{ switch: { 'aria-label': field.label } }} />
-												</span>
-											</div>
+											<now-input
+												name={field.name}
+												label={field.label}
+												value={strVal}
+												type={inputTypeFor(field.fieldType)}
+												readonly={Boolean(isReadOnly)}
+												required={Boolean(isMandatory)}
+												size="md"
+											/>
 										);
-									}
+									})}
+								</div>
+							) : null}
+						</now-card>
 
-									/* ── Choice → now-dropdown ── */
-									if (isChoice(field.fieldType) && field.choices.length) {
-										const items = field.choices.map((c) => ({ id: encodeChoice(field.name, c.value), label: c.label }));
-										const encodedCurrent = encodeChoice(field.name, strVal);
-										const selectedItems = items.some((i) => i.id === encodedCurrent) ? [encodedCurrent] : [];
-										return (
-											<div className={`rf-field${isMandatory ? ' rf-field--required' : ''}`}>
-												<span className="rf-field-label">
-													{field.label}
-													{isMandatory ? <span className="rf-asterisk" aria-hidden="true"> *</span> : null}
-												</span>
-												<now-dropdown items={items} selectedItems={selectedItems} select="single" size="md" disabled={Boolean(isReadOnly)} configAria={{ trigger: { 'aria-label': field.label } }} />
-											</div>
-										);
-									}
-
-									/* ── Reference → readonly display ── */
-									if (isRef(field.fieldType)) {
-										return <now-input name={field.name} label={field.label} value={strVal} readonly={true} size="md" />;
-									}
-
-									/* ── All other types → now-input ── */
-									return (
-										<now-input
-											name={field.name}
-											label={field.label}
-											value={strVal}
-											type={inputTypeFor(field.fieldType)}
-											readonly={Boolean(isReadOnly)}
-											required={Boolean(isMandatory)}
-											size="md"
-										/>
-									);
-								})}
+						{/* Named slot — rendered after each section card, before the next */}
+						{idx < 10 ? (
+							<div className="rf-section-slot">
+								<slot name={`after-section-${idx}`}></slot>
 							</div>
 						) : null}
-					</now-card>
+					</div>
 				);
 			})}
 
@@ -577,6 +588,12 @@ createCustomElement('x-gegis-library-record-form', {
 	renderer: { type: snabbdom },
 	view,
 	styles,
+	slots: {
+		'after-section-0': {}, 'after-section-1': {}, 'after-section-2': {},
+		'after-section-3': {}, 'after-section-4': {}, 'after-section-5': {},
+		'after-section-6': {}, 'after-section-7': {}, 'after-section-8': {},
+		'after-section-9': {},
+	},
 	initialState: {
 		loadKey: '',
 		loading: false,

@@ -38,6 +38,19 @@
 	flex-wrap: wrap;
 }
 
+/* ── Section wrapper (holds one card + one inter-section slot) ── */
+.rf-section-wrap {
+	display: contents; /* transparent to layout — children participate in rf-root flex gap */
+}
+
+/* ── Inter-section slot ───────────────────────────────────────── *
+ * Wraps <slot name="after-section-N">. When empty the slot itself
+ * has no size, so the wrapper collapses to zero height automatically.
+ * When content is slotted in, it flows naturally with the form gap. */
+.rf-section-slot:empty {
+	display: none;
+}
+
 /* ── Section card ─────────────────────────────────────────────── */
 .rf-section {
 	width: 100%;

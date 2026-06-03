@@ -2,6 +2,18 @@
 	"components": {
 		"x-gegis-library-record-form": {
 			"innerComponents": ["now-card", "now-input", "now-button", "now-toggle", "now-dropdown", "now-icon"],
+			"slots": [
+				"after-section-0",
+				"after-section-1",
+				"after-section-2",
+				"after-section-3",
+				"after-section-4",
+				"after-section-5",
+				"after-section-6",
+				"after-section-7",
+				"after-section-8",
+				"after-section-9"
+			],
 			"uiBuilder": {
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Record Form",
