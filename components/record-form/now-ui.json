@@ -1,19 +1,19 @@
 {
 	"components": {
 		"x-gegis-library-record-form": {
-			"innerComponents": ["now-card", "now-input", "now-button"],
+			"innerComponents": ["now-card", "now-input", "now-button", "now-toggle", "now-dropdown", "now-icon"],
 			"uiBuilder": {
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Record Form",
 				"tileIcon": "./tile-icon/record-form-tile-icon.svg",
-				"description": "Experimental self-fetching record form. Reads form layout from sys_ui_section/sys_ui_element and record values from the Table API. Auto-save fields PATCH immediately on blur; all other dirty fields save on the Save button.",
+				"description": "Production-grade self-fetching record form. Reads layout from sys_ui_form/section/element, field metadata from sys_dictionary, choices from sys_choice, UI policies from sys_ui_policy, and UI actions from sys_ui_action. Renders fields with correct Horizon components. Supports collapsible sections, responsive grid, policy-driven field rules, and configurable action bar.",
 				"category": "primitives"
 			},
 			"properties": [
 				{
 					"name": "table",
 					"label": "Table",
-					"description": "ServiceNow table name (e.g. incident, change_request).",
+					"description": "ServiceNow table name (e.g. incident, x_gegis_uwm_dashbo_clearance_case).",
 					"fieldType": "string",
 					"defaultValue": ""
 				},
@@ -27,14 +27,35 @@
 				{
 					"name": "formView",
 					"label": "Form view",
-					"description": "Form view name as configured in the form builder (e.g. Default view).",
+					"description": "Form view title as configured in the form builder (e.g. Default view, ITIL, Workspace).",
 					"fieldType": "string",
 					"defaultValue": "Default view"
 				},
 				{
+					"name": "formTitle",
+					"label": "Form title",
+					"description": "Heading shown above the form. Leave empty to hide.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "actionBarPosition",
+					"label": "Action bar position",
+					"description": "Where to render the UI action buttons and Save button.",
+					"fieldType": "choice",
+					"defaultValue": "bottom",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Bottom right (default)", "value": "bottom" },
+							{ "label": "Top right", "value": "top" },
+							{ "label": "Both top and bottom", "value": "both" }
+						]
+					}
+				},
+				{
 					"name": "autoSaveFields",
 					"label": "Auto-save fields",
-					"description": "JSON array of field names that PATCH the record immediately on blur, e.g. [\"short_description\",\"priority\"]. All other dirty fields require the Save button.",
+					"description": "JSON array of field names that PATCH immediately on blur, e.g. [\"short_description\"]. All other fields require the Save button.",
 					"fieldType": "json"
 				},
 				{
@@ -47,7 +68,7 @@
 				{
 					"name": "readonly",
 					"label": "Read-only",
-					"description": "When on, all fields are read-only and the Save button is hidden.",
+					"description": "When on, all fields are read-only and the Save button is hidden. UI action buttons are still shown.",
 					"fieldType": "boolean",
 					"defaultValue": false
 				}
@@ -58,33 +79,45 @@
 					"label": "Field changed",
 					"description": "Fired when any field value changes (on blur). Payload: { name, value }.",
 					"payload": [
-						{ "name": "name", "label": "Field name", "description": "The field name (column name).", "fieldType": "string" },
-						{ "name": "value", "label": "Value", "description": "The new field value.", "fieldType": "string" }
+						{ "name": "name", "label": "Field name", "fieldType": "string", "description": "Column name of the changed field." },
+						{ "name": "value", "label": "Value", "fieldType": "string", "description": "The new field value." }
 					]
 				},
 				{
 					"name": "FIELD_AUTO_SAVED",
 					"label": "Field auto-saved",
-					"description": "Fired when an auto-save field has been successfully PATCHed to the record. Payload: { name, value }.",
+					"description": "Fired when an auto-save field is successfully PATCHed. Payload: { name, value }.",
 					"payload": [
-						{ "name": "name", "label": "Field name", "description": "The auto-saved field name.", "fieldType": "string" },
-						{ "name": "value", "label": "Value", "description": "The saved value.", "fieldType": "string" }
+						{ "name": "name", "label": "Field name", "fieldType": "string", "description": "The auto-saved field column name." },
+						{ "name": "value", "label": "Value", "fieldType": "string", "description": "The saved value." }
 					]
 				},
 				{
 					"name": "FORM_SAVED",
 					"label": "Form saved",
-					"description": "Fired when the Save button successfully PATCHes all non-auto-save dirty fields. Payload: { values }.",
+					"description": "Fired when Save successfully PATCHes all non-auto-save dirty fields. Payload: { values }.",
 					"payload": [
-						{ "name": "values", "label": "Saved values", "description": "Object of { fieldName: value } that was PATCHed.", "fieldType": "json" }
+						{ "name": "values", "label": "Saved values", "fieldType": "json", "description": "Object of { fieldName: value } that was PATCHed to the record." }
+					]
+				},
+				{
+					"name": "UI_ACTION_TRIGGERED",
+					"label": "UI action triggered",
+					"description": "Fired when the user clicks a sys_ui_action button. Bind to a REST/transform to execute the action. Payload: { name, actionName, sysId, table, values }.",
+					"payload": [
+						{ "name": "name", "label": "Action label", "fieldType": "string", "description": "Display label of the clicked action (e.g. 'Update', 'Resolve')." },
+						{ "name": "actionName", "label": "Action name", "fieldType": "string", "description": "Internal action_name (e.g. 'sysverb_update'). Use this to identify the action in bindings." },
+						{ "name": "sysId", "label": "Record Sys ID", "fieldType": "string", "description": "The sys_id of the record the form is editing." },
+						{ "name": "table", "label": "Table", "fieldType": "string", "description": "The table name." },
+						{ "name": "values", "label": "Current form values", "fieldType": "json", "description": "All current field values at the time the action was triggered." }
 					]
 				},
 				{
 					"name": "FORM_LOAD_ERROR",
 					"label": "Form load error",
-					"description": "Fired when the form layout or record fetch fails. Payload: { error }.",
+					"description": "Fired when form layout or record fetch fails. Payload: { error }.",
 					"payload": [
-						{ "name": "error", "label": "Error message", "description": "The error message string.", "fieldType": "string" }
+						{ "name": "error", "label": "Error message", "fieldType": "string", "description": "The error message string." }
 					]
 				},
 				{
@@ -92,7 +125,7 @@
 					"label": "Form save error",
 					"description": "Fired when a PATCH (auto-save or Save button) fails. Payload: { error }.",
 					"payload": [
-						{ "name": "error", "label": "Error message", "description": "The error message string.", "fieldType": "string" }
+						{ "name": "error", "label": "Error message", "fieldType": "string", "description": "The error message string." }
 					]
 				}
 			]

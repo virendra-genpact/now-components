@@ -224,7 +224,7 @@
       <p class="lead">Reference for the <strong>x_gegis_library</strong> Next Experience components — configuration properties, dispatched events (with payloads), and copy-paste sample inputs.</p>
       <div class="stats">
         <div class="stat"><b>12</b><span>Components</span></div>
-        <div class="stat"><b>24</b><span>Bindable events</span></div>
+        <div class="stat"><b>25</b><span>Bindable events</span></div>
         <div class="stat"><b>x_gegis_library</b><span>Scope</span></div>
       </div>
       <div class="rules">
@@ -961,27 +961,30 @@
         <div class="tags">
           <span class="chip chip-tag">&lt;x-gegis-library-record-form&gt;</span>
           <span class="chip">primitives</span>
-          <span class="chip">6 props</span>
-          <span class="chip">5 events</span>
+          <span class="chip">8 props</span>
+          <span class="chip">6 events</span>
         </div>
       </div>
     </div>
-    <p class="desc">Experimental self-fetching record form. Reads form layout from sys_ui_section/sys_ui_element and record values from the Table API. Auto-save fields PATCH immediately on blur; all other dirty fields save on the Save button.</p>
-    <p class="inner"><strong>Standard components used:</strong> <span class="chip chip-now">now-card</span> <span class="chip chip-now">now-input</span> <span class="chip chip-now">now-button</span></p>
+    <p class="desc">Production-grade self-fetching record form. Reads layout from sys_ui_form/section/element, field metadata from sys_dictionary, choices from sys_choice, UI policies from sys_ui_policy, and UI actions from sys_ui_action. Renders fields with correct Horizon components. Supports collapsible sections, responsive grid, policy-driven field rules, and configurable action bar.</p>
+    <p class="inner"><strong>Standard components used:</strong> <span class="chip chip-now">now-card</span> <span class="chip chip-now">now-input</span> <span class="chip chip-now">now-button</span> <span class="chip chip-now">now-toggle</span> <span class="chip chip-now">now-dropdown</span> <span class="chip chip-now">now-icon</span></p>
     
     <h3>Properties</h3>
-    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>table</code></td><td>Table</td><td>string</td><td><code></code></td><td>ServiceNow table name (e.g. incident, change_request).</td></tr>
+    <table class="tbl"><thead><tr><th>Property</th><th>Label</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>table</code></td><td>Table</td><td>string</td><td><code></code></td><td>ServiceNow table name (e.g. incident, x_gegis_uwm_dashbo_clearance_case).</td></tr>
 <tr><td><code>sysId</code></td><td>Record Sys ID</td><td>string</td><td><code></code></td><td>The sys_id of the record to display.</td></tr>
-<tr><td><code>formView</code></td><td>Form view</td><td>string</td><td><code>Default view</code></td><td>Form view name as configured in the form builder (e.g. Default view).</td></tr>
-<tr><td><code>autoSaveFields</code></td><td>Auto-save fields</td><td>json</td><td><span class="muted">—</span></td><td>JSON array of field names that PATCH the record immediately on blur, e.g. [&quot;short_description&quot;,&quot;priority&quot;]. All other dirty fields require the Save button.</td></tr>
+<tr><td><code>formView</code></td><td>Form view</td><td>string</td><td><code>Default view</code></td><td>Form view title as configured in the form builder (e.g. Default view, ITIL, Workspace).</td></tr>
+<tr><td><code>formTitle</code></td><td>Form title</td><td>string</td><td><code></code></td><td>Heading shown above the form. Leave empty to hide.</td></tr>
+<tr><td><code>actionBarPosition</code></td><td>Action bar position</td><td>choice <span class="muted">(bottom · top · both)</span></td><td><code>bottom</code></td><td>Where to render the UI action buttons and Save button.</td></tr>
+<tr><td><code>autoSaveFields</code></td><td>Auto-save fields</td><td>json</td><td><span class="muted">—</span></td><td>JSON array of field names that PATCH immediately on blur, e.g. [&quot;short_description&quot;]. All other fields require the Save button.</td></tr>
 <tr><td><code>saveLabel</code></td><td>Save button label</td><td>string</td><td><code>Save</code></td><td>Label on the Save button.</td></tr>
-<tr><td><code>readonly</code></td><td>Read-only</td><td>boolean</td><td><code>false</code></td><td>When on, all fields are read-only and the Save button is hidden.</td></tr></tbody></table>
+<tr><td><code>readonly</code></td><td>Read-only</td><td>boolean</td><td><code>false</code></td><td>When on, all fields are read-only and the Save button is hidden. UI action buttons are still shown.</td></tr></tbody></table>
     <h3>Events</h3>
     
     <table class="tbl"><thead><tr><th>Event</th><th>Label</th><th>Payload</th><th>When / use</th></tr></thead><tbody><tr><td><code>FIELD_CHANGED</code></td><td>Field changed</td><td><code>name</code><span class="muted">:string</span> &nbsp; <code>value</code><span class="muted">:string</span></td><td>Fired when any field value changes (on blur). Payload: { name, value }.</td></tr>
-<tr><td><code>FIELD_AUTO_SAVED</code></td><td>Field auto-saved</td><td><code>name</code><span class="muted">:string</span> &nbsp; <code>value</code><span class="muted">:string</span></td><td>Fired when an auto-save field has been successfully PATCHed to the record. Payload: { name, value }.</td></tr>
-<tr><td><code>FORM_SAVED</code></td><td>Form saved</td><td><code>values</code><span class="muted">:json</span></td><td>Fired when the Save button successfully PATCHes all non-auto-save dirty fields. Payload: { values }.</td></tr>
-<tr><td><code>FORM_LOAD_ERROR</code></td><td>Form load error</td><td><code>error</code><span class="muted">:string</span></td><td>Fired when the form layout or record fetch fails. Payload: { error }.</td></tr>
+<tr><td><code>FIELD_AUTO_SAVED</code></td><td>Field auto-saved</td><td><code>name</code><span class="muted">:string</span> &nbsp; <code>value</code><span class="muted">:string</span></td><td>Fired when an auto-save field is successfully PATCHed. Payload: { name, value }.</td></tr>
+<tr><td><code>FORM_SAVED</code></td><td>Form saved</td><td><code>values</code><span class="muted">:json</span></td><td>Fired when Save successfully PATCHes all non-auto-save dirty fields. Payload: { values }.</td></tr>
+<tr><td><code>UI_ACTION_TRIGGERED</code></td><td>UI action triggered</td><td><code>name</code><span class="muted">:string</span> &nbsp; <code>actionName</code><span class="muted">:string</span> &nbsp; <code>sysId</code><span class="muted">:string</span> &nbsp; <code>table</code><span class="muted">:string</span> &nbsp; <code>values</code><span class="muted">:json</span></td><td>Fired when the user clicks a sys_ui_action button. Bind to a REST/transform to execute the action. Payload: { name, actionName, sysId, table, values }.</td></tr>
+<tr><td><code>FORM_LOAD_ERROR</code></td><td>Form load error</td><td><code>error</code><span class="muted">:string</span></td><td>Fired when form layout or record fetch fails. Payload: { error }.</td></tr>
 <tr><td><code>FORM_SAVE_ERROR</code></td><td>Form save error</td><td><code>error</code><span class="muted">:string</span></td><td>Fired when a PATCH (auto-save or Save button) fails. Payload: { error }.</td></tr></tbody></table>
     
   </section>
