@@ -1,14 +1,14 @@
 {
-	"name": "@x_gegis_library/dynamic-form",
+	"name": "@x_gegis_library/data-table",
 	"version": "0.1.0",
 	"private": false,
-	"description": "An OOTB-style record form for ServiceNow Next Experience (UI Builder): configure a table, sys_id and view; the component loads field metadata, choices and the form layout over the Table API and PATCHes changes on Save / autosave. Read-only and Autosave toggles included.",
+	"description": "A configurable record list / data table for ServiceNow Next Experience (UI Builder): give it a table name and an encoded query and it loads the matching records over the Table API and renders them in a paginated, OOTB-style table with a status pill and per-row Edit / Duplicate / Delete actions. Emits row + action events for the page to bind.",
 	"keywords": [
 		"ServiceNow",
 		"Next Experience UI Component",
-		"form",
-		"metadata",
-		"dynamic"
+		"table",
+		"list",
+		"data"
 	],
 	"readme": "./README.md",
 	"engines": {
@@ -29,12 +29,9 @@
 	},
 	"devDependencies": {
 		"@babel/runtime": "7.25.7",
-		"@servicenow/now-button": "latest",
-		"@servicenow/now-checkbox": "latest",
-		"@servicenow/now-input": "latest",
+		"@servicenow/now-icon": "latest",
 		"@servicenow/now-loader": "latest",
-		"@servicenow/now-select": "latest",
-		"@servicenow/now-textarea": "latest",
+		"@servicenow/now-pagination-control": "latest",
 		"ajv": "^6.12.6",
 		"sass": "1.53.0"
 	},
