@@ -10,6 +10,45 @@
 	color: #2a3242;
 }
 
+.qc-root {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+/* ── Action bar (absorbed from quote-action-bar) ── */
+.qab {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 10px 12px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	background: #ffffff;
+	border: 1px solid #e3e6ec;
+}
+.qab-left,
+.qab-right {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.qab-count {
+	font-size: 14px;
+	color: #6b7280;
+	white-space: nowrap;
+}
+.qab-btn {
+	display: inline-flex;
+	align-items: center;
+}
+.qab-btn.is-off {
+	cursor: default;
+}
+
+/* ── Comparison grid ── */
 .qc-grid {
 	display: grid;
 	/* gridTemplateColumns set inline (label width + repeat(n, 1fr)) */
@@ -97,8 +136,12 @@
 	color: #2a3242;
 	border-bottom: 1px solid #ececf0;
 	border-left: 1px solid #f3f4f6;
-	display: block;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
+/* --center kept for explicitness; all cells are centered by default above */
 .qc-cell--center {
 	text-align: center;
 }
@@ -124,16 +167,30 @@
 	vertical-align: bottom;
 }
 
-/* tick / cross */
-.qc-tick {
-	color: #1f9d57;
-	font-size: 15px;
-	font-weight: 700;
+/* tick / cross — now-icon; color inherited */
+.qc-icon {
+	display: inline-flex;
+	align-items: center;
 }
-.qc-cross {
-	color: #d23f54;
-	font-size: 15px;
-	font-weight: 700;
+.qc-icon--success  { color: #1f9d57; }
+.qc-icon--critical { color: #d23f54; }
+.qc-icon--warning  { color: #e8833a; }
+
+/* status_text — icon + label inline (Quote Validity, Authority Check) */
+.qc-status-text {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 13px;
+}
+.qc-status-text.qc-icon--warning  { color: #e8833a; }
+.qc-status-text.qc-icon--success  { color: #1f9d57; }
+.qc-status-text.qc-icon--critical { color: #d23f54; }
+
+/* Actions label row */
+.qc-rowlabel--actions {
+	font-weight: 600;
+	color: #1c2433;
 }
 
 /* Trend (small arrow + optional "vs baseline"). */
@@ -166,11 +223,12 @@
 .qc-pill--red { background: #d23f54; }
 .qc-pill--orange { background: #e8833a; }
 
-/* Action buttons */
+/* Action buttons — centered (inherits from .qc-cell flex) */
 .qc-actions {
 	display: flex;
-	gap: 8px;
+	gap: 6px;
 	flex-wrap: wrap;
+	justify-content: center;
 }
 .qc-btn {
 	font: inherit;
