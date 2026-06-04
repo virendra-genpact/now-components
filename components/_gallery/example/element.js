@@ -30,13 +30,20 @@ const QC_VERSIONS = [
 ];
 const DF_SECTIONS = [
 	{ sectionName: 'Insured details', fields: [
-		{ label: 'Legal name', name: 'name', type: 'text', value: 'Acme Manufacturing Co.' },
-		{ label: 'Industry', name: 'industry', type: 'select', options: ['Manufacturing', 'Retail', 'Technology'], value: 'Manufacturing' },
-		{ label: 'State', name: 'state', type: 'select', options: ['CA', 'TX', 'NY'], value: 'TX' },
-		{ label: 'Employees', name: 'emp', type: 'text', value: '250' },
-		{ label: 'TIV', name: 'tiv', type: 'text', value: '$5,000,000' },
-		{ label: 'Effective date', name: 'eff', type: 'text', value: '2026-07-01' },
+		{ label: 'Number',         name: 'number',    type: 'text',      readonly: true, value: 'CS0001007' },
+		{ label: 'Account',        name: 'account',   type: 'reference', value: '' },
+		{ label: 'Contact',        name: 'contact',   type: 'reference', value: '' },
+		{ label: 'Opened at',      name: 'opened_at', type: 'datetime',  value: '2026-05-11T21:18' },
+		{ label: 'State',          name: 'state',     type: 'select',    options: [{ label: 'New', value: '1' }, { label: 'In Progress', value: '2' }, { label: 'Closed', value: '3' }], value: '1' },
+		{ label: 'Priority',       name: 'priority',  type: 'select',    options: [{ label: '1 - Critical', value: '1' }, { label: '2 - High', value: '2' }, { label: '3 - Moderate', value: '3' }, { label: '4 - Low', value: '4' }], value: '4' },
+		{ label: 'Effective date', name: 'eff',       type: 'date',      value: '2026-07-01' },
+		{ label: 'Active',         name: 'active',    type: 'boolean',   value: true },
 	] },
+];
+const DF_UI_ACTIONS = [
+	{ label: 'Update',       name: 'update',       variant: 'primary'   },
+	{ label: 'Assign to me', name: 'assign_to_me', variant: 'secondary' },
+	{ label: 'Cancel',       name: 'cancel',       variant: 'tertiary'  },
 ];
 const TC_ITEMS = [
 	{ label: 'Property Damage', on: true, required: true },
@@ -53,7 +60,7 @@ const ITEMS = [
 	['x-gegis-library-peril-deductibles', 780],
 	['x-gegis-library-metric-card', 380],
 	['x-gegis-library-collapse', 640, { expanded: true }],
-	['x-gegis-library-dynamic-form', 620, { sections: DF_SECTIONS }],
+	['x-gegis-library-dynamic-form', 680, { sections: DF_SECTIONS, uiActions: DF_UI_ACTIONS }],
 	['x-gegis-library-endorsement-card', 640],
 	['x-gegis-library-extraction-summary', 860],
 	['x-gegis-library-toggle-card', 560, { items: TC_ITEMS }],

@@ -5,3 +5,4 @@ dist/
 
 # workspace
 now-components/
+package-lock.json

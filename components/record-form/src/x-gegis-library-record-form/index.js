@@ -45,19 +45,41 @@ const parseAutoSave = (raw) => {
 
 /* ── Field-type helpers ──────────────────────────────────────── */
 
+/* now-input only accepts: email | ip | number | text. */
 const INPUT_TYPE_MAP = {
 	integer: 'number', float: 'number', decimal: 'number', currency: 'number',
-	email: 'email', url: 'url',
-	phone_number: 'tel', ph_number: 'tel', phone_number_e164: 'tel',
-	password: 'password', password2: 'password',
-	glide_date: 'date', due_date: 'date',
-	glide_date_time: 'datetime-local', glide_time: 'time',
+	longint: 'number', price: 'number', percent_complete: 'number',
+	email: 'email',
+	ip_addr: 'ip',
 };
 const inputTypeFor = (ft) => INPUT_TYPE_MAP[ft] || 'text';
 
-const isBool = (ft) => ft === 'boolean';
-const isChoice = (ft) => ft === 'choice';
-const isRef = (ft) => ft === 'reference' || ft === 'domain_id' || ft === 'glide_list' || ft === 'document_id';
+const isBool     = (ft) => ft === 'boolean';
+const isChoice   = (ft) => ft === 'choice';
+const isRef      = (ft) => ft === 'reference' || ft === 'domain_id' || ft === 'glide_list' || ft === 'document_id';
+const isPhone    = (ft) => ft === 'ph_number' || ft === 'phone_number' || ft === 'phone_number_e164';
+const isPassword = (ft) => ft === 'password' || ft === 'password2';
+const isUrl      = (ft) => ft === 'url' || ft === 'glide_uri';
+const isHtml     = (ft) => ft === 'html' || ft === 'translated_html';
+/* Multiline plain-text types → now-textarea */
+const isMultiline = (ft) => [
+	'journal', 'journal_input', 'journal_list',
+	'wiki_text', 'script', 'script_plain',
+	'conditions', 'condition_string',
+	'translated_text', 'data_structure',
+	'simple_name_values', 'dynamic_attribute_store',
+].includes(ft);
+
+const isDateType     = (ft) => ft === 'glide_date' || ft === 'due_date';
+const isDateTimeType = (ft) => ft === 'glide_date_time' || ft === 'calendar_date_time' || ft === 'insert_timestamp';
+const isTimeType     = (ft) => ft === 'glide_time' || ft === 'glide_utc_time' || ft === 'glide_duration';
+const isAnyDate  = (ft) => isDateType(ft) || isDateTimeType(ft) || isTimeType(ft);
+
+const dateTimeProps = (ft) => {
+	if (isDateTimeType(ft)) return { type: 'date-time', format: 'yyyy-MM-dd HH:mm:ss' };
+	if (isTimeType(ft))     return { type: 'time',      format: 'HH:mm:ss' };
+	return                         { type: 'date',      format: 'yyyy-MM-dd' };
+};
 /* Image / file fields are backed by attachments (db_image / sys_attachment), not a value
  * you edit in a text box — e.g. sys_user.photo & avatar are `user_image`. */
 const isImage = (ft) => ft === 'user_image' || ft === 'image' || ft === 'file_attachment' || ft === 'photo';
@@ -252,6 +274,52 @@ let _loadTimer = null;
  *   sys_ui_action.form_button = boolean → show in action bar
  *   sys_ui_action.condition   = encoded query or 'javascript:…'
  * ─────────────────────────────────────────────────────────────── */
+/* ── Build sections from resolved elements + dictMap + choicesMap ── */
+const buildSections = (sectionList, allElements, elementList, dictMap, choicesMap) => {
+	const bySection = {};
+	const fieldByKey = {};
+	(elementList || []).forEach((el) => {
+		const sid = refVal(el.sys_ui_section);
+		if (!sid) return;
+		const dict = (dictMap || {})[el.element] || { label: toLabel(el.element), type: 'string', isChoice: false, reference: '', mandatory: false, readOnly: false };
+		const fieldObj = {
+			name: el.element,
+			label: dict.label,
+			fieldType: dict.type,
+			isChoice: dict.isChoice,
+			reference: dict.reference,
+			mandatory: dict.mandatory,
+			readOnly: dict.readOnly,
+			choices: (choicesMap || {})[el.element] || [],
+		};
+		if (!bySection[sid]) bySection[sid] = [];
+		bySection[sid].push(fieldObj);
+		fieldByKey[sid + '|' + el.element] = fieldObj;
+	});
+	const colsBySection = {};
+	(allElements || []).forEach((el) => {
+		const sid = refVal(el.sys_ui_section);
+		if (!sid) return;
+		if (!colsBySection[sid]) colsBySection[sid] = [[]];
+		const nm = el.element;
+		if (nm === '.split') { colsBySection[sid].push([]); return; }
+		if (nm.charAt(0) === '.') return;
+		const fo = fieldByKey[sid + '|' + nm];
+		if (fo) colsBySection[sid][colsBySection[sid].length - 1].push(fo);
+	});
+	return (sectionList || [])
+		.map((s) => {
+			const groups = (colsBySection[s.sys_id] || [[]]).filter((c) => c.length > 0);
+			return {
+				sys_id: s.sys_id,
+				caption: s.caption || 'Details',
+				fields: bySection[s.sys_id] || [],
+				columnGroups: groups.length ? groups : [bySection[s.sys_id] || []],
+			};
+		})
+		.filter((s) => s.fields.length > 0);
+};
+
 const loadFormAndRecord = (table, sysId, formView) => {
 	const enc = encodeURIComponent;
 
@@ -260,7 +328,84 @@ const loadFormAndRecord = (table, sysId, formView) => {
 		`/api/now/table/${enc(table)}/${enc(sysId)}?sysparm_display_value=all`
 	);
 
-	/* ② Resolve view → needed by all other layout/policy/action fetches */
+	/* ② Table inheritance chain — sys_dictionary stores fields under the table
+	 * where they are DEFINED, not where they are used. A child table's own
+	 * sys_dictionary only has the fields added at that level; all inherited fields
+	 * live under the parent's name. Walk super_class up to 5 levels in one call. */
+	const tableChainPromise = snFetch(
+		`/api/now/table/sys_db_object?sysparm_query=name=${enc(table)}` +
+		`&sysparm_fields=super_class.name,super_class.super_class.name` +
+		`,super_class.super_class.super_class.name` +
+		`,super_class.super_class.super_class.super_class.name` +
+		`,super_class.super_class.super_class.super_class.super_class.name` +
+		`&sysparm_limit=1`
+	).then((r) => {
+		const rec = (r.result || [])[0] || {};
+		const chain = [
+			table,
+			rec['super_class.name'],
+			rec['super_class.super_class.name'],
+			rec['super_class.super_class.super_class.name'],
+			rec['super_class.super_class.super_class.super_class.name'],
+			rec['super_class.super_class.super_class.super_class.super_class.name'],
+		].filter(Boolean);
+		console.log('[record-form] table chain:', chain);
+		return chain;
+	}).catch(() => [table]);
+
+	/* ③ sys_dictionary — parallel with view chain, no elementIN filter.
+	 * Uses full inheritance chain so inherited fields are included.
+	 * Child definition overwrites parent when the same field appears at both levels. */
+	const dictPromise = tableChainPromise.then((chain) =>
+		snFetch(
+			`/api/now/table/sys_dictionary` +
+			`?sysparm_query=nameIN${chain.join(',')}` +
+			`&sysparm_fields=name,element,column_label,internal_type,choice,reference,mandatory,read_only` +
+			`&sysparm_limit=1000`
+		).then((dictRes) => {
+			const dictMap = {};
+			/* Sort parent→child (highest chain index first) so child writes last and wins */
+			const sorted = (dictRes.result || []).slice().sort(
+				(a, b) => chain.indexOf(b.name || '') - chain.indexOf(a.name || '')
+			);
+			sorted.forEach((d) => {
+				if (!d.element) return;
+				const type = refVal(d.internal_type) || 'string';
+				const choiceAttr = String(d.choice == null ? '' : d.choice);
+				dictMap[d.element] = {
+					label: d.column_label || toLabel(d.element),
+					type,
+					isChoice: choiceAttr === '1' || choiceAttr === '2' || choiceAttr === '3' || isChoice(type),
+					reference: refVal(d.reference) || '',
+					mandatory: isTruthy(d.mandatory),
+					readOnly: isTruthy(d.read_only),
+				};
+			});
+			console.log('[record-form] dictMap:', JSON.stringify(dictMap, null, 2));
+			return dictMap;
+		})
+	).catch(() => ({}));
+
+	/* ④ sys_choice — waits for dictMap to know which fields are choice type.
+	 * Also uses nameIN(chain) so choices defined on parent tables are included. */
+	const choicesPromise = Promise.all([tableChainPromise, dictPromise]).then(([chain, dictMap]) => {
+		const choiceFields = Object.keys(dictMap).filter((f) => dictMap[f].isChoice);
+		if (!choiceFields.length) return {};
+		return snFetch(
+			`/api/now/table/sys_choice` +
+			`?sysparm_query=nameIN${chain.join(',')}^elementIN${choiceFields.join(',')}^inactive=false` +
+			`&sysparm_fields=element,value,label&sysparm_orderby=sequence&sysparm_limit=1000`
+		).then((choiceRes) => {
+			const choicesMap = {};
+			(choiceRes.result || []).forEach((c) => {
+				if (!choicesMap[c.element]) choicesMap[c.element] = [];
+				choicesMap[c.element].push({ value: c.value, label: c.label });
+			});
+			return choicesMap;
+		}).catch(() => ({}));
+	}).catch(() => ({}));
+
+	/* ⑤ Resolve view → needed by policies, actions, sections */
 	const viewPromise = snFetch(
 		`/api/now/table/sys_ui_view` +
 		`?sysparm_query=title=${enc(formView)}^ORname=${enc(formView)}` +
@@ -322,7 +467,7 @@ const loadFormAndRecord = (table, sysId, formView) => {
 		.catch(() => [])
 	).catch(() => []);
 
-	/* ⑤ Sections + elements + dictionary + choices chain */
+	/* ⑥ Sections + elements only — dict/choices resolved in parallel above */
 	const sectionsPromise = viewPromise.then(({ internalName, viewSysId }) =>
 		snFetch(
 			`/api/now/table/sys_ui_form` +
@@ -375,7 +520,7 @@ const loadFormAndRecord = (table, sysId, formView) => {
 			});
 		})
 		.then(({ sectionList, orderedIds }) => {
-			if (!orderedIds.length) return { sectionList: [], allElements: [], elementList: [], dictMap: {}, choicesMap: {} };
+			if (!orderedIds.length) return { sectionList: [], allElements: [], elementList: [] };
 			return snFetch(
 				`/api/now/table/sys_ui_element` +
 				`?sysparm_query=sys_ui_sectionIN${orderedIds.join(',')}` +
@@ -385,99 +530,21 @@ const loadFormAndRecord = (table, sysId, formView) => {
 				const allElements = (elRes.result || [])
 					.filter((el) => el.element)
 					.sort((a, b) => parseInt(a.position, 10) - parseInt(b.position, 10));
-				const elementList = allElements.filter((el) => el.element.charAt(0) !== '.');
-				const fieldNames = [...new Set(elementList.map((el) => el.element))];
-				if (!fieldNames.length) return { sectionList, allElements, elementList, dictMap: {}, choicesMap: {} };
-				/* internal_type & reference are REFERENCE fields → read `.value` via refVal()
-				 * (the raw object's value is the canonical name, e.g. "boolean"/"reference").
-				 * `choice` is the dictionary attribute (1/2/3) that marks a dropdown — the
-				 * type alone never says "choice" (e.g. `notification` is internal_type integer
-				 * with choice=3). No display_value: raw values are what we want here. */
-				return snFetch(
-					`/api/now/table/sys_dictionary` +
-					`?sysparm_query=name=${enc(table)}^elementIN${fieldNames.join(',')}` +
-					`&sysparm_fields=element,column_label,internal_type,choice,reference,mandatory,read_only&sysparm_limit=500`
-				).then((dictRes) => {
-					const dictMap = {};
-					(dictRes.result || []).forEach((d) => {
-						const type = refVal(d.internal_type) || 'string';
-						const choiceAttr = String(d.choice == null ? '' : d.choice);
-						dictMap[d.element] = {
-							label: d.column_label || toLabel(d.element),
-							type: type,
-							isChoice: choiceAttr === '1' || choiceAttr === '2' || choiceAttr === '3' || isChoice(type),
-							reference: refVal(d.reference) || '',
-							mandatory: isTruthy(d.mandatory),
-							readOnly: isTruthy(d.read_only),
-						};
-					});
-					const choiceFields = fieldNames.filter((f) => dictMap[f] && dictMap[f].isChoice);
-					if (!choiceFields.length) return { sectionList, allElements, elementList, dictMap, choicesMap: {} };
-					return snFetch(
-						`/api/now/table/sys_choice` +
-						`?sysparm_query=name=${enc(table)}^elementIN${choiceFields.join(',')}^inactive=false` +
-						`&sysparm_fields=element,value,label&sysparm_orderby=sequence&sysparm_limit=1000`
-					).then((choiceRes) => {
-						const choicesMap = {};
-						(choiceRes.result || []).forEach((c) => {
-							if (!choicesMap[c.element]) choicesMap[c.element] = [];
-							choicesMap[c.element].push({ value: c.value, label: c.label });
-						});
-						return { sectionList, allElements, elementList, dictMap, choicesMap };
-					});
-				});
+				/* Skip layout helpers (.split, .begin_split…) and formatter elements.
+				 * Formatters (type="formatter") are special widgets, not editable fields. */
+				const elementList = allElements.filter(
+					(el) => el.element.charAt(0) !== '.' && el.type !== 'formatter'
+				);
+				console.log('[record-form] elementList fields:', elementList.map((el) => el.element));
+				return { sectionList, allElements, elementList };
 			});
-		})
-		.then(({ sectionList, allElements, elementList, dictMap, choicesMap }) => {
-			const bySection = {};
-			const fieldByKey = {};
-			(elementList || []).forEach((el) => {
-				const sid = refVal(el.sys_ui_section);
-				if (!sid) return;
-				const dict = (dictMap || {})[el.element] || { label: toLabel(el.element), type: 'string', isChoice: false, reference: '', mandatory: false, readOnly: false };
-				const fieldObj = {
-					name: el.element,
-					label: dict.label,
-					fieldType: dict.type,
-					isChoice: dict.isChoice,
-					reference: dict.reference,
-					mandatory: dict.mandatory,
-					readOnly: dict.readOnly,
-					choices: (choicesMap || {})[el.element] || [],
-				};
-				if (!bySection[sid]) bySection[sid] = [];
-				bySection[sid].push(fieldObj);
-				fieldByKey[sid + '|' + el.element] = fieldObj;
-			});
-			/* Column groups honour the classic `.split` break: fields before a `.split`
-			 * fill the left column (top→bottom), fields after it fill the next column. */
-			const colsBySection = {};
-			(allElements || []).forEach((el) => {
-				const sid = refVal(el.sys_ui_section);
-				if (!sid) return;
-				if (!colsBySection[sid]) colsBySection[sid] = [[]];
-				const nm = el.element;
-				if (nm === '.split') { colsBySection[sid].push([]); return; }
-				if (nm.charAt(0) === '.') return; // ignore .begin_split/.end_split/.section/…
-				const fo = fieldByKey[sid + '|' + nm];
-				if (fo) colsBySection[sid][colsBySection[sid].length - 1].push(fo);
-			});
-			return (sectionList || [])
-				.map((s) => {
-					const groups = (colsBySection[s.sys_id] || [[]]).filter((c) => c.length > 0);
-					return {
-						sys_id: s.sys_id,
-						caption: s.caption || 'Details',
-						fields: bySection[s.sys_id] || [],
-						columnGroups: groups.length ? groups : [bySection[s.sys_id] || []],
-					};
-				})
-				.filter((s) => s.fields.length > 0);
 		})
 	);
 
-	return Promise.all([sectionsPromise, policiesPromise, uiActionsPromise, recordPromise])
-		.then(([sections, policies, uiActions, recRes]) => {
+	/* ⑦ Merge everything — dict/choices/sections resolved in parallel */
+	return Promise.all([sectionsPromise, policiesPromise, uiActionsPromise, recordPromise, dictPromise, choicesPromise])
+		.then(([{ sectionList, allElements, elementList }, policies, uiActions, recRes, dictMap, choicesMap]) => {
+			const sections = buildSections(sectionList, allElements, elementList, dictMap, choicesMap);
 			const { values, displays } = splitValues(recRes.result);
 			return { sections, policies, uiActions, values, displayValues: displays };
 		});
@@ -631,38 +698,121 @@ const view = (state, { dispatch }) => {
 											);
 										}
 
-										/* ── Reference → searchable now-typeahead ── */
+										/* ── Reference → searchable now-typeahead + search icon ── */
 										if (isRef(field.fieldType)) {
 											const refText = displayValues[field.name] || strVal;
 											return (
-													<now-typeahead
-														name={field.name}
-														label={field.label}
-														value={(state.refQuery && state.refQuery[field.name] != null) ? state.refQuery[field.name] : refText}
-														selectedItem={strVal || null}
-														items={(state.refItems && state.refItems[field.name]) || (strVal && refText ? [{ id: strVal, label: refText }] : [])}
-														search="managed"
-														disabled={Boolean(isReadOnly)}
-														configAria={{ input: { 'aria-label': field.label } }}
-													/>
-												);
+												<now-typeahead
+													name={field.name}
+													label={field.label}
+													value={(state.refQuery && state.refQuery[field.name] != null) ? state.refQuery[field.name] : refText}
+													selectedItem={strVal || null}
+													items={(state.refItems && state.refItems[field.name]) || (strVal && refText ? [{ id: strVal, label: refText }] : [])}
+													search="managed"
+													disabled={Boolean(isReadOnly)}
+													configAria={{ input: { 'aria-label': field.label } }}
+												>
+													<now-icon slot="end" icon="magnifying-glass-outline" size="sm" />
+												</now-typeahead>
+											);
 										}
 
-										/* ── Image / attachment field → read-only indicator (not a text box) ── */
+										/* ── Date / datetime / time → now-date-time (calendar picker) ── *
+										 * now-input only accepts type="email|ip|number|text".
+										 * now-date-time is instance-only (Public npm: false) so renders blank
+										 * in the local playground — validate the picker on the instance. */
+											if (isAnyDate(field.fieldType)) {
+												const { type: dtType, format: dtFormat } = dateTimeProps(field.fieldType);
+												return (
+													<now-date-time
+														name={field.name}
+														label={field.label}
+														value={strVal}
+														type={dtType}
+														format={dtFormat}
+														readonly={Boolean(isReadOnly)}
+														required={Boolean(isMandatory)}
+														size="md"
+													/>
+												);
+											}
+
+											/* ── Image / attachment field → read-only indicator (not a text box) ── */
 											if (isImage(field.fieldType)) {
 												const caption = displayValues[field.name] || strVal;
 												return (
 													<div className="rf-field rf-field--image">
 														<span className="rf-field-label">{field.label}</span>
 														<span className="rf-image-box">
-															<now-icon className="rf-image-icon" icon="image-outline" size="md" aria-hidden="true" />
+															<now-icon className="rf-image-icon" icon="document-outline" size="md" aria-hidden="true" />
 															<span className="rf-image-text">{caption || 'Attachment — managed in the record’s attachments'}</span>
 														</span>
 													</div>
 												);
 											}
 
-											/* ── All other types → now-input ── */
+											/* ── HTML → now-rich-text (read) or now-textarea (edit) ── */
+									if (isHtml(field.fieldType)) {
+										if (isReadOnly) {
+											return <now-rich-text html={strVal} />;
+										}
+										return (
+											<now-textarea name={field.name} label={field.label} value={strVal}
+												required={Boolean(isMandatory)} autoresize={true} size="md" />
+										);
+									}
+
+									/* ── Multiline plain text → now-textarea ── */
+									if (isMultiline(field.fieldType)) {
+										const isJournal = field.fieldType.startsWith('journal');
+										return (
+											<now-textarea name={field.name} label={field.label} value={strVal}
+												readonly={Boolean(isReadOnly || isJournal)}
+												required={Boolean(isMandatory)} autoresize={true} size="md" />
+										);
+									}
+
+									/* ── Phone → now-input + phone icon (start slot) ── */
+										if (isPhone(field.fieldType)) {
+											return (
+												<now-input name={field.name} label={field.label} value={strVal}
+													type="text" readonly={Boolean(isReadOnly)} required={Boolean(isMandatory)} size="md">
+													<now-icon slot="start" icon="phone-outline" size="sm" />
+												</now-input>
+											);
+										}
+
+										/* ── Password → now-input + lock icon, masked value ── */
+										if (isPassword(field.fieldType)) {
+											return (
+												<now-input name={field.name} label={field.label}
+													value={strVal ? '••••••••' : ''} type="text" readonly={true} size="md">
+													<now-icon slot="start" icon="lock-outline" size="sm" />
+												</now-input>
+											);
+										}
+
+										/* ── URL → now-input + link icon (start slot) ── */
+										if (isUrl(field.fieldType)) {
+											return (
+												<now-input name={field.name} label={field.label} value={strVal}
+													type="text" readonly={Boolean(isReadOnly)} required={Boolean(isMandatory)} size="md">
+													<now-icon slot="start" icon="link-outline" size="sm" />
+												</now-input>
+											);
+										}
+
+										/* ── Email → now-input type="email" + envelope icon ── */
+										if (field.fieldType === 'email') {
+											return (
+												<now-input name={field.name} label={field.label} value={strVal}
+													type="email" readonly={Boolean(isReadOnly)} required={Boolean(isMandatory)} size="md">
+													<now-icon slot="start" icon="envelope-outline" size="sm" />
+												</now-input>
+											);
+										}
+
+										/* ── All other types → now-input ── */
 										return (
 											<now-input
 												name={field.name}
@@ -860,6 +1010,37 @@ createCustomElement('x-gegis-library-record-form', {
 				table: state.properties.table,
 				values: state.values,
 			});
+		},
+
+		/* now-date-time calendar picker — value committed on blur / selection */
+		'NOW_DATE_TIME#VALUE_SET': ({ action, state, updateState, dispatch }) => {
+			const { name, value } = action.payload || {};
+			if (!name) return;
+			applyFieldChange(name, value == null ? '' : String(value), state, updateState, dispatch);
+		},
+
+		'NOW_TEXTAREA#VALUE_SET': ({ action, state, updateState, dispatch }) => {
+			const { name, value } = action.payload || {};
+			if (!name) return;
+			applyFieldChange(name, value == null ? '' : String(value), state, updateState, dispatch);
+		},
+
+		'NOW_INPUT_PHONE#VALUE_SET': ({ action, state, updateState, dispatch }) => {
+			const { name, value } = action.payload || {};
+			if (!name) return;
+			applyFieldChange(name, value == null ? '' : String(value), state, updateState, dispatch);
+		},
+
+		'NOW_INPUT_PASSWORD#VALUE_SET': ({ action, state, updateState, dispatch }) => {
+			const { name, value } = action.payload || {};
+			if (!name) return;
+			applyFieldChange(name, value == null ? '' : String(value), state, updateState, dispatch);
+		},
+
+		'NOW_INPUT_URL#VALUE_SET': ({ action, state, updateState, dispatch }) => {
+			const { name, value } = action.payload || {};
+			if (!name) return;
+			applyFieldChange(name, value == null ? '' : String(value), state, updateState, dispatch);
 		},
 
 		/* now-input blur */
