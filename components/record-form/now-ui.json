@@ -1,7 +1,7 @@
 {
 	"components": {
 		"x-gegis-library-record-form": {
-			"innerComponents": ["now-card", "now-input", "now-button", "now-toggle", "now-dropdown", "now-typeahead", "now-icon"],
+			"innerComponents": ["now-card", "now-input", "now-textarea", "now-rich-text", "now-button", "now-toggle", "now-dropdown", "now-typeahead", "now-icon", "now-date-time"],
 			"slots": [
 				"after-section-0",
 				"after-section-1",

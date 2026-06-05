@@ -1,59 +1,158 @@
 {
 	"components": {
-		"x-gegis-library-quote-comparison": {
-			"innerComponents": [],
+		"x-gegis-library-quote-comparison-v2": {
+			"innerComponents": ["now-button", "now-icon"],
 			"uiBuilder": {
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Quote Versions Comparison",
 				"tileIcon": "./tile-icon/quote-comparison-tile-icon.svg",
-				"description": "A custom comparison grid: each version (v1/v2/v3 — records from the same table) is a column; fields grouped by section are rows. Handles tick/cross, currency, aggregation, pills, percentage, and trend. Driven by a JSON array.",
+				"description": "Combined action bar + comparison grid. Each version column needs header.sysId (the record sys_id). Action bar handles Select All, Approve, Share, Generate. All events carry sysId.",
 				"category": "primitives"
 			},
 			"properties": [
 				{
 					"name": "versions",
 					"label": "Versions (JSON array)",
-					"description": "Array of version objects, one per column. Each: { header:{title,option,status,selectable,versionId}, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[{key,label,style}] }. Set header.versionId (e.g. the sys_id) so VERSION_SELECTED/ACTION_CLICKED can identify WHICH version; give each action a stable key (clone/view/copy/send) to branch on. The first version defines the rows; bind a data resource with your v1/v2/v3 records.",
+					"description": "Array of version objects, one per column. Each: { header:{ sysId, option, title?, status?:{label,color}, selectable? }, sections:[{sectionName,type,fields:[{label,value,displayType,formatted,...}]}], actions:[{key,label,style}] }. header.sysId is required — it is the record sys_id carried in all emitted events.",
 					"fieldType": "json",
 					"defaultValue": []
 				},
 				{
 					"name": "title",
 					"label": "Title",
-					"description": "Fallback title shown if the first version has no header.title.",
+					"description": "Fallback grid title if the first version has no header.title.",
 					"fieldType": "string",
 					"defaultValue": "Quote Versions Comparison"
 				},
 				{
 					"name": "labelWidth",
 					"label": "Label column width",
-					"description": "CSS width of the left (field-label) column, e.g. 200px or 16rem.",
+					"description": "CSS width of the left label column, e.g. 200px or 16rem.",
 					"fieldType": "string",
 					"defaultValue": "200px"
+				},
+				{
+					"name": "showActionBar",
+					"label": "Show action bar",
+					"description": "When on, renders the Select All / Approve / Share / Generate action bar above the grid.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showCount",
+					"label": "Show selection count",
+					"description": "Show 'X of N selected' count in the action bar.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "selectAllLabel",
+					"label": "Select All label",
+					"fieldType": "string",
+					"defaultValue": "Select All",
+					"description": "Label for the Select All button."
+				},
+				{
+					"name": "deselectAllLabel",
+					"label": "Deselect All label",
+					"fieldType": "string",
+					"defaultValue": "Deselect All",
+					"description": "Label shown on Select All when all options are already selected."
+				},
+				{
+					"name": "approveLabel",
+					"label": "Approve button label",
+					"fieldType": "string",
+					"defaultValue": "Approve Selected",
+					"description": "Label for the Approve Selected button."
+				},
+				{
+					"name": "shareLabel",
+					"label": "Share button label",
+					"fieldType": "string",
+					"defaultValue": "Share to Broker",
+					"description": "Label for the Share to Broker button."
+				},
+				{
+					"name": "generateLabel",
+					"label": "Generate button label",
+					"fieldType": "string",
+					"defaultValue": "+ Generate New Option",
+					"description": "Label for the Generate New Option button."
+				},
+				{
+					"name": "approveIcon",
+					"label": "Approve icon",
+					"fieldType": "string",
+					"defaultValue": "",
+					"description": "Optional now-icon name for the Approve button (e.g. circle-check-outline)."
+				},
+				{
+					"name": "shareIcon",
+					"label": "Share icon",
+					"fieldType": "string",
+					"defaultValue": "",
+					"description": "Optional now-icon name for the Share button."
+				},
+				{
+					"name": "generateIcon",
+					"label": "Generate icon",
+					"fieldType": "string",
+					"defaultValue": "",
+					"description": "Optional now-icon name for the Generate button."
 				}
 			],
 			"actions": [
 				{
-					"name": "VERSION_SELECTED",
+					"name": "QC2_VERSION_SELECTED",
 					"label": "Version selected",
-					"description": "Fired when a column's Select checkbox changes. Payload: { index, versionId, option, checked }.",
+					"description": "Fired when a column's Select checkbox changes. Payload: { sysId, checked }.",
 					"payload": [
-						{ "name": "index", "label": "Column index", "description": "Zero-based index of the version column.", "fieldType": "number" },
-						{ "name": "versionId", "label": "Version id", "description": "Stable id of the version (header.versionId or header.id); use this to identify the record, not the index.", "fieldType": "string" },
-						{ "name": "option", "label": "Option label", "description": "The version's display label, e.g. 'Option 2 v: 2.0'.", "fieldType": "string" },
-						{ "name": "checked", "label": "Checked", "description": "Whether the Select checkbox is checked.", "fieldType": "boolean" }
+						{ "name": "sysId",   "label": "Sys ID",  "description": "The header.sysId of the toggled version.",        "fieldType": "string" },
+						{ "name": "checked", "label": "Checked", "description": "Whether the checkbox is now checked.",            "fieldType": "boolean" }
 					]
 				},
 				{
-					"name": "ACTION_CLICKED",
-					"label": "Action clicked",
-					"description": "Fired when a footer action button is clicked. Payload: { index, versionId, option, action }.",
+					"name": "QC2_SELECTION_CHANGED",
+					"label": "Selection changed",
+					"description": "Fired when the selection changes (individual checkbox or Select All). Payload: { selected, count }.",
 					"payload": [
-						{ "name": "index", "label": "Column index", "description": "Zero-based index of the version column.", "fieldType": "number" },
-						{ "name": "versionId", "label": "Version id", "description": "Stable id of the version (header.versionId or header.id); use this to know WHICH version's button was clicked, not the index.", "fieldType": "string" },
-						{ "name": "option", "label": "Option label", "description": "The version's display label, e.g. 'Option 2 v: 2.0'.", "fieldType": "string" },
-						{ "name": "action", "label": "Action key", "description": "The clicked button's stable key (action.key) or its label if no key. Branch on this: clone / view / copy / send.", "fieldType": "string" }
+						{ "name": "selected", "label": "Selected sys IDs", "description": "Array of sysId strings currently selected.", "fieldType": "json" },
+						{ "name": "count",    "label": "Count",            "description": "Number of selected versions.",              "fieldType": "number" }
 					]
+				},
+				{
+					"name": "QC2_ACTION_CLICKED",
+					"label": "Action button clicked",
+					"description": "Fired when a per-version footer action button is clicked. Payload: { index, sysId, option, action }.",
+					"payload": [
+						{ "name": "index",  "label": "Column index", "description": "Zero-based index of the version column.",           "fieldType": "number" },
+						{ "name": "sysId",  "label": "Sys ID",       "description": "The header.sysId of the version.",                  "fieldType": "string" },
+						{ "name": "option", "label": "Option label", "description": "The version's display label.",                      "fieldType": "string" },
+						{ "name": "action", "label": "Action key",   "description": "The clicked button's key or label. Branch on this.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "QC2_APPROVE_SELECTED",
+					"label": "Approve selected",
+					"description": "Fired when Approve Selected is clicked with at least one version selected. Payload: { selected }.",
+					"payload": [
+						{ "name": "selected", "label": "Selected sys IDs", "description": "Array of sysId strings to approve.", "fieldType": "json" }
+					]
+				},
+				{
+					"name": "QC2_SHARE_TO_BROKER",
+					"label": "Share to broker",
+					"description": "Fired when Share to Broker is clicked with at least one version selected. Payload: { selected }.",
+					"payload": [
+						{ "name": "selected", "label": "Selected sys IDs", "description": "Array of sysId strings to share.", "fieldType": "json" }
+					]
+				},
+				{
+					"name": "QC2_GENERATE_NEW_OPTION",
+					"label": "Generate new option",
+					"description": "Fired when Generate New Option is clicked. No payload.",
+					"payload": []
 				}
 			]
 		}
