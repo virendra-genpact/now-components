@@ -13,7 +13,7 @@
 				{
 					"name": "options",
 					"label": "Options",
-					"description": "Array of product options. Each: { id, title, subtitle, bullets:[string], pill, pillTone: info|neutral|positive|warning|error, pillIcon }.",
+					"description": "Array of product options. Each: { id, sys_id, title, subtitle, bullets:[string], pill, pillTone: info|neutral|positive|warning|error, pillIcon }.",
 					"fieldType": "json"
 				},
 				{
@@ -35,13 +35,61 @@
 				{
 					"name": "PRODUCT_SELECTED",
 					"label": "Product selected",
-					"description": "Fired when the user selects an option. Payload: { value }.",
+					"description": "Fired when the user selects an option. Payload is the entire selected option: { value, id, sys_id, title, subtitle, pill, pillTone, pillIcon, bullets }.",
 					"payload": [
 						{
 							"name": "value",
 							"label": "Selected option id",
-							"description": "The id of the option the user selected.",
+							"description": "The id of the option the user selected (back-compat alias of id).",
 							"fieldType": "string"
+						},
+						{
+							"name": "id",
+							"label": "Id",
+							"description": "The selected option's id.",
+							"fieldType": "string"
+						},
+						{
+							"name": "sys_id",
+							"label": "Sys id",
+							"description": "ServiceNow record sys_id of the selected product, when sourced from a table.",
+							"fieldType": "string"
+						},
+						{
+							"name": "title",
+							"label": "Title",
+							"description": "The selected product's title.",
+							"fieldType": "string"
+						},
+						{
+							"name": "subtitle",
+							"label": "Subtitle",
+							"description": "The selected product's subtitle.",
+							"fieldType": "string"
+						},
+						{
+							"name": "pill",
+							"label": "Pill",
+							"description": "The selected product's pill label.",
+							"fieldType": "string"
+						},
+						{
+							"name": "pillTone",
+							"label": "Pill tone",
+							"description": "The pill tone: info | neutral | positive | warning | error.",
+							"fieldType": "string"
+						},
+						{
+							"name": "pillIcon",
+							"label": "Pill icon",
+							"description": "The now-icon glyph shown inside the pill, if any.",
+							"fieldType": "string"
+						},
+						{
+							"name": "bullets",
+							"label": "Bullets",
+							"description": "Array of the selected product's bullet strings.",
+							"fieldType": "json"
 						}
 					]
 				}

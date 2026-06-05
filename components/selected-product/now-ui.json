@@ -1,0 +1,125 @@
+{
+	"components": {
+		"x-gegis-library-selected-product": {
+			"innerComponents": ["now-icon", "now-button", "now-modal"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Selected Product Summary",
+				"tileIcon": "./tile-icon/selected-product-tile-icon.svg",
+				"description": "A selected-product summary bar (icon, product name, star, subtitle) with a Change Product action that opens a confirmation modal. Composes now-icon + now-button + now-modal.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "productPrefix",
+					"label": "Product label prefix",
+					"description": "Text shown before the product name (e.g. \"Product:\"). Leave empty to show only the name.",
+					"fieldType": "string",
+					"defaultValue": "Product:"
+				},
+				{
+					"name": "productName",
+					"label": "Product name",
+					"description": "The selected product's name.",
+					"fieldType": "string",
+					"defaultValue": "Commercial Property – Standard Plan"
+				},
+				{
+					"name": "subtitle",
+					"label": "Subtitle",
+					"description": "Secondary line under the product name.",
+					"fieldType": "string",
+					"defaultValue": "Base limits and clauses applied from selected product"
+				},
+				{
+					"name": "icon",
+					"label": "Leading icon",
+					"description": "now-icon name shown at the start of the bar. Leave empty to hide.",
+					"fieldType": "string",
+					"defaultValue": "shield-outline"
+				},
+				{
+					"name": "showStar",
+					"label": "Show star",
+					"description": "When on, shows a star after the product name (e.g. a recommended indicator).",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "starIcon",
+					"label": "Star icon",
+					"description": "now-icon name for the star indicator.",
+					"fieldType": "string",
+					"defaultValue": "star-fill"
+				},
+				{
+					"name": "changeButtonLabel",
+					"label": "Change button label",
+					"description": "Label for the action button on the bar.",
+					"fieldType": "string",
+					"defaultValue": "Change Product"
+				},
+				{
+					"name": "confirmHeader",
+					"label": "Confirm dialog header",
+					"description": "Title of the confirmation modal.",
+					"fieldType": "string",
+					"defaultValue": "Change Product"
+				},
+				{
+					"name": "confirmMessage",
+					"label": "Confirm dialog message",
+					"description": "Body text of the confirmation modal.",
+					"fieldType": "string",
+					"defaultValue": "Changing the product will archive all existing quote options. This action cannot be undone."
+				},
+				{
+					"name": "confirmIcon",
+					"label": "Confirm dialog icon",
+					"description": "now-icon name shown beside the confirmation message (warning glyph). Leave empty to hide.",
+					"fieldType": "string",
+					"defaultValue": "circle-exclamation-outline"
+				},
+				{
+					"name": "confirmLabel",
+					"label": "Confirm button label",
+					"description": "Primary (confirm) button label in the modal footer.",
+					"fieldType": "string",
+					"defaultValue": "Continue"
+				},
+				{
+					"name": "cancelLabel",
+					"label": "Cancel button label",
+					"description": "Secondary (cancel) button label in the modal footer.",
+					"fieldType": "string",
+					"defaultValue": "Cancel"
+				}
+			],
+			"actions": [
+				{
+					"name": "CHANGE_PRODUCT_REQUESTED",
+					"label": "Change product requested",
+					"description": "Fired when the user clicks Change Product (the confirmation modal opens).",
+					"payload": [
+						{ "name": "productName", "label": "Product name", "description": "The current product name.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "CHANGE_PRODUCT_CONFIRMED",
+					"label": "Change product confirmed",
+					"description": "Fired when the user confirms the change in the modal (primary action). Use this to archive existing quote options and return to product selection.",
+					"payload": [
+						{ "name": "productName", "label": "Product name", "description": "The product being changed away from.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "CHANGE_PRODUCT_CANCELLED",
+					"label": "Change product cancelled",
+					"description": "Fired when the user cancels or dismisses the confirmation modal.",
+					"payload": []
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

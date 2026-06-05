@@ -76,16 +76,14 @@
 					"defaultValue": true
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "ACTION_CLICKED",
 					"label": "Action clicked",
-					"description": "Fired when Add or Remove is clicked (not for Required). Payload: { type }."
-				},
-				{
-					"name": "TOGGLED",
-					"label": "Card toggled",
-					"description": "Fired when a collapsible card is expanded/collapsed. Payload: { expanded }."
+					"description": "Fired when Add or Remove is clicked (not for Required). Payload: { type }.",
+					"payload": [
+						{ "name": "type", "label": "Action type", "description": "Which action was clicked: add or remove.", "fieldType": "string" }
+					]
 				}
 			]
 		}

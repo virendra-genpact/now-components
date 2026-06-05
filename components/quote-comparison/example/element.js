@@ -6,7 +6,7 @@ import { mountPlayground } from './playground';
  * three sample versions (v1/v2/v3 — same fields, "3 records from the same table")
  * to demonstrate the column-per-version comparison. */
 const v = (option, status, x) => ({
-	header: { title: 'Quote Versions Comparison', option, status, selectable: true },
+	header: { title: 'Quote Versions Comparison', option, status, selectable: true, versionId: x.versionId },
 	sections: [
 		{
 			sectionName: 'Policy Basics',
@@ -81,23 +81,26 @@ const v = (option, status, x) => ({
 		},
 	],
 	actions: [
-		{ label: 'View Details', type: 'button', style: 'secondary' },
-		{ label: 'Clone', type: 'button', style: 'secondary' },
+		{ key: 'view', label: 'View Details', type: 'button', style: 'secondary' },
+		{ key: 'clone', label: 'Clone', type: 'button', style: 'secondary' },
 	],
 });
 
 const versions = [
 	v('Option 1 v: 1.0', { label: 'Draft', type: 'pill', color: 'gray' }, {
+		versionId: 'QV-0001',
 		authority: true, purpose: 'Basic Option', period: '04/23/2026 - 04/23/2027', bi: false, equip: false,
 		bldg: 4000000, bldgF: '$4,000,000', tiv: 7000000, tivF: '$7,000,000', form: 'Basic', coins: 90,
 		prem: 181000, premF: '$181,000', delta: 0,
 	}),
 	v('Option 2 v: 2.0', { label: 'In Review', type: 'pill', color: 'orange' }, {
+		versionId: 'QV-0002',
 		authority: true, purpose: 'Broad Option', period: '04/23/2026 - 04/23/2027', bi: true, equip: false,
 		bldg: 4500000, bldgF: '$4,500,000', tiv: 7500000, tivF: '$7,500,000', form: 'Broad', coins: 80,
 		prem: 175000, premF: '$175,000', delta: -2.0,
 	}),
 	v('Option 3 v: 3.0', { label: 'Broker Approved', type: 'pill', color: 'green' }, {
+		versionId: 'QV-0003',
 		authority: true, purpose: 'Balanced Option', period: '04/23/2026 - 04/23/2027', bi: true, equip: false,
 		bldg: 5000000, bldgF: '$5,000,000', tiv: 8000000, tivF: '$8,000,000', form: 'Special', coins: 80,
 		prem: 172865, premF: '$172,865', delta: -4.5,

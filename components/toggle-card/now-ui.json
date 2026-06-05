@@ -46,11 +46,16 @@
 					"defaultValue": true
 				}
 			],
-			"events": [
+			"actions": [
 				{
 					"name": "TOGGLE_CHANGED",
 					"label": "Toggle changed",
-					"description": "Fired when a row's toggle is switched. Payload: { index, label, on }."
+					"description": "Fired when a row's toggle is switched. Payload: { index, label, on }.",
+					"payload": [
+						{ "name": "index", "label": "Row index", "description": "Zero-based index of the toggled row.", "fieldType": "number" },
+						{ "name": "label", "label": "Row label", "description": "Label of the toggled row.", "fieldType": "string" },
+						{ "name": "on", "label": "On", "description": "New toggle state.", "fieldType": "boolean" }
+					]
 				}
 			]
 		}

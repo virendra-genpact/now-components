@@ -92,7 +92,12 @@ const view = (state, { dispatch }) => {
 						<input
 							type="checkbox"
 							on-change={(e) =>
-								dispatch('VERSION_SELECTED', { index: i, checked: !!(e && e.target && e.target.checked) })
+								dispatch('VERSION_SELECTED', {
+										index: i,
+										versionId: h.versionId != null ? h.versionId : h.id != null ? h.id : '',
+										option: h.option || '',
+										checked: !!(e && e.target && e.target.checked),
+									})
 							}
 						/>
 						<span>Select</span>
@@ -137,13 +142,22 @@ const view = (state, { dispatch }) => {
 	if (acts0.length) {
 		cells.push(<div className="qc-rowlabel"></div>);
 		list.forEach((v, i) => {
+			const ah = v.header || {};
+			const aVersionId = ah.versionId != null ? ah.versionId : ah.id != null ? ah.id : '';
 			cells.push(
 				<div className="qc-cell qc-actions">
 					{(v.actions || []).map((a) => (
 						<button
 							type="button"
 							className={`qc-btn qc-btn--${a.style || 'secondary'}`}
-							on-click={() => dispatch('ACTION_CLICKED', { index: i, action: a.label })}
+							on-click={() =>
+								dispatch('ACTION_CLICKED', {
+									index: i,
+									versionId: aVersionId,
+									option: ah.option || '',
+									action: a.key || a.label,
+								})
+							}
 						>
 							{a.label}
 						</button>

@@ -28,7 +28,7 @@ owned by the component.
 
 | Property | Type | Default | Description |
 | --- | --- | --- | --- |
-| `options` | json (array) | 3 sample products | Each: `{ id, title, subtitle, bullets:[], pill, pillTone, pillIcon }`. |
+| `options` | json (array) | 3 sample products | Each: `{ id, sys_id, title, subtitle, bullets:[], pill, pillTone, pillIcon }`. |
 | `value` | string | `commercial` | The selected option's `id`. |
 | `bulletsWhenSelectedOnly` | boolean | `true` | Show subtitle + bullets only on the selected card. |
 
@@ -37,6 +37,7 @@ owned by the component.
 | Key | Description |
 | --- | --- |
 | `id` | Unique id (used as the selected `value`). Required. |
+| `sys_id` | ServiceNow record sys_id of the product, when sourced from a table. |
 | `title` | Card title. |
 | `subtitle` | Small bold heading above the bullets (e.g. "Why we recommend:"). |
 | `bullets` | Array of strings rendered with green checkmarks. |
@@ -48,7 +49,19 @@ owned by the component.
 
 | Event | Payload | When |
 | --- | --- | --- |
-| `PRODUCT_SELECTED` | `{ value }` | The user selects a different option. |
+| `PRODUCT_SELECTED` | `{ value, id, sys_id, title, subtitle, pill, pillTone, pillIcon, bullets }` | The user selects a different option. The payload is the **entire** selected option; `value` is a back-compat alias of `id`. |
+
+## Integration
+
+`PRODUCT_SELECTED` carries the whole selected product so a downstream consumer can render
+it directly. To wire it to **`selected-product`** in UI Builder, bind the event payload to
+its properties:
+
+| `PRODUCT_SELECTED` payload | → `selected-product` property |
+| --- | --- |
+| `title` | `productName` |
+| `subtitle` | `subtitle` |
+| `sys_id` / `id` | (track which record to act on in your page logic) |
 
 ## Accessibility
 

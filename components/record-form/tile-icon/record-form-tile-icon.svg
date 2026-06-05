@@ -1,0 +1,12 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card outline -->
+  <rect x="6" y="8" width="36" height="32" rx="4" fill="none" stroke="#474747" stroke-width="2.5"/>
+  <!-- Section title bar -->
+  <rect x="11" y="14" width="16" height="2.5" rx="1.2" fill="#474747"/>
+  <!-- Field row 1 -->
+  <rect x="11" y="20" width="26" height="2" rx="1" fill="#474747" opacity="0.4"/>
+  <!-- Field row 2 -->
+  <rect x="11" y="25" width="20" height="2" rx="1" fill="#474747" opacity="0.4"/>
+  <!-- Field row 3 -->
+  <rect x="11" y="30" width="23" height="2" rx="1" fill="#474747" opacity="0.4"/>
+</svg>

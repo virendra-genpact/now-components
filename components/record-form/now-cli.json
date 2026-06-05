@@ -1,0 +1,14 @@
+{
+	"development": {
+		"proxy": {
+			"proxies": ["/api"],
+			"timeout": 30000
+		},
+		"devServer": {
+			"client": {
+				"overlay": false
+			}
+		}
+	},
+	"version": "2"
+}
