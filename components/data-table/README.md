@@ -10,12 +10,17 @@ the **Table API** and renders them in a paginated, OOTB-style table with a color
 ## How it works
 
 - Data is fetched over `@servicenow/ui-effect-http` (`createHttpEffect`) against
-  `/api/now/table/:table`, so the instance session / auth / scope are used
-  automatically — no hand-rolled `fetch()`.
+  `/api/now/table/:table` with **`batch: false`** (the default batched transport
+  mismatches version-skewed instances and returns a 503 — see notes), so the instance
+  session / auth / scope are used automatically — no hand-rolled `fetch()`.
+- **Lazy, server-side paging:** only the current page's rows are loaded
+  (`sysparm_limit` = page size, `sysparm_offset` = page × size). Navigating pages
+  fetches the next page on demand. The total count for the footer / pager comes from
+  the response's **`X-Total-Count`** header (delivered in the success action meta), so
+  no records are pre-loaded and `Showing X-Y of N` stays accurate.
 - Records are fetched with `sysparm_display_value=all` (so each cell carries both the
-  raw `value` and the `display_value`) up to **Max records**, then paginated
-  client-side so the footer count (`Showing 1-5 of 5`) is exact.
-- `sys_id` is always requested so row + action events can identify the record.
+  raw `value` and the `display_value`); `sys_id` is always requested so row + action
+  events can identify the record.
 
 ## Composition (design-system components used)
 
@@ -52,8 +57,10 @@ Sort pickers list that table's fields and **dot-walk into reference fields**:
 | `fields` | `field_list` | `""` | **Columns "+Add" picker** (ordered, dot-walk). Blank → every returned field. |
 | `labels` | `string` | `""` | Optional header overrides matching `fields`; blanks fall back to the prettified name. |
 | `statusField` | `field` | `"status"` | Field picker; rendered as a colored pill. Blank → plain text. |
-| `pageSize` | `number` | `5` | Rows per page. |
-| `maxRecords` | `number` | `1000` | Cap on records fetched (pagination is client-side). |
+| `pageSize` | `number` | `5` | Default rows fetched/shown per page (pages load lazily on demand). |
+| `showPageSizeControl` | `boolean` | `true` | Show the footer "Per page" selector so users can change page size at runtime. |
+| `pageSizes` | `string` | `"5,10,20,50,100"` | Comma-separated page-size choices for the selector. |
+| `pageSizeLabel` | `string` | `"Per page"` | Label next to the per-page selector. |
 | `heading` | `string` | `""` | Optional title above the table. |
 | `itemLabel` | `string` | `"records"` | Noun in the footer count. |
 | `showActions` / `showEdit` / `showCopy` / `showDelete` | `boolean` | `true` | Per-row action icons. |

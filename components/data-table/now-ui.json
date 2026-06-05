@@ -72,16 +72,30 @@
 				{
 					"name": "pageSize",
 					"label": "Rows per page",
-					"description": "Number of rows shown per page.",
+					"description": "Default number of rows fetched and shown per page. Pages load lazily from the server on demand (sysparm_limit + sysparm_offset). Users can change this at runtime via the per-page selector.",
 					"fieldType": "number",
 					"defaultValue": 5
 				},
 				{
-					"name": "maxRecords",
-					"label": "Max records",
-					"description": "Maximum records fetched from the Table API (pagination is then done client-side so the total count is exact).",
-					"fieldType": "number",
-					"defaultValue": 1000
+					"name": "showPageSizeControl",
+					"label": "Show per-page selector",
+					"description": "When on, the footer shows a 'Per page' dropdown so the user can change how many rows are shown per page.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "pageSizes",
+					"label": "Per-page options",
+					"description": "Comma-separated page-size choices offered in the per-page selector, e.g. \"5,10,20,50,100\".",
+					"fieldType": "string",
+					"defaultValue": "5,10,20,50,100"
+				},
+				{
+					"name": "pageSizeLabel",
+					"label": "Per-page label",
+					"description": "Label shown next to the per-page selector.",
+					"fieldType": "string",
+					"defaultValue": "Per page"
 				},
 				{
 					"name": "heading",

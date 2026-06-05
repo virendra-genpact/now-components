@@ -76,6 +76,40 @@ describe('data-table transforms', () => {
 		expect(buildQuery('a=b', '', false)).toBe('a=b');
 	});
 
+	const totalFromHeaders = (action) => {
+		const meta = (action && action.meta) || {};
+		const h = meta.responseHeaders;
+		if (!h) return undefined;
+		let v;
+		if (typeof h.get === 'function') v = h.get('X-Total-Count');
+		else v = h['X-Total-Count'] != null ? h['X-Total-Count'] : (h['x-total-count'] != null ? h['x-total-count'] : h['X-TOTAL-COUNT']);
+		if (v == null || v === '') return undefined;
+		const n = Number(v);
+		return Number.isFinite(n) ? n : undefined;
+	};
+
+	const parseSizes = (raw, current) => {
+		let arr = splitList(raw).map(Number).filter((n) => Number.isFinite(n) && n > 0);
+		if (!arr.length) arr = [5, 10, 20, 50, 100];
+		if (current > 0 && arr.indexOf(current) < 0) arr.push(current);
+		return arr.sort((a, b) => a - b);
+	};
+
+	it('parses per-page options, defaults when empty, and includes the current size', () => {
+		expect(parseSizes('5,10,20,50', 10)).toEqual([5, 10, 20, 50]);
+		expect(parseSizes('', 5)).toEqual([5, 10, 20, 50, 100]);
+		expect(parseSizes('10,20', 15)).toEqual([10, 15, 20]); // current injected + sorted
+		expect(parseSizes('garbage,,', 25)).toEqual([5, 10, 20, 25, 50, 100]);
+	});
+
+	it('reads X-Total-Count from the action meta (object or Headers-like)', () => {
+		expect(totalFromHeaders({ meta: { responseHeaders: { 'X-Total-Count': '42' } } })).toBe(42);
+		expect(totalFromHeaders({ meta: { responseHeaders: { 'x-total-count': '7' } } })).toBe(7);
+		expect(totalFromHeaders({ meta: { responseHeaders: new Map([['X-Total-Count', '5']]) } })).toBe(5);
+		expect(totalFromHeaders({ meta: {} })).toBeUndefined();
+		expect(totalFromHeaders({})).toBeUndefined();
+	});
+
 	it('resolves columns from fields+labels, else derives from the first row', () => {
 		const explicit = computeColumns({ fields: 'name,version,status', labels: 'Product,Ver' }, []);
 		expect(explicit).toEqual([

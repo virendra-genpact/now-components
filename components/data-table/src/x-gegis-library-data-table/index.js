@@ -126,31 +126,74 @@ const computeColumns = (props, rows) => {
 		.map((f) => ({ field: f, label: prettify(f) }));
 };
 
-/* ------------------------------------------------------------------ *
- * Load chain — fetch the records when table/query/etc change.
- * ------------------------------------------------------------------ */
-const maybeLoad = ({ state, updateState, dispatch }) => {
-	const { table, query, orderBy, orderDescending, fields, maxRecords } = state.properties;
-	if (!table) {
-		updateState({ rows: [], loading: false, error: '', page: 0, _loadedKey: '' });
-		return;
-	}
-	const key = `${table}|${query}|${orderBy}|${orderDescending}|${fields}|${maxRecords}`;
-	if (key === state._loadedKey) return;
-	updateState({ _loadedKey: key, loading: true, error: '', page: 0 });
+// Read the Table API's X-Total-Count header. The http-effect delivers response
+// headers in the success action's META (see ui-effect-http httpEffect.js:
+// dispatch(successActionType, data, { ...meta, responseHeaders })).
+const totalFromHeaders = (action) => {
+	const meta = (action && action.meta) || {};
+	const h = meta.responseHeaders;
+	if (!h) return undefined;
+	let v;
+	if (typeof h.get === 'function') v = h.get('X-Total-Count');
+	else v = h['X-Total-Count'] != null ? h['X-Total-Count'] : (h['x-total-count'] != null ? h['x-total-count'] : h['X-TOTAL-COUNT']);
+	if (v == null || v === '') return undefined;
+	const n = Number(v);
+	return Number.isFinite(n) ? n : undefined;
+};
 
+// Effective page size: a runtime override from the per-page selector (state.size)
+// wins; otherwise the configured `pageSize` property; otherwise 5.
+const effSize = (state) => {
+	const s = Number(state.size);
+	if (s > 0) return s;
+	const p = Number(state.properties.pageSize);
+	return p > 0 ? p : 5;
+};
+
+// Parse the configured per-page options ("5,10,20,50") to a sorted number list,
+// guaranteeing the current size is present so the selector can show it selected.
+const parseSizes = (raw, current) => {
+	let arr = splitList(raw).map(Number).filter((n) => Number.isFinite(n) && n > 0);
+	if (!arr.length) arr = [5, 10, 20, 50, 100];
+	if (current > 0 && arr.indexOf(current) < 0) arr.push(current);
+	return arr.sort((a, b) => a - b);
+};
+
+/* ------------------------------------------------------------------ *
+ * Lazy server-side paging — only the rows for the CURRENT page are loaded
+ * (sysparm_limit + sysparm_offset). The pager total comes from X-Total-Count.
+ * ------------------------------------------------------------------ */
+const fetchPage = (dispatch, props, page, size) => {
+	const { table, query, orderBy, orderDescending } = props;
+	const lim = Number(size) > 0 ? Number(size) : 5;
 	const payload = {
 		table,
 		sysparm_display_value: 'all',
-		sysparm_limit: String(Number(maxRecords) > 0 ? Number(maxRecords) : 1000),
 		sysparm_exclude_reference_link: 'true',
+		sysparm_limit: String(lim),
+		sysparm_offset: String(Math.max(0, Number(page) || 0) * lim),
 	};
 	const q = buildQuery(query, orderBy, orderDescending);
 	if (q) payload.sysparm_query = q;
 	// Always include sys_id so row/action events can identify the record.
-	const cols = splitList(fields);
+	const cols = splitList(props.fields);
 	if (cols.length) payload.sysparm_fields = cols.concat(cols.indexOf('sys_id') < 0 ? ['sys_id'] : []).join(',');
 	dispatch(A.FETCH, payload);
+};
+
+const maybeLoad = ({ state, updateState, dispatch }) => {
+	const { table, query, orderBy, orderDescending, fields, pageSize } = state.properties;
+	if (!table) {
+		updateState({ rows: [], total: 0, loading: false, error: '', page: 0, size: 0, _loadedKey: '' });
+		return;
+	}
+	// Reload from page 0 whenever the query identity (incl. page size) changes.
+	const key = `${table}|${query}|${orderBy}|${orderDescending}|${fields}|${pageSize}`;
+	if (key === state._loadedKey) return;
+	const propSize = Number(pageSize) > 0 ? Number(pageSize) : 5;
+	// A config change resets any runtime per-page override back to the property.
+	updateState({ _loadedKey: key, loading: true, error: '', page: 0, rows: [], total: 0, size: propSize });
+	fetchPage(dispatch, state.properties, 0, propSize);
 };
 
 /* Dispatch a record-scoped event ({ sysId, table }). */
@@ -162,12 +205,13 @@ const emit = (dispatch, table, name, sysId) => dispatch(name, { sysId: String(sy
 const view = (state, { dispatch }) => {
 	const props = state.properties;
 	const {
-		table, statusField, pageSize, heading, itemLabel,
+		table, statusField, heading, itemLabel,
 		showActions, showEdit, showCopy, showDelete, actionsLabel,
 		editIcon, copyIcon, deleteIcon, prettyDates, emptyMessage,
+		showPageSizeControl, pageSizes, pageSizeLabel,
 	} = props;
 	const { loading, error, rows, page } = state;
-	const list = Array.isArray(rows) ? rows : [];
+	const list = Array.isArray(rows) ? rows : [];   // already just the current page
 
 	if (!table) {
 		return (
@@ -197,12 +241,12 @@ const view = (state, { dispatch }) => {
 	}
 
 	const columns = computeColumns(props, list);
-	const size = Number(pageSize) > 0 ? Number(pageSize) : 5;
-	const total = list.length;
-	const pageCount = Math.max(1, Math.ceil(total / size));
-	const safePage = Math.min(Math.max(0, Number(page) || 0), pageCount - 1);
+	const size = effSize(state);
+	const sizeOptions = parseSizes(pageSizes, size);
+	const total = Number(state.total) || 0;
+	const safePage = Math.max(0, Number(page) || 0);
 	const start = safePage * size;
-	const pageRows = list.slice(start, start + size);
+	const pageRows = list;   // server already returned only this page's rows
 	const anyActions = !!showActions && (showEdit || showCopy || showDelete);
 	const colCount = columns.length + (anyActions ? 1 : 0);
 
@@ -235,8 +279,8 @@ const view = (state, { dispatch }) => {
 		/>
 	);
 
-	const rangeStart = total === 0 ? 0 : start + 1;
-	const rangeEnd = Math.min(start + size, total);
+	const rangeStart = pageRows.length === 0 ? 0 : start + 1;
+	const rangeEnd = start + pageRows.length;
 
 	return (
 		<div className="dt-root">
@@ -291,9 +335,12 @@ const view = (state, { dispatch }) => {
 					total={total}
 					selectedPage={safePage}
 					selectedPageSize={size}
+					pageSizes={sizeOptions}
+					pageSizeLabel={pageSizeLabel || 'Per page'}
 					manageSelectedPage={true}
+					manageSelectedPageSize={true}
 					hideRange={true}
-					hidePageSizeControl={true}
+					hidePageSizeControl={!showPageSizeControl}
 				/>
 			</div>
 		</div>
@@ -311,7 +358,9 @@ createCustomElement('x-gegis-library-data-table', {
 		loading: false,
 		error: '',
 		rows: [],
+		total: 0,
 		page: 0,
+		size: 0,
 		_loadedKey: '',
 	},
 	properties: {
@@ -323,7 +372,9 @@ createCustomElement('x-gegis-library-data-table', {
 		labels: { default: '' },
 		statusField: { default: 'status' },
 		pageSize: { default: 5 },
-		maxRecords: { default: 1000 },
+		showPageSizeControl: { default: true },
+		pageSizes: { default: '5,10,20,50,100' },
+		pageSizeLabel: { default: 'Per page' },
 		heading: { default: '' },
 		itemLabel: { default: 'records' },
 		showActions: { default: true },
@@ -343,26 +394,49 @@ createCustomElement('x-gegis-library-data-table', {
 		[actionTypes.COMPONENT_PROPERTY_CHANGED]: (coeffects) => {
 			const { action } = coeffects;
 			const name = action && action.payload ? action.payload.propertyName : '';
-			if (['table', 'query', 'orderBy', 'orderDescending', 'fields', 'maxRecords'].indexOf(name) >= 0) maybeLoad(coeffects);
+			if (['table', 'query', 'orderBy', 'orderDescending', 'fields', 'pageSize'].indexOf(name) >= 0) maybeLoad(coeffects);
 		},
 
 		/* records loaded */
 		[A.FETCH]: createHttpEffect('/api/now/table/:table', {
 			method: 'GET',
+			// batch:false → call the Table API directly instead of wrapping it in the
+			// framework batch request. The default (batch:true) routes through a batch
+			// endpoint whose contract differs between the bundled lib (24.x) and the
+			// instance (Zurich), which surfaces as a 503 "Service Unavailable".
+			batch: false,
 			pathParams: ['table'],
-			queryParams: ['sysparm_query', 'sysparm_fields', 'sysparm_limit', 'sysparm_display_value', 'sysparm_exclude_reference_link'],
+			queryParams: ['sysparm_query', 'sysparm_fields', 'sysparm_limit', 'sysparm_offset', 'sysparm_display_value', 'sysparm_exclude_reference_link'],
 			successActionType: A.FETCH_OK,
 			errorActionType: A.FETCH_ERR,
 		}),
-		[A.FETCH_OK]: ({ action, updateState }) =>
-			updateState({ rows: resultOf(action) || [], loading: false, error: '', page: 0 }),
+		[A.FETCH_OK]: ({ action, state, updateState }) => {
+			const rows = resultOf(action) || [];
+			const size = effSize(state);
+			const headerTotal = totalFromHeaders(action);
+			// Fallback when the header is absent: at least offset + rows on this page.
+			const fallback = Math.max((Number(state.page) || 0) * size + rows.length, Number(state.total) || 0);
+			updateState({ rows, total: headerTotal != null ? headerTotal : fallback, loading: false, error: '' });
+		},
 		[A.FETCH_ERR]: ({ action, updateState }) =>
 			updateState({ rows: [], loading: false, error: `Could not load records: ${errOf(action)}` }),
 
-		/* pagination: now-pagination-control is in manage mode, so we own the page */
-		'NOW_PAGINATION_CONTROL#SELECTED_PAGE_SET': ({ action, updateState }) => {
-			const v = action && action.payload ? Number(action.payload.value) : 0;
-			updateState({ page: Number.isFinite(v) ? v : 0 });
+		/* pagination: manage mode → we own the page and lazily fetch it on demand */
+		'NOW_PAGINATION_CONTROL#SELECTED_PAGE_SET': ({ action, state, updateState, dispatch }) => {
+			const raw = action && action.payload ? Number(action.payload.value) : 0;
+			const v = Number.isFinite(raw) ? Math.max(0, raw) : 0;
+			if (v === state.page && Array.isArray(state.rows) && state.rows.length) return;
+			updateState({ page: v, loading: true, error: '' });
+			fetchPage(dispatch, state.properties, v, effSize(state));
+		},
+
+		/* per-page selector: manage mode → we own the size; reset to page 0 + refetch */
+		'NOW_PAGINATION_CONTROL#SELECTED_PAGE_SIZE_SET': ({ action, state, updateState, dispatch }) => {
+			const raw = action && action.payload ? Number(action.payload.value) : 0;
+			const newSize = Number.isFinite(raw) && raw > 0 ? raw : effSize(state);
+			if (newSize === effSize(state)) return;
+			updateState({ size: newSize, page: 0, loading: true, error: '' });
+			fetchPage(dispatch, state.properties, 0, newSize);
 		},
 	},
 });
