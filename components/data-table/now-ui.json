@@ -1,0 +1,226 @@
+{
+	"components": {
+		"x-gegis-library-data-table": {
+			"innerComponents": [
+				"now-button-iconic",
+				"now-icon",
+				"now-loader",
+				"now-pagination-control"
+			],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Data Table",
+				"tileIcon": "./tile-icon/data-table-tile-icon.svg",
+				"description": "A configurable record list: give it a table name and an encoded query and it loads the matching records over the Table API and renders them in a paginated, OOTB-style table. Columns, a status pill, and per-row Edit / Duplicate / Delete actions are configurable. Emits ROW_CLICK plus EDIT/COPY/DELETE_ACTION events (each with the record sys_id) for the page to bind.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "table",
+					"label": "Table",
+					"description": "Table to query, e.g. \"task\" or \"incident\". The Columns / Status / Sort pickers below list this table's fields (and dot-walk into reference fields).",
+					"fieldType": "table_name",
+					"defaultValue": "",
+					"typeMetadata": {}
+				},
+				{
+					"name": "query",
+					"label": "Fixed filter",
+					"description": "Condition that filters which records are shown (built with the condition editor, stored as an encoded query). Leave blank for all records.",
+					"fieldType": "condition_string",
+					"defaultValue": "",
+					"typeMetadata": { "table": "@table" }
+				},
+				{
+					"name": "orderBy",
+					"label": "Sort by field",
+					"description": "Field to sort the records by. Use \"Sort descending\" to reverse the order.",
+					"fieldType": "field",
+					"defaultValue": "",
+					"typeMetadata": { "table": "@table" }
+				},
+				{
+					"name": "orderDescending",
+					"label": "Sort descending",
+					"description": "When on, sorts the chosen Sort field in descending order.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "fields",
+					"label": "Columns",
+					"description": "Fields to show as columns, in order. Add reference fields and dot-walk into them (e.g. caller_id.name). Leave empty to show every returned field. Stored as a comma-separated field list.",
+					"fieldType": "field_list",
+					"defaultValue": "",
+					"typeMetadata": { "table": "@table", "variant": "ordered", "emptyStateBehavior": "EMPTY_STRING" }
+				},
+				{
+					"name": "labels",
+					"label": "Column headers (override)",
+					"description": "Optional comma-separated header labels matching the Columns order, e.g. \"Product Name,Version,Status\". Blank entries fall back to the field's prettified name.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "statusField",
+					"label": "Status field",
+					"description": "Field rendered as a colored status pill (Draft / Published / Archived, etc.). Leave blank to render it as plain text.",
+					"fieldType": "field",
+					"defaultValue": "status",
+					"typeMetadata": { "table": "@table" }
+				},
+				{
+					"name": "pageSize",
+					"label": "Rows per page",
+					"description": "Default number of rows fetched and shown per page. Pages load lazily from the server on demand (sysparm_limit + sysparm_offset). Users can change this at runtime via the per-page selector.",
+					"fieldType": "number",
+					"defaultValue": 5
+				},
+				{
+					"name": "showPageSizeControl",
+					"label": "Show per-page selector",
+					"description": "When on, the footer shows a 'Per page' dropdown so the user can change how many rows are shown per page.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "pageSizes",
+					"label": "Per-page options",
+					"description": "Comma-separated page-size choices offered in the per-page selector, e.g. \"5,10,20,50,100\".",
+					"fieldType": "string",
+					"defaultValue": "5,10,20,50,100"
+				},
+				{
+					"name": "pageSizeLabel",
+					"label": "Per-page label",
+					"description": "Label shown next to the per-page selector.",
+					"fieldType": "string",
+					"defaultValue": "Per page"
+				},
+				{
+					"name": "heading",
+					"label": "Heading",
+					"description": "Optional title shown above the table. Leave blank to hide.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "itemLabel",
+					"label": "Item label",
+					"description": "Noun used in the footer count, e.g. \"products\" → \"Showing 1-5 of 5 products\".",
+					"fieldType": "string",
+					"defaultValue": "records"
+				},
+				{
+					"name": "showActions",
+					"label": "Show actions column",
+					"description": "When on, shows the per-row action icons column.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showEdit",
+					"label": "Show Edit action",
+					"description": "Show the edit (pencil) action icon.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showCopy",
+					"label": "Show Duplicate action",
+					"description": "Show the duplicate (copy) action icon.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showDelete",
+					"label": "Show Delete action",
+					"description": "Show the delete (trash) action icon.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "actionsLabel",
+					"label": "Actions header",
+					"description": "Header text for the actions column.",
+					"fieldType": "string",
+					"defaultValue": "Actions"
+				},
+				{
+					"name": "editIcon",
+					"label": "Edit icon",
+					"description": "now-icon name for the edit action.",
+					"fieldType": "string",
+					"defaultValue": "pencil-outline"
+				},
+				{
+					"name": "copyIcon",
+					"label": "Duplicate icon",
+					"description": "now-icon name for the duplicate action.",
+					"fieldType": "string",
+					"defaultValue": "copy-outline"
+				},
+				{
+					"name": "deleteIcon",
+					"label": "Delete icon",
+					"description": "now-icon name for the delete action.",
+					"fieldType": "string",
+					"defaultValue": "trash-outline"
+				},
+				{
+					"name": "prettyDates",
+					"label": "Pretty dates",
+					"description": "When on, values that look like dates are formatted as \"Mon D, YYYY\" (e.g. May 1, 2026).",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "emptyMessage",
+					"label": "Empty message",
+					"description": "Text shown when no records match the query.",
+					"fieldType": "string",
+					"defaultValue": "No records found"
+				}
+			],
+			"actions": [
+				{
+					"name": "ROW_CLICK",
+					"label": "Row clicked",
+					"description": "Fired when a table row body is clicked. Payload: { sysId, table }.",
+					"payload": [
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the clicked record.", "fieldType": "string" },
+						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "EDIT_ACTION",
+					"label": "Edit clicked",
+					"description": "Fired when the edit (pencil) icon is clicked. Payload: { sysId, table }.",
+					"payload": [
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the record to edit.", "fieldType": "string" },
+						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "COPY_ACTION",
+					"label": "Duplicate clicked",
+					"description": "Fired when the duplicate (copy) icon is clicked. Payload: { sysId, table }.",
+					"payload": [
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the record to duplicate.", "fieldType": "string" },
+						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "DELETE_ACTION",
+					"label": "Delete clicked",
+					"description": "Fired when the delete (trash) icon is clicked. Payload: { sysId, table }.",
+					"payload": [
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the record to delete.", "fieldType": "string" },
+						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

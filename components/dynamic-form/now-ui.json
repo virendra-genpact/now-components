@@ -1,49 +1,113 @@
 {
 	"components": {
 		"x-gegis-library-dynamic-form": {
-			"innerComponents": [],
+			"innerComponents": [
+				"now-input",
+				"now-select",
+				"now-checkbox",
+				"now-textarea",
+				"now-date-time",
+				"now-button",
+				"now-loader"
+			],
 			"uiBuilder": {
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Dynamic Form",
 				"tileIcon": "./tile-icon/dynamic-form-tile-icon.svg",
-				"description": "A metadata-driven sectioned form: section cards with a multi-column grid of select / text / read-only fields. Values bind to a record; Save fires FORM_SAVED for a REST data resource.",
+				"description": "An OOTB-style record form: configure a table, record sys_id and view; the component loads field labels/types/choices and the form layout over the Table API, renders sectioned fields, and PATCHes changes on Save (or on blur when Autosave is on). Read-only and Autosave toggles included.",
 				"category": "primitives"
 			},
 			"properties": [
 				{
-					"name": "sections",
-					"label": "Sections (JSON array)",
-					"description": "Grouping metadata. Each: { sectionName, fields:[{ label, name, type:'select'|'text', options, placeholder, readonly, value }] }. Bind your external metadata here.",
-					"fieldType": "json",
-					"defaultValue": []
+					"name": "table",
+					"label": "Table",
+					"description": "Table name to load the record from, e.g. \"incident\".",
+					"fieldType": "string",
+					"defaultValue": ""
 				},
 				{
-					"name": "values",
-					"label": "Values (JSON object)",
-					"description": "Current field values keyed by field name. Bind your table record here; the form updates this as the user edits.",
-					"fieldType": "json",
-					"defaultValue": {}
+					"name": "sysId",
+					"label": "Record sys_id",
+					"description": "sys_id of the record to load and save. Bind this from the page (e.g. a URL parameter).",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "view",
+					"label": "Form view",
+					"description": "Form view to render (sections + field order). Pass the view's sys_id (from sys_ui_view) or its name. Leave blank for the Default view.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "heading",
+					"label": "Heading",
+					"description": "Title shown at the top of the form (e.g. \"Coverage\"). Leave blank to hide.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "subheading",
+					"label": "Subheading",
+					"description": "Smaller text under the heading (e.g. \"Building Coverage\"). Leave blank to hide.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "readOnly",
+					"label": "Read only",
+					"description": "When on, every field is rendered disabled and the Save button is hidden.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "autosave",
+					"label": "Autosave",
+					"description": "When on, each field is PATCHed back to the record as soon as it loses focus / changes (no Save click needed).",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "saveRelated",
+					"label": "Save related (dot-walked) fields",
+					"description": "When on, edits to dot-walked fields (e.g. broker.brokeraddress.city) are saved to their related records too — each related record is resolved and PATCHed. Requires write access (ACLs) to those records, and the reference must point to an existing record. Off by default (dot-walked edits are not saved).",
+					"fieldType": "boolean",
+					"defaultValue": false
 				},
 				{
 					"name": "columns",
 					"label": "Columns",
 					"description": "Number of fields per row in each section.",
 					"fieldType": "number",
-					"defaultValue": 3
+					"defaultValue": 2
 				},
 				{
 					"name": "saveLabel",
 					"label": "Save button text",
-					"description": "Label for the Save button.",
+					"description": "Label for the manual Save button.",
 					"fieldType": "string",
 					"defaultValue": "Save"
 				},
 				{
 					"name": "showSave",
 					"label": "Show Save button",
-					"description": "When on, shows the Save button that fires FORM_SAVED.",
+					"description": "When on (and not read-only), shows the Save button.",
 					"fieldType": "boolean",
 					"defaultValue": true
+				},
+				{
+					"name": "saveButtonPosition",
+					"label": "Save button position",
+					"description": "Where to place the Save button: top (next to the heading), bottom, or both.",
+					"fieldType": "choice",
+					"defaultValue": "bottom",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Bottom", "value": "bottom" },
+							{ "label": "Top", "value": "top" },
+							{ "label": "Both", "value": "both" }
+						]
+					}
 				}
 			],
 			"actions": [
@@ -52,16 +116,25 @@
 					"label": "Field changed",
 					"description": "Fired when any field changes. Payload: { name, value }.",
 					"payload": [
-						{ "name": "name", "label": "Field name", "description": "Name of the changed field.", "fieldType": "string" },
-						{ "name": "value", "label": "Value", "description": "New value of the field.", "fieldType": "string" }
+						{ "name": "name", "label": "Field name", "description": "The changed field's column name.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "The new value.", "fieldType": "string" }
 					]
 				},
 				{
 					"name": "FORM_SAVED",
 					"label": "Form saved",
-					"description": "Fired when Save is clicked. Payload: { values }. Bind to a REST/transform data resource to perform the HTTP save.",
+					"description": "Fired after a successful HTTP save (Save click or autosave). Payload: { table, sysId }.",
 					"payload": [
-						{ "name": "values", "label": "Form values", "description": "Object of all field values keyed by field name.", "fieldType": "json" }
+						{ "name": "table", "label": "Table", "description": "Table that was saved.", "fieldType": "string" },
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the saved record.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "SAVE_ERROR",
+					"label": "Save error",
+					"description": "Fired when an HTTP save fails. Payload: { message }.",
+					"payload": [
+						{ "name": "message", "label": "Message", "description": "Error message from the Table API.", "fieldType": "string" }
 					]
 				}
 			]
