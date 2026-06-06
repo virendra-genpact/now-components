@@ -88,7 +88,8 @@ query evaluator supports `=`, `!=`, `IN`, `NOT IN`, `LIKE`, `NOT LIKE`,
 ## UI Actions (form buttons)
 
 When **Show UI Actions** is on, the table's active form-button `sys_ui_action`
-records are rendered as `now-button`s above the form. Clicking one fires the
+records are rendered as `now-button`s. Their placement is set by
+**`uiActionPosition`** (`top` / `bottom` / `both`). Clicking one fires the
 **`UI_ACTION_CLICKED`** event with `{ name, sysId, label }` so the UI Builder page
 can react (navigate, open a modal, call a Data Resource, …).
 
@@ -100,17 +101,28 @@ can react (navigate, open a modal, call a Data Resource, …).
 | Dictionary type | Rendered as |
 | --- | --- |
 | choice / has a choice list | `now-select` (field is encoded into each item id `field::value` so changes can be mapped back, since `now-select` doesn't emit a field name) |
-| true/false | `now-checkbox` (used instead of `now-toggle`, which emits no field name to disambiguate) |
-| integer / decimal / float / currency | `now-input type="number"` |
-| date | `now-date-time type="date"` |
-| date/time | `now-date-time type="date-time"` |
-| html / journal / translated-text | `now-textarea` (full-width) |
+| true/false | `now-toggle` (default) or `now-checkbox` — set by `booleanControl` |
+| integer / decimal / float / currency / price | `now-input type="number"` |
+| date / due date | `now-date-time type="date"` |
+| date/time / time | `now-date-time type="date-time"` |
+| html / journal / journal input / journal list / translated / wiki | `now-textarea` (full-width) |
 | string with `max_length` > 255 | `now-textarea` (full-width) — long strings (e.g. an `address` String(400)) render multi-line, like the platform form |
-| reference / document id / glide list | **editable** `now-typeahead` — searches the referenced table over the Table API as you type and saves the chosen record's sys_id (see [Reference fields](#reference-fields-editable-picker)) |
-| everything else | `now-input type="text"` |
+| reference / document id | **editable** `now-typeahead` — searches the referenced table over the Table API as you type and saves the chosen record's sys_id (see [Reference fields](#reference-fields-editable-picker)) |
+| glide list / list (multi-value) | **editable** `now-typeahead-multi` — pill multi-select; same server search, saves a CSV of sys_ids |
+| password / encrypted text | `now-input-password` (masked) |
+| url | `now-input-url` |
+| phone number (E164) | `now-input-phone` |
+| everything else (icon, color, geo point, script, conditions, media, …) | `now-input type="text"` fallback |
 
-> Multi-valued **glide list** fields are treated as a single reference picker
-> (only one value is saved) — a true multi-select list editor is out of scope.
+### Control coverage
+
+| ServiceNow field | Control used | Notes |
+| --- | --- | --- |
+| Choice | `now-select` (dropdown) | platform default for choices |
+| True/False | `now-toggle` (default) or `now-checkbox` | set by `booleanControl`. `now-toggle` carries no field name on change, so the value is flipped from the view's `on-click` (the field is known there) and fed back via the controlled `checked` prop |
+| Reference / Document ID | `now-typeahead` | single record picker |
+| Glide List / List | `now-typeahead-multi` | pill multi-select |
+| Radio | — | choices render as a dropdown (platform default); `now-radio-buttons` is available but not auto-applied |
 
 ### Dot-walked fields
 
@@ -134,6 +146,8 @@ it falls back to a humanized column name.
 | `saveRelated` | boolean | `false` | Also save edits to dot-walked fields to their related records (resolve each record + PATCH it). Needs write ACLs + existing references. |
 | `applyUiPolicy` | boolean | `true` | Load + evaluate declarative UI Policies to set fields mandatory / read-only / hidden as values change. Script-based policies are ignored. |
 | `showUiActions` | boolean | `true` | Render the table's active form-button UI Actions; clicking one fires `UI_ACTION_CLICKED` (the action's script is not run). |
+| `uiActionPosition` | choice | `top` | Where the UI Action buttons render: `top`, `bottom`, or `both`. |
+| `booleanControl` | choice | `toggle` | How true/false fields render: `toggle` (now-toggle switch) or `checkbox` (now-checkbox). |
 | `columns` | number | `2` | Fields per row per section. |
 | `saveLabel` | string | `Save` | Manual Save button text. |
 | `showSave` | boolean | `true` | Show the Save button (when not read-only). |
@@ -151,8 +165,9 @@ it falls back to a humanized column name.
 ## Notes & limitations
 
 - **Reference fields are editable** via a `now-typeahead` that searches the
-  referenced table as you type and saves the selected record's sys_id. Multi-
-  valued glide-list fields are handled as a single reference (one value saved).
+  referenced table as you type and saves the selected record's sys_id.
+- **Glide List / List fields are editable** via a `now-typeahead-multi` pill
+  picker; selections save as a comma-separated list of sys_ids.
 - **UI Policy** — only **declarative** field actions (mandatory / read-only /
   hidden) are applied; policies that **run scripts** are ignored.
 - **UI Actions** — form buttons are rendered and emit `UI_ACTION_CLICKED`; the

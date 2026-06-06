@@ -134,14 +134,23 @@ const isEmptyVal = (v) => v == null || String(v) === '';
 const normType = (disp) => {
 	const t = String(disp || '').toLowerCase();
 	if (t.includes('true/false') || t.includes('boolean')) return 'boolean';
-	if (t.includes('reference') || t.includes('document id') || t.includes('glide list') || t.includes('list'))
-		return 'reference';
-	if (t.includes('integer') || t.includes('long') || t.includes('decimal') || t.includes('float') || t.includes('currency') || t.includes('percent') || t.includes('numeric'))
+	// Multi-line text (Journal / Journal Input / Journal List / HTML / Translated /
+	// Wiki) is checked BEFORE the list rule, so "Journal List" isn't mistaken for a
+	// multi-reference list (both contain "list").
+	if (t.includes('journal') || t.includes('html') || t.includes('translated') || t.includes('wiki')) return 'textarea';
+	// Glide List / List fields hold MULTIPLE references (comma-separated sys_ids) →
+	// a pill multi-select. Plain Reference / Document ID are single-value.
+	if (t.includes('glide list') || t.includes('glide_list') || t.includes('list')) return 'multi_reference';
+	if (t.includes('reference') || t.includes('document id')) return 'reference';
+	if (t.includes('integer') || t.includes('long') || t.includes('decimal') || t.includes('float') || t.includes('currency') || t.includes('price') || t.includes('percent') || t.includes('numeric'))
 		return 'number';
-	if (t.includes('date/time') || t.includes('time')) return 'datetime';
-	if (t.includes('date')) return 'date';
-	if (t.includes('html') || t.includes('journal') || t.includes('translated')) return 'textarea';
+	// Whole-word match so "Validated IPV4…" doesn't match "date", etc.
+	if (t.includes('date/time') || /\btime\b/.test(t)) return 'datetime';
+	if (/\bdate\b/.test(t)) return 'date';
 	if (t.includes('choice')) return 'choice';
+	if (t.includes('password') || t.includes('encrypted')) return 'password';
+	if (t.includes('url')) return 'url';
+	if (t.includes('phone')) return 'phone';
 	return 'string';
 };
 
@@ -351,7 +360,8 @@ const assemble = (state) => {
 	const inRecord = new Set(fieldNames);
 
 	const refMeta = {}; // field -> { table, displayField }
-	const refItems = {}; // field -> [{ id, label }]
+	const refItems = {}; // field -> [{ id, label }] (search candidates)
+	const refSelected = {}; // field -> [{ id, label }] (current pills, for multi_reference)
 
 	// Choices are keyed by the table where the field is DEFINED. For a direct/inherited
 	// field, resolveField returns the base table, but inherited choices are stored under
@@ -384,6 +394,14 @@ const assemble = (state) => {
 			// Item ids encode the field ("field::sysId") so the selection action can be
 			// mapped back even when the typeahead's payload omits the field `name`.
 			refItems[name] = !isEmptyVal(id) ? [{ id: `${name}::${id}`, label: lbl || id }] : [];
+		}
+		if (type === 'multi_reference' && meta && meta.reference) {
+			refMeta[name] = { table: meta.reference, displayField: 'name' };
+			// Glide List stores a CSV of sys_ids (value) / labels (display_value).
+			const ids = isEmptyVal(rawVal(record[name])) ? [] : String(rawVal(record[name])).split(',').map((s) => s.trim()).filter(Boolean);
+			const lbls = isEmptyVal(dispVal(record[name])) ? [] : String(dispVal(record[name])).split(',').map((s) => s.trim());
+			refSelected[name] = ids.map((sid, i) => ({ id: `${name}::${sid}`, label: lbls[i] || sid }));
+			refItems[name] = [];
 		}
 		return {
 			name, // original (possibly dot-walked) key — used for values
@@ -436,7 +454,7 @@ const assemble = (state) => {
 		display[n] = dispVal(record[n]);
 	});
 
-	return { model: { sections }, values, display, _refMeta: refMeta, _refItems: refItems };
+	return { model: { sections }, values, display, _refMeta: refMeta, _refItems: refItems, _refSelected: refSelected };
 };
 
 /* ------------------------------------------------------------------ *
@@ -457,6 +475,7 @@ const maybeLoad = ({ state, updateState, dispatch }) => {
 	updateState({
 		_loadedKey: key, loading: true, error: '', _layout: [], _viewName: '',
 		_tableFamily: [], _uiPolicies: [], _policyState: {}, _uiActions: [], _invalid: {},
+		_refMeta: {}, _refItems: {}, _refSelected: {}, _refSearch: null,
 	});
 
 	// `view` may be a sys_id or a name. sysparm_view + the section query both need
@@ -580,7 +599,8 @@ const startEnrichments = (state, dispatch) => {
 const view = (state, { updateState, dispatch }) => {
 	const {
 		readOnly, columns, saveLabel, showSave, autosave, table, sysId,
-		heading, subheading, saveButtonPosition, showUiActions,
+		heading, subheading, saveButtonPosition, showUiActions, uiActionPosition,
+		booleanControl,
 	} = state.properties;
 	const { loading, error, saving, model, values, display } = state;
 	const secs = (model && Array.isArray(model.sections)) ? model.sections : [];
@@ -628,14 +648,56 @@ const view = (state, { updateState, dispatch }) => {
 
 		if (f.type === 'boolean') {
 			const v = valStr(nm);
+			const checked = v === 'true' || v === '1';
+			// `now-toggle` (switch) is the default look; its CHECKED_SET event carries no
+			// field name, so we flip the value from the view's on-click (field is known
+			// here) and feed `checked` back as a controlled prop. `now-checkbox` carries a
+			// name and is the fallback (booleanControl = "checkbox").
+			if (booleanControl === 'toggle') {
+				return (
+					<div className="ff-field ff-field--bool">
+						<now-toggle
+							label={f.label}
+							labelPosition="end"
+							checked={checked}
+							manage-checked={true}
+							disabled={disabled}
+							on-click={disabled ? undefined : () => applyFieldChange({ state, updateState, dispatch }, nm, checked ? 'false' : 'true')}
+						/>
+					</div>
+				);
+			}
 			return (
 				<div className="ff-field ff-field--bool">
 					<now-checkbox
 						name={nm}
 						label={f.label}
-						checked={v === 'true' || v === '1'}
+						checked={checked}
 						disabled={disabled}
 						required={mandatory}
+					/>
+				</div>
+			);
+		}
+
+		if (f.type === 'multi_reference') {
+			// Glide List / List → pill multi-select. Same server search as a reference,
+			// but selections accumulate as pills and save as a CSV of sys_ids.
+			const items = (state._refItems && state._refItems[nm]) || [];
+			const selectedItems = (state._refSelected && state._refSelected[nm]) || [];
+			return (
+				<div className="ff-field ff-field--wide">
+					<now-typeahead-multi
+						name={nm}
+						label={f.label}
+						items={items}
+						selectedItems={selectedItems}
+						disabled={disabled}
+						required={mandatory}
+						invalid={invalid}
+						messages={invalidMsgs(nm)}
+						search="managed"
+						placeholder="Type to search…"
 					/>
 				</div>
 			);
@@ -697,6 +759,54 @@ const view = (state, { updateState, dispatch }) => {
 						value={valStr(nm)}
 						disabled={disabled}
 						required={mandatory}
+					/>
+				</div>
+			);
+		}
+
+		if (f.type === 'password') {
+			return (
+				<div className="ff-field">
+					<now-input-password
+						name={nm}
+						label={f.label}
+						value={valStr(nm)}
+						disabled={disabled}
+						required={mandatory}
+						invalid={invalid}
+						messages={invalidMsgs(nm)}
+					/>
+				</div>
+			);
+		}
+
+		if (f.type === 'url') {
+			return (
+				<div className="ff-field">
+					<now-input-url
+						name={nm}
+						label={f.label}
+						value={valStr(nm)}
+						disabled={disabled}
+						required={mandatory}
+						invalid={invalid}
+						messages={invalidMsgs(nm)}
+					/>
+				</div>
+			);
+		}
+
+		if (f.type === 'phone') {
+			return (
+				<div className="ff-field">
+					<now-input-phone
+						name={nm}
+						label={f.label}
+						value={valStr(nm)}
+						disabled={disabled}
+						required={mandatory}
+						invalid={invalid}
+						messages={invalidMsgs(nm)}
 					/>
 				</div>
 			);
@@ -791,6 +901,9 @@ const view = (state, { updateState, dispatch }) => {
 	const showTop = buttons && (pos === 'top' || pos === 'both');
 	const showBottom = buttons && (pos === 'bottom' || pos === 'both');
 	const hasActionBar = showUiActions && uiActions.length;
+	const aPos = uiActionPosition || 'top';
+	const showActionsTop = hasActionBar && (aPos === 'top' || aPos === 'both');
+	const showActionsBottom = hasActionBar && (aPos === 'bottom' || aPos === 'both');
 
 	return (
 		<div className="ff-root">
@@ -801,7 +914,7 @@ const view = (state, { updateState, dispatch }) => {
 				</div>
 			) : null}
 
-			{hasActionBar ? actionBar() : null}
+			{showActionsTop ? actionBar() : null}
 
 			{error ? <div className="ff-error" role="alert">{error}</div> : null}
 
@@ -813,6 +926,8 @@ const view = (state, { updateState, dispatch }) => {
 					</div>
 				</div>
 			))}
+
+			{showActionsBottom ? actionBar() : null}
 
 			{showBottom ? saveBtn() : null}
 		</div>
@@ -849,6 +964,7 @@ createCustomElement('x-gegis-library-dynamic-form', {
 		_layout: [],
 		_refMeta: {},
 		_refItems: {},
+		_refSelected: {},
 		_refSearch: null,
 		_uiPolicies: [],
 		_policyState: {},
@@ -866,6 +982,8 @@ createCustomElement('x-gegis-library-dynamic-form', {
 		saveRelated: { default: false },
 		applyUiPolicy: { default: true },
 		showUiActions: { default: true },
+		uiActionPosition: { default: 'top' },
+		booleanControl: { default: 'toggle' },
 		columns: { default: 2 },
 		saveLabel: { default: 'Save' },
 		showSave: { default: true },
@@ -882,6 +1000,9 @@ createCustomElement('x-gegis-library-dynamic-form', {
 
 		/* ---- field changes from the composed now-* controls ---- */
 		'NOW_INPUT#VALUE_SET': (cx) => applyFieldChange(cx, cx.action.payload.name, cx.action.payload.value),
+		'NOW_INPUT_PASSWORD#VALUE_SET': (cx) => applyFieldChange(cx, cx.action.payload.name, cx.action.payload.value),
+		'NOW_INPUT_URL#VALUE_SET': (cx) => applyFieldChange(cx, cx.action.payload.name, cx.action.payload.value),
+		'NOW_INPUT_PHONE#VALUE_SET': (cx) => applyFieldChange(cx, cx.action.payload.name, cx.action.payload.value),
 		'NOW_TEXTAREA#VALUE_SET': (cx) => applyFieldChange(cx, cx.action.payload.name, cx.action.payload.value),
 		'NOW_DATE_TIME#VALUE_SET': (cx) => applyFieldChange(cx, cx.action.payload.name, cx.action.payload.value),
 		'NOW_CHECKBOX#CHECKED_SET': (cx) =>
@@ -927,6 +1048,62 @@ createCustomElement('x-gegis-library-dynamic-form', {
 					sysparm_limit: '25',
 				});
 			}, 300);
+		},
+
+		/* multi-reference (Glide List) pills: typing searches the same way as a reference */
+		'NOW_TYPEAHEAD_MULTI#VALUE_SET': (cx) => {
+			const { action, state, updateState, dispatch } = cx;
+			const name = action.payload && action.payload.name;
+			const term = String((action.payload && action.payload.value) || '');
+			const rm = (state._refMeta || {})[name];
+			if (!name || !rm) return;
+			if (refSearchTimers[name]) clearTimeout(refSearchTimers[name]);
+			refSearchTimers[name] = setTimeout(() => {
+				const df = rm.displayField || 'name';
+				const q = term ? `${df}LIKE${term}^ORDERBY${df}` : `ORDERBY${df}`;
+				updateState({ _refSearch: { field: name, displayField: df } });
+				dispatch(A.FETCH_REF_OPTIONS, {
+					table: rm.table,
+					sysparm_query: q,
+					sysparm_fields: `sys_id,${df}`,
+					sysparm_display_value: 'all',
+					sysparm_limit: '25',
+				});
+			}, 300);
+		},
+		/* multi-reference selection: ids are encoded "field::sysId"; save a CSV of sys_ids
+		 * and keep the pill objects (with labels) in _refSelected. */
+		'NOW_TYPEAHEAD_MULTI#SELECTED_ITEMS_SET': (cx) => {
+			const { action, state, updateState, dispatch } = cx;
+			const p = action.payload || {};
+			const ids = Array.isArray(p.value) ? p.value : [];
+			let field = p.name;
+			const parts = ids.map((raw) => {
+				const r = String(raw);
+				const i = r.indexOf('::');
+				return i >= 0 ? { enc: r, sid: r.slice(i + 2), fld: r.slice(0, i) } : { enc: r, sid: r, fld: null };
+			});
+			if (!field && parts.length) field = parts[0].fld;
+			if (!field) return;
+			// label lookup from current search items + already-selected pills
+			const known = {};
+			((state._refItems || {})[field] || []).forEach((it) => { known[it.id] = it.label; });
+			((state._refSelected || {})[field] || []).forEach((it) => { known[it.id] = it.label; });
+			const selected = parts.map((d) => ({ id: d.enc, label: known[d.enc] || d.sid }));
+			const csv = parts.map((d) => d.sid).join(',');
+			const values = { ...(state.values || {}), [field]: csv };
+			const dirty = { ...(state.dirty || {}), [field]: csv };
+			const display = { ...(state.display || {}), [field]: selected.map((s) => s.label).join(', ') };
+			const refSelected = { ...(state._refSelected || {}), [field]: selected };
+			const patch = { values, dirty, display, _refSelected: refSelected };
+			if (state._invalid && state._invalid[field] && csv) {
+				patch._invalid = { ...state._invalid };
+				delete patch._invalid[field];
+			}
+			patch._policyState = computePolicyState(state._uiPolicies || [], values);
+			updateState(patch);
+			dispatch('FIELD_CHANGED', { name: field, value: csv });
+			if (state.properties.autosave) dispatch(A.SAVE, { fields: { [field]: csv } });
 		},
 
 		/* 0) resolve a view sys_id -> its name (sysparm_view + section query need the name) */

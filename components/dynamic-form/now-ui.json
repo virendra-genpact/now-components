@@ -3,11 +3,16 @@
 		"x-gegis-library-dynamic-form": {
 			"innerComponents": [
 				"now-input",
+				"now-input-password",
+				"now-input-url",
+				"now-input-phone",
 				"now-select",
 				"now-checkbox",
+				"now-toggle",
 				"now-textarea",
 				"now-date-time",
 				"now-typeahead",
+				"now-typeahead-multi",
 				"now-button",
 				"now-loader"
 			],
@@ -88,6 +93,33 @@
 					"description": "When on, render the table's active form-button UI Actions (sys_ui_action) as buttons. Clicking one fires the UI_ACTION_CLICKED event so the page can react/navigate — the action's own server/client script is not executed.",
 					"fieldType": "boolean",
 					"defaultValue": true
+				},
+				{
+					"name": "uiActionPosition",
+					"label": "UI Actions position",
+					"description": "Where to render the UI Action buttons: top (above the form), bottom (below the form), or both.",
+					"fieldType": "choice",
+					"defaultValue": "top",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Top", "value": "top" },
+							{ "label": "Bottom", "value": "bottom" },
+							{ "label": "Both", "value": "both" }
+						]
+					}
+				},
+				{
+					"name": "booleanControl",
+					"label": "Boolean control",
+					"description": "How true/false fields render: a toggle switch (now-toggle) or a checkbox (now-checkbox).",
+					"fieldType": "choice",
+					"defaultValue": "toggle",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Toggle", "value": "toggle" },
+							{ "label": "Checkbox", "value": "checkbox" }
+						]
+					}
 				},
 				{
 					"name": "columns",

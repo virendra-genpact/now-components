@@ -12,14 +12,17 @@ describe('dynamic-form transforms', () => {
 	const normType = (disp) => {
 		const t = String(disp || '').toLowerCase();
 		if (t.includes('true/false') || t.includes('boolean')) return 'boolean';
-		if (t.includes('reference') || t.includes('document id') || t.includes('glide list') || t.includes('list'))
-			return 'reference';
-		if (t.includes('integer') || t.includes('long') || t.includes('decimal') || t.includes('float') || t.includes('currency') || t.includes('percent') || t.includes('numeric'))
+		if (t.includes('journal') || t.includes('html') || t.includes('translated') || t.includes('wiki')) return 'textarea';
+		if (t.includes('glide list') || t.includes('glide_list') || t.includes('list')) return 'multi_reference';
+		if (t.includes('reference') || t.includes('document id')) return 'reference';
+		if (t.includes('integer') || t.includes('long') || t.includes('decimal') || t.includes('float') || t.includes('currency') || t.includes('price') || t.includes('percent') || t.includes('numeric'))
 			return 'number';
-		if (t.includes('date/time') || t.includes('time')) return 'datetime';
-		if (t.includes('date')) return 'date';
-		if (t.includes('html') || t.includes('journal') || t.includes('translated')) return 'textarea';
+		if (t.includes('date/time') || /\btime\b/.test(t)) return 'datetime';
+		if (/\bdate\b/.test(t)) return 'date';
 		if (t.includes('choice')) return 'choice';
+		if (t.includes('password') || t.includes('encrypted')) return 'password';
+		if (t.includes('url')) return 'url';
+		if (t.includes('phone')) return 'phone';
 		return 'string';
 	};
 
@@ -32,9 +35,26 @@ describe('dynamic-form transforms', () => {
 	it('maps dictionary types to render kinds', () => {
 		expect(normType('True/False')).toBe('boolean');
 		expect(normType('Reference')).toBe('reference');
+		expect(normType('Document ID')).toBe('reference');
+		expect(normType('Glide List')).toBe('multi_reference');
+		expect(normType('List')).toBe('multi_reference');
+		// Journal types are multi-line text — must NOT be mistaken for a list.
+		expect(normType('Journal Input')).toBe('textarea');
+		expect(normType('Journal List')).toBe('textarea');
+		expect(normType('Journal')).toBe('textarea');
+		expect(normType('Translated Text')).toBe('textarea');
+		expect(normType('Wiki')).toBe('textarea');
+		expect(normType('Price')).toBe('number');
 		expect(normType('Integer')).toBe('number');
 		expect(normType('Date/Time')).toBe('datetime');
 		expect(normType('Date')).toBe('date');
+		expect(normType('Due Date')).toBe('date');
+		// "Validated" contains "date" — must NOT be a date field.
+		expect(normType('IP Address (Validated IPV4, IPV6)')).toBe('string');
+		expect(normType('Password (2 Way Encrypted)')).toBe('password');
+		expect(normType('Encrypted Text')).toBe('password');
+		expect(normType('URL')).toBe('url');
+		expect(normType('Phone Number (E164)')).toBe('phone');
 		expect(normType('HTML')).toBe('textarea');
 		expect(normType('Choice')).toBe('choice');
 		expect(normType('String')).toBe('string');
@@ -242,5 +262,35 @@ describe('dynamic-form long-string -> textarea', () => {
 	it('does not affect non-string types', () => {
 		expect(resolveType('reference', 400)).toBe('reference');
 		expect(resolveType('choice', 400)).toBe('choice');
+	});
+});
+
+describe('dynamic-form multi-reference (Glide List) pills', () => {
+	// Seed: a CSV of sys_ids (value) + CSV of labels (display) -> pill objects with
+	// field-encoded ids. Selection: encoded ids -> CSV of sys_ids saved back.
+	const seed = (field, idCsv, lblCsv) => {
+		const ids = !idCsv ? [] : String(idCsv).split(',').map((s) => s.trim()).filter(Boolean);
+		const lbls = !lblCsv ? [] : String(lblCsv).split(',').map((s) => s.trim());
+		return ids.map((sid, i) => ({ id: `${field}::${sid}`, label: lbls[i] || sid }));
+	};
+	const toCsv = (encodedIds) => encodedIds.map((raw) => {
+		const r = String(raw); const i = r.indexOf('::');
+		return i >= 0 ? r.slice(i + 2) : r;
+	}).join(',');
+
+	it('seeds pills from the CSV value + display', () => {
+		expect(seed('watch_list', 'aaa,bbb', 'Jane Doe,Bob Lee')).toEqual([
+			{ id: 'watch_list::aaa', label: 'Jane Doe' },
+			{ id: 'watch_list::bbb', label: 'Bob Lee' },
+		]);
+	});
+
+	it('handles an empty multi value', () => {
+		expect(seed('watch_list', '', '')).toEqual([]);
+	});
+
+	it('saves the selection back as a CSV of sys_ids', () => {
+		expect(toCsv(['watch_list::aaa', 'watch_list::bbb'])).toBe('aaa,bbb');
+		expect(toCsv([])).toBe('');
 	});
 });

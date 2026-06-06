@@ -73,9 +73,13 @@
  * collapses to intrinsic width, which is what left the big gaps). This styles the
  * element's own box only — not its shadow internals. */
 .ff-field now-input,
+.ff-field now-input-password,
+.ff-field now-input-url,
+.ff-field now-input-phone,
 .ff-field now-select,
 .ff-field now-textarea,
 .ff-field now-typeahead,
+.ff-field now-typeahead-multi,
 .ff-field now-checkbox {
 	display: block;
 	width: 100%;

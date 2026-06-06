@@ -5,15 +5,19 @@ import '../src/x-gegis-library-dynamic-form';
  * versions). Locally you'll see the legacy (Rome-era) styling; validate the true
  * Horizon look on the instance. See [memory: do-not-bundle-now-star-use-horizon].
  *
- * NOTE: now-date-time and now-typeahead are intentionally NOT imported here, so
- * the date/datetime fields and the reference pickers stay blank in local preview
- * and only render on the instance (which supplies the real Horizon controls).
- * (now-date-time isn't on public npm; now-typeahead is, but is left out so the
- * playground doesn't require it.) All deploy paths are unaffected since src/
- * imports no now-*. */
+ * NOTE: now-date-time, now-typeahead and now-typeahead-multi are intentionally NOT
+ * imported here, so the date/datetime fields and the reference / multi-select pickers
+ * stay blank in local preview and only render on the instance (which supplies the real
+ * Horizon controls). (now-date-time isn't on public npm; the typeaheads are, but are
+ * left out so the playground doesn't require them.) All deploy paths are unaffected
+ * since src/ imports no now-*. */
 import '@servicenow/now-input';
+import '@servicenow/now-input-password';
+import '@servicenow/now-input-url';
+import '@servicenow/now-input-phone';
 import '@servicenow/now-select';
 import '@servicenow/now-checkbox';
+import '@servicenow/now-toggle';
 import '@servicenow/now-textarea';
 import '@servicenow/now-button';
 import '@servicenow/now-loader';
@@ -38,6 +42,8 @@ if (el) {
 	el.autosave = false;
 	el.applyUiPolicy = true;
 	el.showUiActions = true;
+	el.uiActionPosition = 'top';
+	el.booleanControl = 'toggle';
 	el.columns = 3;
 	el.saveButtonPosition = 'both';
 }
