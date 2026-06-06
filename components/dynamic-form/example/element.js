@@ -5,10 +5,12 @@ import '../src/x-gegis-library-dynamic-form';
  * versions). Locally you'll see the legacy (Rome-era) styling; validate the true
  * Horizon look on the instance. See [memory: do-not-bundle-now-star-use-horizon].
  *
- * NOTE: now-date-time is NOT published to public npm, so it isn't imported here —
- * the date/datetime fields stay blank in local preview and only render on the
- * instance (which supplies the real Horizon control). All deploy paths are
- * unaffected since src/ imports no now-*. */
+ * NOTE: now-date-time and now-typeahead are intentionally NOT imported here, so
+ * the date/datetime fields and the reference pickers stay blank in local preview
+ * and only render on the instance (which supplies the real Horizon controls).
+ * (now-date-time isn't on public npm; now-typeahead is, but is left out so the
+ * playground doesn't require it.) All deploy paths are unaffected since src/
+ * imports no now-*. */
 import '@servicenow/now-input';
 import '@servicenow/now-select';
 import '@servicenow/now-checkbox';
@@ -34,6 +36,8 @@ if (el) {
 	el.view = '';
 	el.readOnly = false;
 	el.autosave = false;
+	el.applyUiPolicy = true;
+	el.showUiActions = true;
 	el.columns = 3;
 	el.saveButtonPosition = 'both';
 }

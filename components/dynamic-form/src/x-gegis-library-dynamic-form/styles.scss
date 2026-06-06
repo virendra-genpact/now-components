@@ -75,10 +75,19 @@
 .ff-field now-input,
 .ff-field now-select,
 .ff-field now-textarea,
+.ff-field now-typeahead,
 .ff-field now-checkbox {
 	display: block;
 	width: 100%;
 	margin: 0;
+}
+
+/* UI Action form buttons (sys_ui_action) — a wrap-friendly button bar. */
+.ff-uiactions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
 }
 
 /* Loading + status rows. */

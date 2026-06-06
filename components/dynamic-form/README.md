@@ -6,9 +6,10 @@ component talks to the **ServiceNow Table API** itself to build and save the
 form. It also exposes **Read only** and **Autosave** toggles.
 
 The **field controls are real Horizon `now-*` components** (`now-input`,
-`now-select`, `now-checkbox`, `now-textarea`, `now-button`, `now-loader`)
-composed inside our own card/section layout — so inputs stay in sync with
-Horizon while the section grouping matches the provided design. HTTP is done with
+`now-select`, `now-checkbox`, `now-textarea`, `now-date-time`, `now-typeahead`,
+`now-button`, `now-loader`) composed inside our own card/section layout — so
+inputs stay in sync with Horizon while the section grouping matches the provided
+design. HTTP is done with
 `@servicenow/ui-effect-http` (`createHttpEffect`) so the instance
 session / auth / scope are used automatically — there is **no hand-rolled
 `fetch()`**.
@@ -26,13 +27,29 @@ these Table API calls, each via `createHttpEffect`:
 
 1. **Record** — `GET /api/now/table/{table}/{sysId}?sysparm_display_value=all&sysparm_view={view}`
    → the field set for the view + values/display values.
-2. **Field metadata** — `GET /api/now/table/sys_dictionary?...name={table}...`
-   → label, type, mandatory, read-only per column.
-3. **Choices** — `GET /api/now/table/sys_choice?...name={table}...`
-   → choice lists (rendered as dropdowns).
-4. **Layout** — `GET /api/now/table/sys_ui_element?...sys_ui_section.name={table}...`
+2. **Table hierarchy** — `GET /api/now/table/sys_db_object?name={table}` (dot-walking
+   `super_class`) → the table **and its parents**, so inherited fields are covered.
+3. **Field metadata** — `GET /api/now/table/sys_dictionary?...nameIN{family}...`
+   → label, type, mandatory, read-only per column, for the whole table family (so
+   fields inherited from e.g. `task` — `comments`, `work_notes`, `state` — resolve
+   correctly instead of falling back to a plain text box).
+4. **Choices** — `GET /api/now/table/sys_choice?...nameIN{family}...`
+   → choice lists (rendered as dropdowns), including choices defined on a parent table.
+5. **Layout** — `GET /api/now/table/sys_ui_element?...sys_ui_section.name={table}...`
    → sections + field order for the view. If no layout is found it falls back to
    a single section from the view's fields.
+
+Once the form is rendered it runs three **enrichment** calls (in the background,
+so the form is usable immediately):
+
+6. **Reference display fields** — `GET /api/now/table/sys_dictionary?...display=true`
+   → which column to search/show per referenced table (so reference pickers
+   search the right field; falls back to `name`).
+7. **UI Policies** (when **Apply UI Policy** is on) — `sys_ui_policy` +
+   `sys_ui_policy_action` for the table/view → dynamic mandatory / read-only /
+   hidden behavior (see below).
+8. **UI Actions** (when **Show UI Actions** is on) — `sys_ui_action` form buttons
+   for the table → rendered as buttons (see below).
 
 Editing a field marks it dirty. **Save** (or, when **Autosave** is on, each
 field's blur/change) PATCHes the dirty fields back:
@@ -40,6 +57,43 @@ field's blur/change) PATCHes the dirty fields back:
 ```
 PATCH /api/now/table/{table}/{sysId}   { <field>: <value>, ... }
 ```
+
+On a manual **Save**, visible + mandatory fields that are still empty are flagged
+invalid and the save is blocked until they're filled.
+
+## Reference fields (editable picker)
+
+Reference (and document-id / list) fields render as a **`now-typeahead`**. As you
+type, the component searches the **referenced table** over the Table API
+(debounced ~300 ms) on that table's display field
+(`{displayField}LIKE{term}^ORDERBY{displayField}`, top 25) and lists the matches.
+Selecting one saves the chosen record's **sys_id** as the field value (and shows
+its display value). The initial value is seeded from the loaded record.
+
+## UI Policy (declarative)
+
+When **Apply UI Policy** is on, active `sys_ui_policy` records for the table
+(matching this view, or `global`) are loaded with their `sys_ui_policy_action`
+rows. Each policy's **condition** is evaluated against the record's current values
+(re-evaluated on every field change), and matching actions set fields
+**mandatory**, **read-only** (`disabled`), or **hidden** (`visible=false`);
+`reverse_if_false` applies the inverse when the condition is false. The encoded-
+query evaluator supports `=`, `!=`, `IN`, `NOT IN`, `LIKE`, `NOT LIKE`,
+`STARTSWITH`, `ENDSWITH`, `ISEMPTY`, `ISNOTEMPTY`, `>`, `<`, `>=`, `<=` and
+`^` (AND) / `^OR` / `^NQ` grouping.
+
+> **Limitation:** UI Policies that **run scripts** can't be executed over plain
+> REST and are ignored — only the declarative field actions are applied.
+
+## UI Actions (form buttons)
+
+When **Show UI Actions** is on, the table's active form-button `sys_ui_action`
+records are rendered as `now-button`s above the form. Clicking one fires the
+**`UI_ACTION_CLICKED`** event with `{ name, sysId, label }` so the UI Builder page
+can react (navigate, open a modal, call a Data Resource, …).
+
+> **Limitation:** the UI action's own server/client **script is not executed** —
+> the component emits the event and the page decides what to do.
 
 ## Field rendering
 
@@ -50,9 +104,13 @@ PATCH /api/now/table/{table}/{sysId}   { <field>: <value>, ... }
 | integer / decimal / float / currency | `now-input type="number"` |
 | date | `now-date-time type="date"` |
 | date/time | `now-date-time type="date-time"` |
-| html / journal / translated | `now-textarea` (full-width) |
-| reference / glide list | **read-only** `now-input` (display value) — editing references needs a record picker not available over plain REST |
+| html / journal / translated-text | `now-textarea` (full-width) |
+| string with `max_length` > 255 | `now-textarea` (full-width) — long strings (e.g. an `address` String(400)) render multi-line, like the platform form |
+| reference / document id / glide list | **editable** `now-typeahead` — searches the referenced table over the Table API as you type and saves the chosen record's sys_id (see [Reference fields](#reference-fields-editable-picker)) |
 | everything else | `now-input type="text"` |
+
+> Multi-valued **glide list** fields are treated as a single reference picker
+> (only one value is saved) — a true multi-select list editor is out of scope.
 
 ### Dot-walked fields
 
@@ -74,6 +132,8 @@ it falls back to a humanized column name.
 | `readOnly` | boolean | `false` | Disable every field; hide Save. |
 | `autosave` | boolean | `false` | PATCH each field on blur/change. |
 | `saveRelated` | boolean | `false` | Also save edits to dot-walked fields to their related records (resolve each record + PATCH it). Needs write ACLs + existing references. |
+| `applyUiPolicy` | boolean | `true` | Load + evaluate declarative UI Policies to set fields mandatory / read-only / hidden as values change. Script-based policies are ignored. |
+| `showUiActions` | boolean | `true` | Render the table's active form-button UI Actions; clicking one fires `UI_ACTION_CLICKED` (the action's script is not run). |
 | `columns` | number | `2` | Fields per row per section. |
 | `saveLabel` | string | `Save` | Manual Save button text. |
 | `showSave` | boolean | `true` | Show the Save button (when not read-only). |
@@ -86,11 +146,17 @@ it falls back to a humanized column name.
 | `FIELD_CHANGED` | `{ name, value }` | A field changes |
 | `FORM_SAVED` | `{ table, sysId }` | A save succeeds |
 | `SAVE_ERROR` | `{ message }` | A save fails |
+| `UI_ACTION_CLICKED` | `{ name, sysId, label }` | A form-button UI Action is clicked (its script is not run) |
 
 ## Notes & limitations
 
-- **Reference fields are read-only** (display value only) — a proper reference
-  picker is out of scope for plain REST.
+- **Reference fields are editable** via a `now-typeahead` that searches the
+  referenced table as you type and saves the selected record's sys_id. Multi-
+  valued glide-list fields are handled as a single reference (one value saved).
+- **UI Policy** — only **declarative** field actions (mandatory / read-only /
+  hidden) are applied; policies that **run scripts** are ignored.
+- **UI Actions** — form buttons are rendered and emit `UI_ACTION_CLICKED`; the
+  action's own server/client **script is not executed**.
 - **Dot-walked fields** — by default they're display-only (the base PATCH can't
   write them). Turn on **`saveRelated`** to also save them: the component groups
   the edits by related record, resolves each record's sys_id (one extra GET), and

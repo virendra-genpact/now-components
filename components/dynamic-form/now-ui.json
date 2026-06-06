@@ -7,6 +7,7 @@
 				"now-checkbox",
 				"now-textarea",
 				"now-date-time",
+				"now-typeahead",
 				"now-button",
 				"now-loader"
 			],
@@ -75,6 +76,20 @@
 					"defaultValue": false
 				},
 				{
+					"name": "applyUiPolicy",
+					"label": "Apply UI Policy",
+					"description": "When on, load the table's declarative UI Policies (sys_ui_policy + sys_ui_policy_action) for this view and dynamically set fields mandatory / read-only / hidden as the record's values change. UI Policies that 'run scripts' can't be executed over REST and are ignored.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showUiActions",
+					"label": "Show UI Actions",
+					"description": "When on, render the table's active form-button UI Actions (sys_ui_action) as buttons. Clicking one fires the UI_ACTION_CLICKED event so the page can react/navigate — the action's own server/client script is not executed.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
 					"name": "columns",
 					"label": "Columns",
 					"description": "Number of fields per row in each section.",
@@ -135,6 +150,16 @@
 					"description": "Fired when an HTTP save fails. Payload: { message }.",
 					"payload": [
 						{ "name": "message", "label": "Message", "description": "Error message from the Table API.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "UI_ACTION_CLICKED",
+					"label": "UI Action clicked",
+					"description": "Fired when a rendered form-button UI Action is clicked. The action's own script is NOT executed — bind this to navigate/react on the page. Payload: { name, sysId, label }.",
+					"payload": [
+						{ "name": "name", "label": "Action name", "description": "The UI action's action_name (or name).", "fieldType": "string" },
+						{ "name": "sysId", "label": "UI Action sys_id", "description": "sys_id of the sys_ui_action record.", "fieldType": "string" },
+						{ "name": "label", "label": "Label", "description": "The button label shown to the user.", "fieldType": "string" }
 					]
 				}
 			]
