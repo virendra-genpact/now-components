@@ -123,4 +123,114 @@ describe('data-table transforms', () => {
 			{ field: 'state', label: 'State' },
 		]);
 	});
+
+	/* ---- new list-feature transforms ---- */
+
+	const NO_VALUE_OPS = { ISEMPTY: 1, ISNOTEMPTY: 1 };
+	const filterClause = (field, op, value) => {
+		if (!field || !op) return '';
+		if (NO_VALUE_OPS[op]) return `${field}${op}`;
+		const v = String(value == null ? '' : value).trim();
+		if (v === '') return '';
+		return `${field}${op}${v}`;
+	};
+
+	const orderClause = (props, state, group) => {
+		const segs = [];
+		if (group) segs.push(`ORDERBY${group}`);
+		let sf = state && state.sortField ? state.sortField : props.orderBy;
+		let desc = state && state.sortField ? state.sortDir === 'desc' : !!props.orderDescending;
+		sf = String(sf || '').trim();
+		if (sf.charAt(0) === '-') { desc = true; sf = sf.slice(1); }
+		if (sf && sf !== group) segs.push(desc ? `ORDERBYDESC${sf}` : `ORDERBY${sf}`);
+		return segs.join('^');
+	};
+	const activeGroup = (props, state) =>
+		(state && state.groupBy != null && state.groupBy !== '') ? state.groupBy : (props.groupByField || '');
+	const currentQuery = (props, state) => {
+		const parts = [];
+		if (props.query) parts.push(props.query);
+		const term = String((state && state.search) || '').trim();
+		if (term) parts.push(`123TEXTQUERY321=${term}`);
+		const cf = (state && state.colFilters) || {};
+		Object.keys(cf).forEach((field) => {
+			const clause = filterClause(field, cf[field] && cf[field].op, cf[field] && cf[field].value);
+			if (clause) parts.push(clause);
+		});
+		const base = parts.join('^');
+		const order = orderClause(props, state, activeGroup(props, state));
+		return base ? (order ? `${base}^${order}` : base) : order;
+	};
+
+	const applyColumnOrder = (cols, order) => {
+		if (!order || !order.length) return cols;
+		const idx = (f) => { const i = order.indexOf(f); return i < 0 ? order.length + 1 : i; };
+		return cols
+			.map((c, i) => ({ c, i }))
+			.sort((a, b) => (idx(a.c.field) - idx(b.c.field)) || (a.i - b.i))
+			.map((x) => x.c);
+	};
+
+	const parseRefLink = (link) => {
+		const m = /\/table\/([^/?#]+)\/([0-9a-f]{32})/i.exec(String(link || ''));
+		return m ? { table: m[1], sysId: m[2] } : null;
+	};
+
+	const parseJsonArray = (s) => {
+		if (Array.isArray(s)) return s;
+		const str = String(s || '').trim();
+		if (!str) return [];
+		try { const v = JSON.parse(str); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+	};
+
+	it('builds per-column filter clauses (value, no-value, IN), skipping empties', () => {
+		expect(filterClause('state', '=', '2')).toBe('state=2');
+		expect(filterClause('short_description', 'LIKE', 'net')).toBe('short_descriptionLIKEnet');
+		expect(filterClause('priority', 'IN', '1,2')).toBe('priorityIN1,2');
+		expect(filterClause('assigned_to', 'ISEMPTY')).toBe('assigned_toISEMPTY');
+		expect(filterClause('state', '=', '   ')).toBe(''); // blank value → skipped
+		expect(filterClause('', '=', 'x')).toBe('');
+	});
+
+	it('assembles the effective query: fixed filter + global search + column filters + order', () => {
+		expect(currentQuery({ query: 'active=true', orderBy: '', groupByField: '' }, {})).toBe('active=true');
+		expect(currentQuery({ query: 'active=true' }, { search: 'router' }))
+			.toBe('active=true^123TEXTQUERY321=router');
+		expect(currentQuery({ query: '' }, { colFilters: { state: { op: '=', value: '2' } } }))
+			.toBe('state=2');
+		expect(currentQuery(
+			{ query: 'active=true', orderBy: 'number', orderDescending: false },
+			{ search: 'vpn', colFilters: { priority: { op: 'IN', value: '1,2' } }, groupBy: 'state' }
+		)).toBe('active=true^123TEXTQUERY321=vpn^priorityIN1,2^ORDERBYstate^ORDERBYnumber');
+	});
+
+	it('lets a runtime sort override the configured orderBy (asc/desc toggle)', () => {
+		expect(orderClause({ orderBy: 'number', orderDescending: false }, { sortField: 'priority', sortDir: 'desc' }, ''))
+			.toBe('ORDERBYDESCpriority');
+		expect(orderClause({ orderBy: 'number', orderDescending: true }, {}, '')).toBe('ORDERBYDESCnumber');
+		// group field first, sort second; sort skipped when equal to group
+		expect(orderClause({ orderBy: 'state' }, {}, 'state')).toBe('ORDERBYstate');
+	});
+
+	it('applies a user column order, keeping unknown columns at the end', () => {
+		const cols = [{ field: 'a' }, { field: 'b' }, { field: 'c' }];
+		expect(applyColumnOrder(cols, ['c', 'a', 'b'])).toEqual([{ field: 'c' }, { field: 'a' }, { field: 'b' }]);
+		expect(applyColumnOrder(cols, ['b'])).toEqual([{ field: 'b' }, { field: 'a' }, { field: 'c' }]);
+		expect(applyColumnOrder(cols, [])).toEqual(cols);
+	});
+
+	it('parses a reference cell link into { table, sysId }', () => {
+		expect(parseRefLink('https://x.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441'))
+			.toEqual({ table: 'sys_user', sysId: '6816f79cc0a8016401c5a33be04be441' });
+		expect(parseRefLink('')).toBeNull();
+		expect(parseRefLink('not a link')).toBeNull();
+	});
+
+	it('parses JSON-array props defensively (blank / invalid → [])', () => {
+		expect(parseJsonArray('[{"id":"a"}]')).toEqual([{ id: 'a' }]);
+		expect(parseJsonArray('')).toEqual([]);
+		expect(parseJsonArray('{not json')).toEqual([]);
+		expect(parseJsonArray('{"id":"a"}')).toEqual([]); // object, not array → []
+		expect(parseJsonArray([{ id: 'b' }])).toEqual([{ id: 'b' }]);
+	});
 });

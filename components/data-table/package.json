@@ -29,9 +29,14 @@
 	},
 	"devDependencies": {
 		"@babel/runtime": "7.25.7",
+		"@servicenow/now-button": "latest",
+		"@servicenow/now-dropdown": "latest",
+		"@servicenow/now-highlighted-value": "latest",
 		"@servicenow/now-icon": "latest",
+		"@servicenow/now-input": "latest",
 		"@servicenow/now-loader": "latest",
 		"@servicenow/now-pagination-control": "latest",
+		"@servicenow/now-select": "latest",
 		"ajv": "^6.12.6",
 		"sass": "1.53.0"
 	},

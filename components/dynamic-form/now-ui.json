@@ -34,7 +34,7 @@
 				{
 					"name": "sysId",
 					"label": "Record sys_id",
-					"description": "sys_id of the record to load and save. Bind this from the page (e.g. a URL parameter).",
+					"description": "sys_id of the record to load and save. Bind this from the page (e.g. a URL parameter). Pass \"-1\" to render a blank CREATE form for the table/view — Save then POSTs a new record and FORM_SAVED carries the new sys_id.",
 					"fieldType": "string",
 					"defaultValue": ""
 				},

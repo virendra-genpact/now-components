@@ -99,7 +99,15 @@ const A = {
 	SAVE_HTTP: 'DF#SAVE_HTTP',
 	SAVE_HTTP_OK: 'DF#SAVE_HTTP_OK',
 	SAVE_HTTP_ERR: 'DF#SAVE_HTTP_ERR',
+	CREATE_HTTP: 'DF#CREATE_HTTP',
+	CREATE_OK: 'DF#CREATE_OK',
+	CREATE_ERR: 'DF#CREATE_ERR',
 };
+
+// sysId "-1" puts the form in CREATE mode: render a blank form for the table/view
+// and POST a new record on Save (instead of GET-then-PATCH an existing one).
+const CREATE_SYS_ID = '-1';
+const isCreate = (sysId) => String(sysId == null ? '' : sysId) === CREATE_SYS_ID;
 
 /* Per-field debounce timers for reference typeahead server search (module-level
  * so they survive re-renders; one in-flight search slot is tracked in state). */
@@ -355,6 +363,9 @@ const assemble = (state) => {
 	const record = state._record || {}; // name -> { value, display_value }
 	const layout = Array.isArray(state._layout) ? state._layout : [];
 	const family = (state._tableFamily && state._tableFamily.length) ? state._tableFamily : [baseTable];
+	// CREATE mode (sysId "-1"): no record was loaded, so fields come from the layout
+	// (or the dictionary as a fallback) rather than the record's keys.
+	const creating = isCreate(state.properties && state.properties.sysId);
 
 	const fieldNames = Object.keys(record);
 	const inRecord = new Set(fieldNames);
@@ -416,10 +427,12 @@ const assemble = (state) => {
 
 	let sections = [];
 
-	// Prefer the real form layout (sections + order) when available.
+	// Prefer the real form layout (sections + order) when available. In CREATE mode
+	// there's no record, so accept any layout element that resolves to a real field.
 	const usable = layout.filter((r) => {
 		const el = rawVal(r.element);
-		return el && !String(el).startsWith('.') && inRecord.has(el);
+		if (!el || String(el).startsWith('.')) return false;
+		return creating ? !!resolveField(dicts, baseTable, el).meta : inRecord.has(el);
 	});
 
 	if (usable.length) {
@@ -435,24 +448,25 @@ const assemble = (state) => {
 		});
 		sections = order.map((sectionName) => ({ sectionName, fields: bySection[sectionName] }));
 	} else {
-		// Fallback: one section from the view's returned fields.
-		sections = [
-			{
-				sectionName: '',
-				fields: fieldNames
-					.filter((n) => n !== 'sys_id')
-					.map(makeField),
-			},
-		];
+		// Fallback: one section. CREATE mode has no record, so list the base table's
+		// dictionary columns; otherwise use the view's returned fields.
+		const names = creating
+			? Object.keys(dicts[baseTable] || {}).filter((n) => n !== 'sys_id')
+			: fieldNames.filter((n) => n !== 'sys_id');
+		sections = [{ sectionName: '', fields: names.map(makeField) }];
 	}
 
-	// Seed editable values + display values from the record.
+	// Seed editable values + display values. CREATE mode starts blank.
 	const values = {};
 	const display = {};
-	fieldNames.forEach((n) => {
-		values[n] = rawVal(record[n]);
-		display[n] = dispVal(record[n]);
-	});
+	if (creating) {
+		sections.forEach((sec) => (sec.fields || []).forEach((f) => { values[f.name] = ''; display[f.name] = ''; }));
+	} else {
+		fieldNames.forEach((n) => {
+			values[n] = rawVal(record[n]);
+			display[n] = dispVal(record[n]);
+		});
+	}
 
 	return { model: { sections }, values, display, _refMeta: refMeta, _refItems: refItems, _refSelected: refSelected };
 };
@@ -467,13 +481,31 @@ const startRecordLoad = (dispatch, table, sysId, viewName) => {
 	dispatch(A.FETCH_RECORD, payload);
 };
 
+// Resolve the table hierarchy → dictionary → choices → layout (no record fetch).
+// Shared by RECORD_OK and CREATE mode (where there is no record to load).
+const startMetaLoad = (dispatch, table) => {
+	dispatch(A.FETCH_HIERARCHY, {
+		sysparm_query: `name=${table}`,
+		sysparm_fields: 'name,super_class.name,super_class.super_class.name,super_class.super_class.super_class.name,super_class.super_class.super_class.super_class.name',
+		sysparm_display_value: 'false',
+		sysparm_limit: '1',
+	});
+};
+
+// Begin loading for the resolved view name: fetch the record (edit) or jump straight
+// to metadata (create, sysId "-1").
+const startLoadForView = (dispatch, table, sysId, viewName) => {
+	if (isCreate(sysId)) startMetaLoad(dispatch, table);
+	else startRecordLoad(dispatch, table, sysId, viewName);
+};
+
 const maybeLoad = ({ state, updateState, dispatch }) => {
 	const { table, sysId, view } = state.properties;
 	if (!table || !sysId) return;
 	const key = `${table}|${sysId}|${view || ''}`;
 	if (key === state._loadedKey) return;
 	updateState({
-		_loadedKey: key, loading: true, error: '', _layout: [], _viewName: '',
+		_loadedKey: key, loading: true, error: '', _layout: [], _viewName: '', _record: {},
 		_tableFamily: [], _uiPolicies: [], _policyState: {}, _uiActions: [], _invalid: {},
 		_refMeta: {}, _refItems: {}, _refSelected: {}, _refSearch: null,
 	});
@@ -484,7 +516,7 @@ const maybeLoad = ({ state, updateState, dispatch }) => {
 		dispatch(A.FETCH_VIEW_NAME, { viewSysId: view, sysparm_fields: 'name' });
 	} else {
 		updateState({ _viewName: view || '' });
-		startRecordLoad(dispatch, table, sysId, view || '');
+		startLoadForView(dispatch, table, sysId, view || '');
 	}
 };
 
@@ -505,7 +537,8 @@ const applyFieldChange = ({ state, updateState, dispatch }, name, value, display
 	patch._policyState = computePolicyState(state._uiPolicies || [], values);
 	updateState(patch);
 	dispatch('FIELD_CHANGED', { name, value: String(value == null ? '' : value) });
-	if (state.properties.autosave) dispatch(A.SAVE, { fields: { [name]: value } });
+	// Autosave never applies in CREATE mode — the record doesn't exist yet (Save POSTs it).
+	if (state.properties.autosave && !isCreate(state.properties.sysId)) dispatch(A.SAVE, { fields: { [name]: value } });
 };
 
 /* Group dirty DOT-WALKED fields by their related record (the path minus the last
@@ -1103,7 +1136,7 @@ createCustomElement('x-gegis-library-dynamic-form', {
 			patch._policyState = computePolicyState(state._uiPolicies || [], values);
 			updateState(patch);
 			dispatch('FIELD_CHANGED', { name: field, value: csv });
-			if (state.properties.autosave) dispatch(A.SAVE, { fields: { [field]: csv } });
+			if (state.properties.autosave && !isCreate(state.properties.sysId)) dispatch(A.SAVE, { fields: { [field]: csv } });
 		},
 
 		/* 0) resolve a view sys_id -> its name (sysparm_view + section query need the name) */
@@ -1118,12 +1151,12 @@ createCustomElement('x-gegis-library-dynamic-form', {
 			const rec = resultOf(action) || {};
 			const viewName = rawVal(rec.name) || '';
 			updateState({ _viewName: viewName });
-			startRecordLoad(dispatch, state.properties.table, state.properties.sysId, viewName);
+			startLoadForView(dispatch, state.properties.table, state.properties.sysId, viewName);
 		},
 		[A.VIEW_NAME_ERR]: ({ state, updateState, dispatch }) => {
 			// Couldn't resolve the sys_id — load the Default view rather than break.
 			updateState({ _viewName: '' });
-			startRecordLoad(dispatch, state.properties.table, state.properties.sysId, '');
+			startLoadForView(dispatch, state.properties.table, state.properties.sysId, '');
 		},
 
 		/* 1) record values for the view */
@@ -1140,12 +1173,7 @@ createCustomElement('x-gegis-library-dynamic-form', {
 			// Resolve the table's parent hierarchy first so the dictionary fetch covers
 			// INHERITED fields (e.g. comments / work_notes / state from `task`). The
 			// dot-walked super_class.* fields walk up to ~4 ancestors in one call.
-			dispatch(A.FETCH_HIERARCHY, {
-				sysparm_query: `name=${state.properties.table}`,
-				sysparm_fields: 'name,super_class.name,super_class.super_class.name,super_class.super_class.super_class.name,super_class.super_class.super_class.super_class.name',
-				sysparm_display_value: 'false',
-				sysparm_limit: '1',
-			});
+			startMetaLoad(dispatch, state.properties.table);
 		},
 		[A.RECORD_ERR]: ({ action, updateState }) =>
 			updateState({ loading: false, error: `Could not load record: ${errOf(action)}` }),
@@ -1458,6 +1486,14 @@ createCustomElement('x-gegis-library-dynamic-form', {
 				(k.indexOf('.') < 0 ? base : related)[k] = all[k];
 			});
 			const { table, sysId, saveRelated } = state.properties;
+
+			// CREATE mode (sysId "-1"): POST a new record with the base (non-dot-walked)
+			// fields. Dot-walked / related saves are not supported on create.
+			if (isCreate(sysId)) {
+				updateState({ saving: true, error: '' });
+				dispatch(A.CREATE_HTTP, { table, data: base, sysparm_display_value: 'all' });
+				return;
+			}
 			const baseGroup = Object.keys(base).length ? { table, sysId, data: base } : null;
 			const relGroups = saveRelated ? buildRelatedGroups(state._dicts || {}, state._baseTable, related) : {};
 			const prefixes = Object.keys(relGroups);
@@ -1522,5 +1558,29 @@ createCustomElement('x-gegis-library-dynamic-form', {
 		},
 		[A.SAVE_HTTP_ERR]: ({ action, state, updateState, dispatch }) =>
 			finalizeSave({ state, updateState, dispatch }, { error: errOf(action) }),
+
+		/* CREATE mode: POST a new record. On success we surface the new sys_id via
+		 * FORM_SAVED so the page can rebind/refresh (this component keeps sysId "-1"
+		 * until the page points it at the created record). */
+		[A.CREATE_HTTP]: createHttpEffect('/api/now/table/:table', {
+			method: 'POST',
+			pathParams: ['table'],
+			dataParam: 'data',
+			queryParams: ['sysparm_display_value'],
+			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+			successActionType: A.CREATE_OK,
+			errorActionType: A.CREATE_ERR,
+		}),
+		[A.CREATE_OK]: ({ action, state, updateState, dispatch }) => {
+			const rec = resultOf(action) || {};
+			const newSysId = rawVal(rec.sys_id) || '';
+			updateState({ saving: false, dirty: {}, error: '', _saveError: '' });
+			dispatch('FORM_SAVED', { table: state.properties.table, sysId: newSysId });
+		},
+		[A.CREATE_ERR]: ({ action, updateState, dispatch }) => {
+			const msg = errOf(action);
+			updateState({ saving: false, error: `Create failed: ${msg}` });
+			dispatch('SAVE_ERROR', { message: msg });
+		},
 	},
 });

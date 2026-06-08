@@ -1,10 +1,12 @@
 @import '@servicenow/sass-kit/host';
 
-/* The table grid + status pill are our own light-DOM markup (no `now-table`
- * primitive exists; now-badge is numeric-only — documented exception, see README).
- * The action icons / loader / pager are real Horizon now-* components; we only
- * style their HOST box (spacing), never their shadow internals. Colors use Now
- * design tokens with screenshot-matched fallbacks — the §5 look-&-feel win-win. */
+/* The table grid, status pill, toolbar, per-column filter row, slide-in drawer +
+ * overlay, column resize/reorder handles, expand detail row and group headers are
+ * our own light-DOM markup (the design system has no now-table / drawer primitive —
+ * documented §5 exception, see README). The composed now-* controls (buttons,
+ * inputs, selects, dropdown, highlighted-value, loader, pager) are real Horizon
+ * components; we only style their HOST box (spacing/width), never their shadow
+ * internals. Colors use Now design tokens with screenshot-matched fallbacks. */
 
 :host {
 	display: block;
@@ -12,25 +14,168 @@
 	color: var(--now-color--neutral-22, #1e2b3d);
 }
 
-.dt-heading {
-	font-size: 18px;
-	font-weight: 700;
-	color: var(--now-color--neutral-22, #1e2b3d);
-	margin: 0 0 14px;
-}
-
-/* Outer card. */
+/* Outer card. overflow is visible so toolbar popovers / sort & group panels can
+ * escape the card; rounded corners are preserved by rounding the toolbar (top) and
+ * footer (bottom) instead of clipping the whole card. */
 .dt-root {
+	position: relative;
 	display: block;
 	background: var(--now-color--neutral-0, #ffffff);
 	border: 1px solid var(--now-color--neutral-3, #edf0f3);
 	border-radius: 16px;
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.05);
-	overflow: hidden;
+	overflow: visible;
 }
 .dt-root--msg {
 	padding: 8px;
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.dt-heading {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--now-color--neutral-22, #1e2b3d);
+	margin: 0;
+}
+
+/* Title block: title row (heading + record-count badge) over a "last refreshed" subtitle. */
+.dt-titlewrap { display: flex; flex-direction: column; gap: 2px; }
+.dt-titlerow { display: flex; align-items: center; gap: 10px; }
+.dt-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--now-color--neutral-18, #2b3a4d);
+	background: var(--now-color--neutral-3, #eef1f4);
+}
+.dt-subtitle { font-size: 12px; color: var(--now-color--neutral-13, #6b7682); }
+
+/* Toolbar (heading + list actions | dropdown + search + add-new). */
+.dt-toolbar {
+	position: relative;
+	/* High so the toolbar's stacking context (and its hand-rolled popovers — search,
+	 * sort, group) sits above the grid / sticky cells / now-* hosts below it. */
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+	background: var(--now-color--neutral-0, #ffffff);
+	border-radius: 16px 16px 0 0;
+}
+.dt-toolbar-left,
+.dt-toolbar-right {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.dt-search { min-width: 220px; }
+/* View Only variant: always-visible inline search pill at the top-left. */
+.dt-search-inline { display: inline-flex; min-width: 260px; }
+.dt-listaction { display: inline-flex; }
+
+/* Toolbar chips (Filter / Sort / Group by) — native-list pill manner. They are
+ * real now-button; we only space their host box. */
+.dt-chip { display: inline-flex; }
+.dt-chip--on { /* active chip — now-button 'secondary' variant carries the look */ }
+.dt-chip-wrap { position: relative; display: inline-flex; }
+
+/* Sort / Group dropdown form panels (no Horizon list-builder primitive — hand-rolled,
+ * token-themed). */
+.dt-panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 0;
+	z-index: 1000;
+	min-width: 240px;
+	max-height: 340px;
+	overflow-y: auto;
+	padding: 8px;
+	background: var(--now-color--neutral-0, #ffffff);
+	border: 1px solid var(--now-color--neutral-3, #eef1f4);
+	border-radius: 12px;
+	box-shadow: 0 8px 28px rgba(16, 24, 40, 0.16);
+}
+.dt-panel-head {
+	padding: 4px 8px 8px;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--now-color--neutral-13, #6b7682);
+}
+.dt-panel-list { display: flex; flex-direction: column; }
+.dt-panel-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+	padding: 9px 10px;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	font: inherit;
+	font-size: 14px;
+	color: var(--now-color--neutral-19, #2b3a4d);
+	text-align: left;
+	cursor: pointer;
+}
+.dt-panel-item:hover { background: var(--now-color--neutral-1, #f4f6f8); }
+.dt-panel-item--on { background: var(--now-color--blue-0, #e7ecfd); font-weight: 600; }
+.dt-panel-dir { font-size: 12px; color: var(--now-color--interactive, #3b5bdb); white-space: nowrap; }
+.dt-panel-foot { display: flex; justify-content: flex-end; padding-top: 6px; }
+
+/* Global-search match highlight. */
+.dt-mark { background: var(--now-color--warning-0, #fdf0dc); color: inherit; padding: 0 1px; border-radius: 2px; }
+
+/* Delete confirmation dialog. */
+.dt-confirm-wrap { position: fixed; inset: 0; z-index: 1100; display: flex; align-items: center; justify-content: center; }
+.dt-confirm {
+	position: relative;
+	z-index: 1;
+	width: 380px;
+	max-width: 92vw;
+	padding: 22px 24px;
+	background: var(--now-color--neutral-0, #ffffff);
+	border-radius: 14px;
+	box-shadow: 0 16px 48px rgba(16, 24, 40, 0.28);
+}
+.dt-confirm-title { font-size: 17px; font-weight: 700; color: var(--now-color--neutral-22, #1e2b3d); margin-bottom: 8px; }
+.dt-confirm-msg { font-size: 14px; color: var(--now-color--neutral-15, #5b6b7b); margin-bottom: 20px; line-height: 1.45; }
+.dt-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* Query debug bar. */
+.dt-querybar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 20px;
+	background: var(--now-color--neutral-1, #f7f8fa);
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+	font-size: 12px;
+}
+.dt-querybar-k {
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--now-color--neutral-13, #6b7682);
+}
+.dt-querybar-v {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	color: var(--now-color--neutral-18, #2b3a4d);
+	word-break: break-all;
 }
 
 .dt-scroll {
@@ -38,57 +183,150 @@
 	overflow-x: auto;
 }
 
-/* Table grid. */
+/* Table grid. Header + body cells share identical horizontal padding and
+ * box-sizing so column headers line up exactly above their values. */
 .dt-table {
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 14px;
 }
+.dt-table th,
+.dt-table td { box-sizing: border-box; }
 
-.dt-table thead th {
+/* Bold, dark, title-case headers — matches the native list look (not the muted
+ * uppercase style). Compact vertical padding; same 16px sides as the body cells. */
+.dt-table thead .dt-th {
+	position: relative;
 	text-align: left;
-	padding: 18px 24px;
-	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: 0.07em;
-	text-transform: uppercase;
-	color: var(--now-color--neutral-13, #6b7682);
+	padding: 9px 16px;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--now-color--neutral-22, #1e2b3d);
 	background: var(--now-color--neutral-0, #ffffff);
 	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
 	white-space: nowrap;
 }
+.dt-th-label { display: inline-flex; align-items: center; gap: 6px; }
+.dt-th--sortable { cursor: pointer; user-select: none; }
+.dt-th--sortable:hover { color: var(--now-color--neutral-18, #2b3a4d); }
+.dt-sort { font-size: 9px; color: var(--now-color--interactive, #3b5bdb); }
 .dt-th-actions { text-align: left; }
 
-.dt-table tbody td {
-	padding: 22px 24px;
+/* Hover affordance: a visible right boundary, and (when draggable) a grab cursor +
+ * drag-dots indicator before the label. */
+.dt-th:hover { background: var(--now-color--neutral-1, #f4f6f8); }
+.dt-th[draggable="true"] { cursor: grab; }
+.dt-th[draggable="true"]:active { cursor: grabbing; }
+.dt-th[draggable="true"] .dt-th-label::before {
+	content: "⠿";
+	margin-right: 6px;
+	color: var(--now-color--neutral-9, #c6cdd6);
+	opacity: 0;
+	transition: opacity 0.12s ease;
+	cursor: grab;
+}
+.dt-th[draggable="true"]:hover .dt-th-label::before { opacity: 1; }
+
+/* Column resize handle — a visible boundary line on hover. */
+.dt-resize {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 9px;
+	height: 100%;
+	cursor: col-resize;
+	user-select: none;
+	border-right: 2px solid transparent;
+}
+.dt-th:hover .dt-resize { border-right-color: var(--now-color--neutral-6, #c6cdd6); }
+.dt-resize:hover { border-right-color: var(--now-color--interactive, #3b5bdb); }
+
+/* Small sort/filter/group state icons shown inline in the header label. */
+.dt-th-stateicon { color: var(--now-color--interactive, #3b5bdb); margin-left: 2px; }
+
+/* Per-column ⋮ actions button (revealed on header hover) + its anchored popover. */
+.dt-th-menu-wrap { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); z-index: 3; }
+/* Kept in the DOM (opacity, not display) so an OPEN portaled menu isn't dismissed when
+ * the header loses hover; revealed on header hover / focus. */
+.dt-th-menu { display: inline-flex; opacity: 0; transition: opacity 0.12s ease; }
+.dt-th:hover .dt-th-menu,
+.dt-th-menu-wrap:focus-within .dt-th-menu { opacity: 1; }
+/* The More-actions (⋮) toolbar menu host. */
+.dt-more { display: inline-flex; }
+
+/* Compact body cells — same 16px sides as the header so columns align. */
+.dt-table tbody .dt-td {
+	padding: 8px 16px;
 	color: var(--now-color--neutral-15, #5b6b7b);
 	border-bottom: 1px solid var(--now-color--neutral-2, #f1f3f5);
 	vertical-align: middle;
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
-.dt-table tbody tr:last-child td {
-	border-bottom: none;
-}
+.dt-wrap { white-space: normal; }
+.dt-table tbody tr:last-child .dt-td { border-bottom: none; }
 
-/* First column = primary identifier: bold + dark, like the OOTB list. */
-.dt-table tbody td:first-child {
+/* First data column = primary identifier: bold + dark, like the OOTB list. Driven by
+ * an explicit class (not :first-child) so the lead / actions columns don't steal it. */
+.dt-table tbody tr .dt-td--primary {
 	font-weight: 700;
-	font-size: 15px;
 	color: var(--now-color--neutral-22, #1e2b3d);
 }
 
-/* Clickable rows. */
-.dt-row {
-	cursor: pointer;
-	transition: background-color 0.12s ease;
+/* Zebra striping — alternate data rows get a clearly visible tint (class applied per
+ * data row so group-header / expand rows don't throw off the parity). A neutral
+ * translucent overlay keeps it visible on ANY theme, even where the neutral design
+ * tokens resolve to (near-)white. */
+.dt-table tbody tr.dt-row--alt > td { background-color: rgba(17, 24, 39, 0.05); }
+
+/* Leading column = the filter (funnel) toggle icon (native-list manner; no checkbox).
+ * Narrow, fixed width so data columns start at a consistent indent. */
+.dt-th-lead,
+.dt-td-lead {
+	width: 48px;
+	min-width: 48px;
+	padding-left: 16px;
+	padding-right: 0;
+	text-align: center;
+	white-space: nowrap;
 }
-.dt-row:hover {
-	background: var(--now-color--neutral-1, #f9fafb);
+.dt-filter-toggle { display: inline-flex; }
+.dt-filter-lead {
+	padding: 6px 8px 10px 16px;
+	background: var(--now-color--neutral-0, #ffffff);
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+	vertical-align: top;
+	white-space: nowrap;
 }
+.dt-filter-lead-label {
+	font-size: 13px;
+	color: var(--now-color--neutral-15, #5b6b7b);
+}
+
+/* Rows. Default cursor — the hand pointer is reserved for reference links; rows show a
+ * pointer only when a row-click action (expand / open record) is configured. */
+.dt-row { transition: background-color 0.12s ease; }
+.dt-row--clickable { cursor: pointer; }
+.dt-row:hover .dt-td { background-color: rgba(17, 24, 39, 0.02); }
+.dt-row--alt:hover > td { background-color: rgba(17, 24, 39, 0.07); }
 .dt-row:focus-visible {
 	outline: 2px solid var(--now-color--interactive, #3b5bdb);
 	outline-offset: -2px;
 }
+.dt-row--hl .dt-td { background: inherit; } /* inline row background wins */
+
+.dt-reflink {
+	color: var(--now-color--interactive, #3b5bdb);
+	text-decoration: none;
+	cursor: pointer;
+}
+.dt-reflink:hover { text-decoration: underline; }
+
+.dt-html :first-child { margin-top: 0; }
+.dt-html :last-child { margin-bottom: 0; }
 
 .dt-empty { color: var(--now-color--neutral-10, #aab2bf); }
 
@@ -99,8 +337,118 @@
 	font-size: 14px;
 }
 
-/* Status pill (no design-system text-pill component — now-badge is numeric only).
- * Tones map to Now status token families; fallbacks match the design. */
+/* Per-column filter row — mirrors the native list inline filter:
+ * "Operator <op> ▾" on top, a "Value" field below. */
+.dt-filter-row .dt-filter-cell {
+	padding: 6px 16px 10px;
+	background: var(--now-color--neutral-0, #ffffff);
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+	white-space: nowrap;
+	vertical-align: top;
+}
+.dt-filter-cell { display: table-cell; min-width: 180px; }
+.dt-filter-op-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.dt-filter-op-label {
+	font-size: 13px;
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	white-space: nowrap;
+	color: var(--now-color--neutral-15, #5b6b7b);
+}
+/* The operator picker (now-dropdown, "Operator [is ▾]") fills the cell so the menu and
+ * the selected label aren't clipped. */
+.dt-filter-op { display: block; width: 100%; min-width: 150px; }
+.dt-filter-val { display: block; width: 100%; }
+/* Choice columns: multi-select "Edit filter / N values selected" picker. */
+.dt-filter-choice { display: block; min-width: 150px; }
+
+/* Collapsed round search trigger + anchored popover (native-list manner). */
+.dt-search-wrap { position: relative; display: inline-flex; }
+.dt-search-icon { display: inline-flex; }
+.dt-search-pop {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 0;
+	z-index: 1000;
+	width: 280px;
+	padding: 14px 16px 12px;
+	background: var(--now-color--neutral-0, #ffffff);
+	border: 1px solid var(--now-color--neutral-3, #eef1f4);
+	border-radius: 12px;
+	box-shadow: 0 8px 28px rgba(16, 24, 40, 0.16);
+}
+.dt-search-pop-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+.dt-search-pop-title { font-size: 14px; font-weight: 700; color: var(--now-color--neutral-22, #1e2b3d); }
+.dt-search-pop .dt-search { display: block; min-width: 0; width: 100%; }
+.dt-search-pop-foot { display: flex; justify-content: flex-end; margin-top: 10px; }
+.dt-refresh, .dt-reset, .dt-export { display: inline-flex; }
+.dt-filter-actions { background: var(--now-color--neutral-0, #ffffff); border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4); }
+
+/* Group header rows. */
+.dt-group-row td {
+	padding: 7px 16px;
+	background: var(--now-color--neutral-2, #f1f3f5);
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+}
+/* Group header: clickable expand/collapse toggle + label + per-page count badge. */
+.dt-group-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 2px 4px;
+	border: none;
+	background: transparent;
+	font: inherit;
+	cursor: pointer;
+	color: var(--now-color--neutral-14, #5a6473);
+}
+.dt-group-caret { color: var(--now-color--neutral-13, #6b7682); }
+.dt-group-label {
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--now-color--neutral-14, #5a6473);
+}
+.dt-group-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 18px;
+	padding: 0 7px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--now-color--neutral-18, #2b3a4d);
+	background: var(--now-color--neutral-3, #eef1f4);
+}
+.dt-groups-toggle { display: inline-flex; }
+
+/* Expand detail row. */
+.dt-expand-row td {
+	padding: 0;
+	background: var(--now-color--neutral-1, #f8f9fb);
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+}
+.dt-expand {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 12px 28px;
+	padding: 18px 24px;
+}
+.dt-expand-item { display: flex; flex-direction: column; gap: 3px; }
+.dt-expand-k { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--now-color--neutral-13, #6b7682); }
+.dt-expand-v { font-size: 14px; color: var(--now-color--neutral-19, #2b3a4d); }
+
+/* Status pill (now-badge is numeric-only). Tones map to Now status token families. */
 .dt-pill {
 	display: inline-flex;
 	align-items: center;
@@ -111,74 +459,53 @@
 	line-height: 1.4;
 	white-space: nowrap;
 }
-.dt-pill--positive {
-	color: var(--now-color--positive-2, #2b8a3e);
-	background: var(--now-color--positive-0, #d6f5e0);
-}
-.dt-pill--info {
-	color: var(--now-color--interactive, #3b5bdb);
-	background: var(--now-color--blue-0, #e7ecfd);
-}
-.dt-pill--neutral {
-	color: var(--now-color--neutral-15, #5b6b7b);
-	background: var(--now-color--neutral-3, #eef1f4);
-}
-.dt-pill--warning {
-	color: var(--now-color--warning-2, #b7791f);
-	background: var(--now-color--warning-0, #fdf0dc);
-}
-.dt-pill--error {
-	color: var(--now-color--critical-2, #c0341d);
-	background: var(--now-color--critical-0, #fde8e8);
-}
+.dt-pill--positive { color: var(--now-color--positive-2, #2b8a3e); background: var(--now-color--positive-0, #d6f5e0); }
+.dt-pill--info { color: var(--now-color--interactive, #3b5bdb); background: var(--now-color--blue-0, #e7ecfd); }
+.dt-pill--neutral { color: var(--now-color--neutral-15, #5b6b7b); background: var(--now-color--neutral-3, #eef1f4); }
+.dt-pill--warning { color: var(--now-color--warning-2, #b7791f); background: var(--now-color--warning-0, #fdf0dc); }
+.dt-pill--error { color: var(--now-color--critical-2, #c0341d); background: var(--now-color--critical-0, #fde8e8); }
 
-/* Action icons (now-button-iconic) — we only space their host box. */
-.dt-actions-cell { width: 1%; }
-.dt-actions {
-	display: flex;
-	align-items: center;
-	gap: 16px;
+/* Action icons (now-button-iconic) — we only space their host box. Sticky pins the
+ * action column to the right edge during horizontal scroll. */
+.dt-actions-cell { width: 1%; white-space: nowrap; }
+.dt-actions { display: flex; align-items: center; gap: 12px; }
+.dt-action { display: inline-flex; --now-color--neutral-15: #9aa6b2; }
+.dt-sticky {
+	position: sticky;
+	right: 0;
+	z-index: 1;
+	background: var(--now-color--neutral-0, #ffffff);
+	box-shadow: -8px 0 12px -8px rgba(16, 24, 40, 0.18);
 }
-.dt-action {
-	display: inline-flex;
-	--now-color--neutral-15: #9aa6b2; /* token nudge: mute the iconic buttons */
-}
+.dt-row:hover .dt-sticky { background: var(--now-color--neutral-1, #f9fafb); }
 
-/* Footer: range text (left) + per-page selector & pager (right). */
+/* Inline editor: the typed control + Apply / Cancel buttons on one row. The edit only
+ * commits (PATCH) when Apply is clicked; Cancel discards. */
+.dt-inline { display: flex; align-items: center; gap: 6px; }
+.dt-inline-input { display: block; flex: 1 1 auto; min-width: 100px; }
+.dt-inline-actions { display: inline-flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+
+/* Footer: range/group (left) + pager (right). */
 .dt-footer {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
-	padding: 18px 24px;
+	flex-wrap: wrap;
+	padding: 16px 24px;
 	border-top: 1px solid var(--now-color--neutral-3, #eef1f4);
 	background: var(--now-color--neutral-0, #ffffff);
+	border-radius: 0 0 16px 16px;
 }
-.dt-range {
-	font-size: 14px;
-	color: var(--now-color--neutral-13, #6b7682);
-}
-.dt-range b {
-	color: var(--now-color--neutral-19, #2b3a4d);
-	font-weight: 700;
-}
-.dt-pager {
-	display: inline-flex;
-	align-items: center;
-	gap: 12px;
-}
+.dt-footer-left { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.dt-range { font-size: 14px; color: var(--now-color--neutral-13, #6b7682); }
+.dt-range b { color: var(--now-color--neutral-19, #2b3a4d); font-weight: 700; }
+.dt-groupby { min-width: 180px; }
+.dt-pager { display: inline-flex; align-items: center; gap: 12px; }
 
-/* Loading / error / empty message states. */
-.dt-loading {
-	display: flex;
-	justify-content: center;
-	padding: 56px 0;
-}
-.dt-msg {
-	padding: 24px;
-	color: var(--now-color--neutral-15, #6b7280);
-	font-size: 14px;
-}
+/* Loading / error / empty states. */
+.dt-loading { display: flex; justify-content: center; padding: 56px 0; }
+.dt-msg { padding: 24px; color: var(--now-color--neutral-15, #6b7280); font-size: 14px; }
 .dt-error {
 	padding: 12px 16px;
 	color: var(--now-color--critical-2, #8a1c1c);
@@ -186,4 +513,81 @@
 	border: 1px solid var(--now-color--critical-1, #f3c2c2);
 	border-radius: 8px;
 	font-size: 13px;
+}
+
+/* ---- right slide-in drawer + overlay (no Horizon drawer primitive) ---- */
+.dt-drawer-wrap {
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	pointer-events: none;
+	visibility: hidden;
+}
+.dt-drawer-wrap--open { pointer-events: auto; visibility: visible; }
+.dt-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: rgba(16, 24, 40, 0.38);
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+.dt-drawer-wrap--open .dt-overlay { opacity: 1; }
+.dt-drawer {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	max-width: 96vw;
+	/* Above the overlay (the dropped form is slotted light-DOM; an explicit stacking
+	 * context keeps it painting over the overlay instead of being dimmed by it). */
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--now-color--neutral-0, #ffffff);
+	box-shadow: -16px 0 48px rgba(16, 24, 40, 0.22);
+	transform: translateX(100%);
+	transition: transform 0.24s ease;
+}
+/* Opaque surfaces so the dimmed overlay never shows through the panel. */
+.dt-drawer-head,
+.dt-drawer-body { background-color: var(--now-color--neutral-0, #ffffff); }
+.dt-drawer-wrap--open .dt-drawer { transform: translateX(0); }
+/* Resize handle on the drawer's left edge — drag to widen/narrow the pane. */
+.dt-drawer-resize {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 8px;
+	height: 100%;
+	cursor: col-resize;
+	z-index: 2;
+	background: transparent;
+	transition: background-color 0.12s ease;
+}
+.dt-drawer-resize:hover,
+.dt-drawer-resize:active { background: var(--now-color--interactive, #3b5bdb); opacity: 0.35; }
+.dt-drawer-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 18px 22px;
+	border-bottom: 1px solid var(--now-color--neutral-3, #eef1f4);
+}
+.dt-drawer-title { font-size: 16px; font-weight: 700; color: var(--now-color--neutral-22, #1e2b3d); }
+.dt-drawer-body { flex: 1; overflow-y: auto; padding: 22px; }
+.dt-drawer-empty {
+	padding: 18px;
+	border: 1px dashed var(--now-color--neutral-6, #c6cdd6);
+	border-radius: 10px;
+	color: var(--now-color--neutral-14, #5a6473);
+	font-size: 13px;
+	line-height: 1.5;
+}
+.dt-drawer-empty code {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	background: var(--now-color--neutral-2, #f1f3f5);
+	padding: 1px 5px;
+	border-radius: 4px;
 }

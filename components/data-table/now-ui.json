@@ -2,8 +2,15 @@
 	"components": {
 		"x-gegis-library-data-table": {
 			"innerComponents": [
+				"now-button",
 				"now-button-iconic",
 				"now-icon",
+				"now-input",
+				"now-select",
+				"now-dropdown",
+				"now-typeahead",
+				"now-date-time",
+				"now-highlighted-value",
 				"now-loader",
 				"now-pagination-control"
 			],
@@ -11,10 +18,23 @@
 				"associatedTypes": ["global.core", "global.landing-page"],
 				"label": "Data Table",
 				"tileIcon": "./tile-icon/data-table-tile-icon.svg",
-				"description": "A configurable record list: give it a table name and an encoded query and it loads the matching records over the Table API and renders them in a paginated, OOTB-style table. Columns, a status pill, and per-row Edit / Duplicate / Delete actions are configurable. Emits ROW_CLICK plus EDIT/COPY/DELETE_ACTION events (each with the record sys_id) for the page to bind.",
+				"description": "A configurable record list / data grid: give it a table and a fixed query and it loads matching records over the Table API into a paginated, OOTB-style grid. Adds global + per-column query building, list/declarative actions, a configurable dropdown, custom row buttons, highlighted-value & HTML cells, zebra & conditional row highlighting, click-to-sort, group-by, column reorder/resize, wrap-text, inline editing, reference-cell links, and a right slide-in drawer with a droppable slot (drop a Dynamic Form for inline Edit / Add-new). Emits ROW_CLICK / EDIT / COPY / DELETE / ADD_NEW / LIST_ACTION / OPEN_RECORD / REFERENCE_CLICK / DROPDOWN_SELECT / CUSTOM_ACTION / INLINE_EDIT.",
 				"category": "primitives"
 			},
 			"properties": [
+				{
+					"name": "variant",
+					"label": "Variant",
+					"description": "Presentation style. 'Default' is the full management list (toolbar Filter/Sort/Group chips, leading filter-icon column, per-column ⋮ menus, count badge, More-actions menu, reorder/resize, inline edit). 'View Only' is a clean read-style list (an inline search pill, plain columns + per-row Edit/Duplicate/Delete actions + footer pager) with all of that management chrome hidden.",
+					"fieldType": "choice",
+					"defaultValue": "default",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Default", "value": "default" },
+							{ "label": "View Only", "value": "viewOnly" }
+						]
+					}
+				},
 				{
 					"name": "table",
 					"label": "Table",
@@ -26,7 +46,7 @@
 				{
 					"name": "query",
 					"label": "Fixed filter",
-					"description": "Condition that filters which records are shown (built with the condition editor, stored as an encoded query). Leave blank for all records.",
+					"description": "Condition that filters which records are shown (built with the condition editor, stored as an encoded query). Global search + per-column filters are ANDed onto this at runtime. Leave blank for all records.",
 					"fieldType": "condition_string",
 					"defaultValue": "",
 					"typeMetadata": { "table": "@table" }
@@ -34,7 +54,7 @@
 				{
 					"name": "orderBy",
 					"label": "Sort by field",
-					"description": "Field to sort the records by. Use \"Sort descending\" to reverse the order.",
+					"description": "Default field to sort by. Clicking a column header (when Enable sort is on) overrides this at runtime. Use \"Sort descending\" to reverse the order.",
 					"fieldType": "field",
 					"defaultValue": "",
 					"typeMetadata": { "table": "@table" }
@@ -60,14 +80,6 @@
 					"description": "Optional comma-separated header labels matching the Columns order, e.g. \"Product Name,Version,Status\". Blank entries fall back to the field's prettified name.",
 					"fieldType": "string",
 					"defaultValue": ""
-				},
-				{
-					"name": "statusField",
-					"label": "Status field",
-					"description": "Field rendered as a colored status pill (Draft / Published / Archived, etc.). Leave blank to render it as plain text.",
-					"fieldType": "field",
-					"defaultValue": "status",
-					"typeMetadata": { "table": "@table" }
 				},
 				{
 					"name": "pageSize",
@@ -97,12 +109,41 @@
 					"fieldType": "string",
 					"defaultValue": "Per page"
 				},
+
 				{
 					"name": "heading",
 					"label": "Heading",
-					"description": "Optional title shown above the table. Leave blank to hide.",
+					"description": "Optional title shown in the toolbar above the table. Leave blank to hide.",
 					"fieldType": "string",
 					"defaultValue": ""
+				},
+				{
+					"name": "showCount",
+					"label": "Show record-count badge",
+					"description": "When on (and a Heading is set), a badge next to the title shows the total record count (like the native record list).",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showLastRefreshed",
+					"label": "Show \"Last refreshed\" subtitle",
+					"description": "When on (and a Heading is set), a subtitle under the title shows how long ago the list was last loaded; it updates on Refresh.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showMoreActions",
+					"label": "Show More-actions menu",
+					"description": "When on, a '⋮' overflow menu in the toolbar offers the standard list actions (Refresh, Reset, Export) plus any configured Dropdown items, like the native record-list header.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showColumnMenu",
+					"label": "Show column actions menu",
+					"description": "When on, hovering a column header reveals a '⋮' actions button with sort / filter / group-by for that column, plus filter/group state icons in the header.",
+					"fieldType": "boolean",
+					"defaultValue": true
 				},
 				{
 					"name": "itemLabel",
@@ -112,16 +153,24 @@
 					"defaultValue": "records"
 				},
 				{
+					"name": "emptyMessage",
+					"label": "Empty message",
+					"description": "Text shown when no records match the query.",
+					"fieldType": "string",
+					"defaultValue": "No records found"
+				},
+
+				{
 					"name": "showActions",
 					"label": "Show actions column",
-					"description": "When on, shows the per-row action icons column.",
+					"description": "When on, shows the per-row action icons column (Edit / Duplicate / Delete + any custom buttons).",
 					"fieldType": "boolean",
 					"defaultValue": true
 				},
 				{
 					"name": "showEdit",
 					"label": "Show Edit action",
-					"description": "Show the edit (pencil) action icon.",
+					"description": "Show the edit (pencil) action icon. When the drawer is enabled, Edit also opens the right drawer.",
 					"fieldType": "boolean",
 					"defaultValue": true
 				},
@@ -135,7 +184,7 @@
 				{
 					"name": "showDelete",
 					"label": "Show Delete action",
-					"description": "Show the delete (trash) action icon.",
+					"description": "Show the delete (trash) action icon. Delete is a BUILT-IN action: it asks for confirmation, then deletes the record over the Table API and refreshes — no event wiring needed.",
 					"fieldType": "boolean",
 					"defaultValue": true
 				},
@@ -149,38 +198,302 @@
 				{
 					"name": "editIcon",
 					"label": "Edit icon",
-					"description": "now-icon name for the edit action.",
-					"fieldType": "string",
-					"defaultValue": "pencil-outline"
+					"description": "Icon for the edit action. Uses the native ServiceNow icon picker (search + Outline / Fill tabs).",
+					"fieldType": "icon",
+					"defaultValue": "pencil-outline",
+					"typeMetadata": { "schema": { "type": "string" } }
 				},
 				{
 					"name": "copyIcon",
 					"label": "Duplicate icon",
-					"description": "now-icon name for the duplicate action.",
-					"fieldType": "string",
-					"defaultValue": "copy-outline"
+					"description": "Icon for the duplicate action. Uses the native ServiceNow icon picker (search + Outline / Fill tabs).",
+					"fieldType": "icon",
+					"defaultValue": "copy-outline",
+					"typeMetadata": { "schema": { "type": "string" } }
 				},
 				{
 					"name": "deleteIcon",
 					"label": "Delete icon",
-					"description": "now-icon name for the delete action.",
-					"fieldType": "string",
-					"defaultValue": "trash-outline"
+					"description": "Icon for the delete action. Uses the native ServiceNow icon picker (search + Outline / Fill tabs).",
+					"fieldType": "icon",
+					"defaultValue": "trash-outline",
+					"typeMetadata": { "schema": { "type": "string" } }
 				},
 				{
-					"name": "prettyDates",
-					"label": "Pretty dates",
-					"description": "When on, values that look like dates are formatted as \"Mon D, YYYY\" (e.g. May 1, 2026).",
+					"name": "actionColumnPosition",
+					"label": "Action column position",
+					"description": "Where the per-row action column sits: Left, Right, or Sticky (pinned to the right edge while the grid scrolls horizontally).",
+					"fieldType": "choice",
+					"defaultValue": "right",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Right", "value": "right" },
+							{ "label": "Left", "value": "left" },
+							{ "label": "Sticky (pinned right)", "value": "sticky" }
+						]
+					}
+				},
+				{
+					"name": "customButtons",
+					"label": "Custom row buttons (JSON)",
+					"description": "Extra icon buttons added to the action column, as a JSON array, e.g. [{\"id\":\"approve\",\"label\":\"Approve\",\"icon\":\"check-outline\"}]. Clicking one fires CUSTOM_ACTION { actionId, sysId, table }.",
+					"fieldType": "json",
+					"defaultValue": ""
+				},
+
+				{
+					"name": "showGlobalSearch",
+					"label": "Show global search",
+					"description": "When on, a search box appears top-right. It runs a full-text search across the table's indexed columns (ANDed with the fixed filter). Applies on Enter / blur.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "globalSearchPlaceholder",
+					"label": "Search placeholder",
+					"description": "Placeholder text for the global search box.",
+					"fieldType": "string",
+					"defaultValue": "Search"
+				},
+				{
+					"name": "showColumnFilters",
+					"label": "Column filters open by default",
+					"description": "Initial state of the per-column filter row (the user can show/hide it any time with the toolbar Filter chip). The filter row builds a query per column (operator: is / is not / contains / starts with / ends with / in / not in / greater / less / empty / not empty).",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "showFilterToggle",
+					"label": "Show Filter chip",
+					"description": "When on, a Filter chip in the toolbar shows/hides the per-column filter row client-side (no refetch) and shows the active condition count.",
 					"fieldType": "boolean",
 					"defaultValue": true
 				},
 				{
-					"name": "emptyMessage",
-					"label": "Empty message",
-					"description": "Text shown when no records match the query.",
+					"name": "showFilterIcon",
+					"label": "Show filter toggle icon",
+					"description": "When on, a small filter (funnel) icon sits in a leading column at the top-left of the grid (like the native list). Clicking it shows/hides the per-column filter row. No selection checkbox is added.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showQuery",
+					"label": "Show query bar",
+					"description": "When on, a read-only bar shows the effective encoded query (fixed filter + search + column filters + sort/group) currently sent to the server.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+
+				{
+					"name": "showRefresh",
+					"label": "Show Refresh button",
+					"description": "When on, a refresh icon in the toolbar reloads the current page from the server.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showReset",
+					"label": "Show Reset button",
+					"description": "When on, a Reset button clears the global search, column filters, sort and group-by (back to the configured defaults).",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "showExport",
+					"label": "Show Export button",
+					"description": "When on, an Export button fires the EXPORT event with the table and the current encoded query, so the page can run a server export (the button itself does not download).",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "showListActions",
+					"label": "Show list actions",
+					"description": "When on, render the table's active list-banner UI Actions (sys_ui_action, list context) as toolbar buttons. Clicking one fires LIST_ACTION so the page can react/navigate — the action's own script is not executed.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "showDropdown",
+					"label": "Show dropdown menu",
+					"description": "When on, a dropdown menu appears in the toolbar. It is empty unless you configure 'Dropdown items'. Selecting an item fires DROPDOWN_SELECT { id, label }.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "dropdownPlaceholder",
+					"label": "Dropdown placeholder",
+					"description": "Trigger text for the dropdown menu when nothing is selected.",
 					"fieldType": "string",
-					"defaultValue": "No records found"
+					"defaultValue": "Actions"
+				},
+				{
+					"name": "dropdownItems",
+					"label": "Dropdown items (JSON)",
+					"description": "Menu items as a JSON array, e.g. [{\"id\":\"export\",\"label\":\"Export\"},{\"id\":\"refresh\",\"label\":\"Refresh\"}]. Leave blank for an empty menu.",
+					"fieldType": "json",
+					"defaultValue": ""
+				},
+				{
+					"name": "showAddNew",
+					"label": "Show Add-new button",
+					"description": "When on (and the drawer is enabled), an 'Add new' button appears top-right. It opens the drawer and fires ADD_NEW { table, sysId: \"-1\" } — bind a dropped form's Record sys_id to it to render a blank create form.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "addNewLabel",
+					"label": "Add-new label",
+					"description": "Label for the Add-new button.",
+					"fieldType": "string",
+					"defaultValue": "Add new"
+				},
+
+				{
+					"name": "enableDrawer",
+					"label": "Enable side drawer",
+					"description": "When on, a right slide-in drawer is available. It exposes a droppable 'form' slot — drop a Dynamic Form (or any component) into it in UI Builder. Edit / Add-new / Open-record (side) open the drawer; bind the dropped form's Record sys_id to the EDIT_ACTION / ADD_NEW / OPEN_RECORD event.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "drawerTitle",
+					"label": "Drawer title",
+					"description": "Heading shown at the top of the side drawer.",
+					"fieldType": "string",
+					"defaultValue": "Details"
+				},
+				{
+					"name": "drawerWidth",
+					"label": "Drawer width",
+					"description": "Initial CSS width of the side drawer, e.g. 480px or 40vw. Users can drag the drawer's left edge to resize it at runtime.",
+					"fieldType": "string",
+					"defaultValue": "480px"
+				},
+
+				{
+					"name": "rowClickAction",
+					"label": "Row click action",
+					"description": "What clicking a row body does (in addition to firing ROW_CLICK): None, Expand/collapse an inline detail, or Open the record (per 'Open record in').",
+					"fieldType": "choice",
+					"defaultValue": "none",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "None", "value": "none" },
+							{ "label": "Expand / collapse", "value": "expand" },
+							{ "label": "Open record", "value": "openRecord" }
+						]
+					}
+				},
+				{
+					"name": "openRecordIn",
+					"label": "Open record in",
+					"description": "When Row click action is 'Open record': open it in the Side drawer (drop a form there) or a New browser tab (classic form). OPEN_RECORD fires either way so the page can override navigation.",
+					"fieldType": "choice",
+					"defaultValue": "side",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Side drawer", "value": "side" },
+							{ "label": "New tab", "value": "newTab" }
+						]
+					}
+				},
+				{
+					"name": "enableReferenceLinks",
+					"label": "Clickable reference cells",
+					"description": "When on, reference-field cells become links. Clicking one fires REFERENCE_CLICK { table, sysId, field } and opens the referenced record per 'Open reference in'.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "referenceOpenIn",
+					"label": "Open reference in",
+					"description": "Where a clicked reference cell opens: the Side drawer or a New browser tab.",
+					"fieldType": "choice",
+					"defaultValue": "side",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Side drawer", "value": "side" },
+							{ "label": "New tab", "value": "newTab" }
+						]
+					}
+				},
+
+				{
+					"name": "highlightedValueFields",
+					"label": "Highlighted-value columns",
+					"description": "Comma-separated fields to render with now-highlighted-value (a colored chip). Use sparingly — 1 or 2 columns for best scanability. (Status-style coloring is driven by these highlighted columns; there is no separate status field.)",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "wrapAtChars",
+					"label": "Wrap text at (characters)",
+					"description": "Maximum characters per line in a cell. 0 = no wrapping (single line, truncated). When greater than 0, cells wrap to the next line once the text exceeds this many characters (the column is capped at this width).",
+					"fieldType": "number",
+					"defaultValue": 0
+				},
+
+				{
+					"name": "zebra",
+					"label": "Alternate row shading",
+					"description": "When on, even rows get a subtle gray background (zebra striping).",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "rowHighlightRules",
+					"label": "Row highlight rules (JSON)",
+					"description": "Conditionally highlight rows. JSON array of { field, op, value, color } evaluated on the loaded page, e.g. [{\"field\":\"priority\",\"op\":\"is\",\"value\":\"1\",\"color\":\"#fde8e8\"}]. op: is / is not / contains / startswith / endswith / > / < / empty / notempty. First match wins.",
+					"fieldType": "json",
+					"defaultValue": ""
+				},
+
+				{
+					"name": "enableSort",
+					"label": "Enable sort",
+					"description": "When on, clicking a column header sorts by that column (toggles ascending / descending / off) and refetches.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "enableGroupBy",
+					"label": "Enable group-by",
+					"description": "When on, a 'Group by' selector appears in the footer; rows are server-sorted by the group field and grouped under headers (within the loaded page).",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "groupByField",
+					"label": "Default group-by field",
+					"description": "Field to group by initially (when Enable group-by is on). Users can change it via the footer selector.",
+					"fieldType": "field",
+					"defaultValue": "",
+					"typeMetadata": { "table": "@table" }
+				},
+				{
+					"name": "enableReorder",
+					"label": "Enable column reorder",
+					"description": "When on, column headers can be dragged to reorder columns.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "enableResize",
+					"label": "Enable column resize",
+					"description": "When on, a drag handle on each column header's right edge resizes the column.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				},
+				{
+					"name": "enableInlineEdit",
+					"label": "Enable inline editing",
+					"description": "When on, double-clicking a (non-status, non-HTML) cell turns it into an input; committing PATCHes the record and fires INLINE_EDIT { sysId, field, value }.",
+					"fieldType": "boolean",
+					"defaultValue": false
 				}
+			],
+			"slots": [
+				"form"
 			],
 			"actions": [
 				{
@@ -195,7 +508,7 @@
 				{
 					"name": "EDIT_ACTION",
 					"label": "Edit clicked",
-					"description": "Fired when the edit (pencil) icon is clicked. Payload: { sysId, table }.",
+					"description": "Fired when the edit (pencil) icon is clicked. Also opens the drawer when enabled. Payload: { sysId, table }.",
 					"payload": [
 						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the record to edit.", "fieldType": "string" },
 						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
@@ -217,6 +530,84 @@
 					"payload": [
 						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the record to delete.", "fieldType": "string" },
 						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "ADD_NEW",
+					"label": "Add new clicked",
+					"description": "Fired when the Add-new button is clicked (also opens the drawer). Bind a dropped form's Record sys_id to sysId to render a blank create form. Payload: { table, sysId } where sysId is \"-1\".",
+					"payload": [
+						{ "name": "table", "label": "Table", "description": "Table to create a record in.", "fieldType": "string" },
+						{ "name": "sysId", "label": "Record sys_id", "description": "Always \"-1\" to signal create-new.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "LIST_ACTION",
+					"label": "List action clicked",
+					"description": "Fired when a toolbar list/declarative UI Action is clicked. The action's script is NOT executed — bind this to react/navigate. Payload: { name, sysId, label }.",
+					"payload": [
+						{ "name": "name", "label": "Action name", "description": "The UI action's action_name (or name).", "fieldType": "string" },
+						{ "name": "sysId", "label": "UI Action sys_id", "description": "sys_id of the sys_ui_action record.", "fieldType": "string" },
+						{ "name": "label", "label": "Label", "description": "The button label shown to the user.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "OPEN_RECORD",
+					"label": "Open record",
+					"description": "Fired when a row is clicked while Row click action is 'Open record'. Payload: { sysId, table, openIn } (openIn = side | newTab). Bind to set a form's sys_id, or to override navigation.",
+					"payload": [
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the record to open.", "fieldType": "string" },
+						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" },
+						{ "name": "openIn", "label": "Open in", "description": "Requested target: side or newTab.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "REFERENCE_CLICK",
+					"label": "Reference cell clicked",
+					"description": "Fired when a clickable reference cell is clicked. Payload: { table, sysId, field, query } — the REFERENCED record's table + sys_id, the source column, and the list's current encoded query.",
+					"payload": [
+						{ "name": "table", "label": "Referenced table", "description": "Table of the referenced record.", "fieldType": "string" },
+						{ "name": "sysId", "label": "Referenced sys_id", "description": "sys_id of the referenced record.", "fieldType": "string" },
+						{ "name": "field", "label": "Source field", "description": "Column the reference was clicked in.", "fieldType": "string" },
+						{ "name": "query", "label": "Current query", "description": "The list's current effective encoded query.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "EXPORT",
+					"label": "Export clicked",
+					"description": "Fired when the Export button is clicked. Bind it to run a server-side export. Payload: { table, query } (query = the current encoded sysparm_query).",
+					"payload": [
+						{ "name": "table", "label": "Table", "description": "Table being listed.", "fieldType": "string" },
+						{ "name": "query", "label": "Query", "description": "Current effective encoded query.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "DROPDOWN_SELECT",
+					"label": "Dropdown item selected",
+					"description": "Fired when a toolbar dropdown item is selected. Payload: { id, label }.",
+					"payload": [
+						{ "name": "id", "label": "Item id", "description": "id of the selected dropdown item.", "fieldType": "string" },
+						{ "name": "label", "label": "Item label", "description": "Label of the selected dropdown item.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "CUSTOM_ACTION",
+					"label": "Custom button clicked",
+					"description": "Fired when a configured custom row button is clicked. Payload: { actionId, sysId, table }.",
+					"payload": [
+						{ "name": "actionId", "label": "Action id", "description": "The custom button's id.", "fieldType": "string" },
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the row's record.", "fieldType": "string" },
+						{ "name": "table", "label": "Table", "description": "Table the record belongs to.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "INLINE_EDIT",
+					"label": "Inline edit committed",
+					"description": "Fired when an inline-edited cell is committed (after the PATCH is requested). Payload: { sysId, field, value }.",
+					"payload": [
+						{ "name": "sysId", "label": "Record sys_id", "description": "sys_id of the edited record.", "fieldType": "string" },
+						{ "name": "field", "label": "Field", "description": "Edited column name.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "New value.", "fieldType": "string" }
 					]
 				}
 			]

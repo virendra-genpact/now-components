@@ -137,7 +137,7 @@ it falls back to a humanized column name.
 | Property | Type | Default | Description |
 | --- | --- | --- | --- |
 | `table` | string | `""` | Table to load, e.g. `incident`. |
-| `sysId` | string | `""` | Record sys_id to load/save (bind from the page, e.g. a URL param). |
+| `sysId` | string | `""` | Record sys_id to load/save (bind from the page, e.g. a URL param). Pass **`-1`** for **create mode** — see below. |
 | `view` | string | `""` | Form view (blank = Default). Pass the view's **sys_id** (from `sys_ui_view`) or its name. A sys_id is resolved to its name first, then `sysparm_view={name}` makes the Table API return that view's own field set (so the form actually changes per view). |
 | `heading` | string | `""` | Title at the top of the form (e.g. `Coverage`). Blank hides it. |
 | `subheading` | string | `""` | Smaller text under the heading (e.g. `Building Coverage`). Blank hides it. |
@@ -181,6 +181,20 @@ it falls back to a humanized column name.
   on a parent (extended) table may not appear.
 - **ACLs** still apply: the Table API enforces field/record ACLs for the current
   user, so the form only shows/saves what that user is allowed to.
+
+## Create mode (`sysId = "-1"`)
+
+Pass **`sysId = "-1"`** to render a **blank create form** for the table/view:
+
+- the record GET is skipped; fields come from the form **layout** (or the table
+  dictionary as a fallback) with empty values,
+- **Save** issues a **`POST /api/now/table/{table}`** with the entered (non-dot-walked)
+  fields instead of a PATCH,
+- on success, **`FORM_SAVED`** carries the **new record's `sys_id`** so the page can
+  rebind / refresh (autosave is ignored in create mode — the record doesn't exist yet).
+
+This is what powers the Data Table's "Add new": the list opens its drawer and fires
+`ADD_NEW { sysId: "-1" }`; bind a dropped Dynamic Form's **Record sys_id** to it.
 
 ## Develop / deploy
 
