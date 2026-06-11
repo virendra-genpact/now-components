@@ -1,0 +1,56 @@
+{
+	"components": {
+		"x-gegis-library-alert-banner": {
+			"innerComponents": [],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Alert Banner",
+				"tileIcon": "./tile-icon/alert-banner-tile-icon.svg",
+				"description": "A tinted status / alert banner with info, warning, critical and AI variants. Icon circle, title, timestamp subtitle, detail lines, body text and an optional clickable link.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "variant",
+					"label": "Variant",
+					"description": "Visual style / severity of the banner.",
+					"fieldType": "choice",
+					"defaultValue": "info",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Info (blue)", "value": "info" },
+							{ "label": "Warning (amber)", "value": "warning" },
+							{ "label": "Critical (red)", "value": "critical" },
+							{ "label": "AI (indigo sparkle)", "value": "ai" }
+						]
+					}
+				},
+				{ "name": "title", "label": "Title", "description": "Bold title line.", "fieldType": "string", "defaultValue": "Submission Details" },
+				{ "name": "showTitle", "label": "Show title", "description": "Show or hide the title.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "subtitle", "label": "Subtitle", "description": "Timestamp subtitle (shown with a clock icon).", "fieldType": "string", "defaultValue": "As of : January 9, 2026 at 3:03 PM" },
+				{ "name": "showSubtitle", "label": "Show subtitle", "description": "Show or hide the subtitle.", "fieldType": "boolean", "defaultValue": false },
+				{ "name": "bodyText", "label": "Body text", "description": "Main body message. In the AI variant this is the assessment text.", "fieldType": "string", "defaultValue": "1 entity requires compliance review. Workflow cannot proceed until all matches are resolved." },
+				{ "name": "showBodyText", "label": "Show body text", "description": "Show or hide the body text.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "detailLine1", "label": "Detail line 1", "description": "First (bold) detail line.", "fieldType": "string", "defaultValue": "IronClad Inc." },
+				{ "name": "detailLine2", "label": "Detail line 2", "description": "Second detail line.", "fieldType": "string", "defaultValue": "Alt North Avenue, Suite 200, New York, NY 10001" },
+				{ "name": "showDetailLines", "label": "Show detail lines", "description": "Show or hide the detail lines.", "fieldType": "boolean", "defaultValue": false },
+				{ "name": "linkText", "label": "Link text", "description": "Clickable link text; clicking emits the link-clicked event.", "fieldType": "string", "defaultValue": "Select the record below that best matches this submission information." },
+				{ "name": "showLinkText", "label": "Show link", "description": "Show or hide the clickable link.", "fieldType": "boolean", "defaultValue": false },
+				{ "name": "showIcon", "label": "Show icon", "description": "Show or hide the leading icon (circle glyph, or AI sparkle).", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "aiLabel", "label": "AI label", "description": "Bold label shown before the body text in the AI variant.", "fieldType": "string", "defaultValue": "AI Quick Assessment:" }
+			],
+			"actions": [
+				{
+					"name": "ALERT_BANNER_LINK_CLICKED",
+					"label": "Alert banner link clicked",
+					"description": "Fired when the user clicks the banner's link text.",
+					"payload": [
+						{ "name": "linkText", "label": "Link text", "description": "The clicked link's text.", "fieldType": "string" },
+						{ "name": "variant", "label": "Variant", "description": "The banner variant.", "fieldType": "string" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

@@ -1,0 +1,156 @@
+@import '@servicenow/sass-kit/host';
+
+/* 100% owned markup (justified in index.js — now-alert can't reproduce this design).
+ * Variant colours kept as documented hex matching the legacy design (§5). Ported
+ * verbatim from OLDER COMPONENTS/alert-banner to preserve the UI. */
+
+$variants: (
+	'ai': (bg: #EEF2FF, border: #C7D2FE, icon-bg: #E0E7FF, accent: #4F46E5, title: #111827, body: #374151, subtitle: #6B7280),
+	'info': (bg: #EFF6FF, border: #BFDBFE, icon-bg: #DBEAFE, accent: #2563EB, title: #111827, body: #374151, subtitle: #6B7280),
+	'warning': (bg: #FFFBEB, border: #FDE68A, icon-bg: #FEF3C7, accent: #D97706, title: #111827, body: #374151, subtitle: #6B7280),
+	'critical': (bg: #FEF2F2, border: #FECACA, icon-bg: #FEE2E2, accent: #DC2626, title: #111827, body: #374151, subtitle: #6B7280),
+);
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.ab-banner {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 14px 16px;
+	border: 1px solid transparent;
+	border-radius: 10px;
+	box-sizing: border-box;
+	width: 100%;
+	font-family: var(--now-font-family, 'Source Sans Pro', sans-serif);
+
+	@each $name, $tokens in $variants {
+		&--#{$name} {
+			background-color: map-get($tokens, bg);
+			border-color: map-get($tokens, border);
+
+			.ab-icon {
+				background-color: map-get($tokens, icon-bg);
+				color: map-get($tokens, accent);
+			}
+
+			.ab-title { color: map-get($tokens, title); }
+			.ab-subtitle { color: map-get($tokens, subtitle); }
+			.ab-detail-line1 { color: map-get($tokens, title); }
+			.ab-detail-line2 { color: map-get($tokens, body); }
+			.ab-body { color: map-get($tokens, body); }
+			.ab-link { color: map-get($tokens, accent); }
+		}
+	}
+}
+
+.ab-icon {
+	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 1px;
+
+	svg { display: block; }
+}
+
+.ab-content {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	&--no-icon { padding-top: 0; }
+}
+
+.ab-title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.ab-subtitle {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12.5px;
+	line-height: 1.4;
+}
+
+.ab-clock {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+
+	svg { display: block; }
+}
+
+.ab-details {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 2px;
+}
+
+.ab-detail-line1 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.ab-detail-line2 {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.ab-body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.ab-link {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	cursor: pointer;
+	text-decoration: none;
+
+	&:hover { text-decoration: underline; }
+}
+
+/* AI variant */
+.ab-ai-body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #374151;
+}
+
+.ab-ai-spark {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+	margin-right: 5px;
+	color: #4F46E5;
+	position: relative;
+	top: -1px;
+
+	svg { display: block; }
+}
+
+.ab-ai-label {
+	font-weight: 700;
+	color: #111827;
+}

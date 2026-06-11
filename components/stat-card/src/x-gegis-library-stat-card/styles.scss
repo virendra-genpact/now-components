@@ -1,0 +1,50 @@
+@import '@servicenow/sass-kit/host';
+
+/* now-card owns the container; we style our own label/value markup and the severity
+ * palette. Border themed to the legacy flat hairline via GLOBAL design tokens (§5 —
+ * the per-component --now-card--* vars are obfuscated; see survey-version-item).
+ * Severity colours are kept as documented hex (matching the legacy design, §5). */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Source Sans Pro', 'Segoe UI', sans-serif);
+
+	--now-container--border-width: 1px;
+	--now-container--border-radius: 6px;
+	--now-color_border--tertiary: 229, 231, 235; /* #e5e7eb */
+}
+
+.sc-card {
+	display: block;
+	width: 100%;
+	min-width: 160px;
+	border-radius: 6px; /* clip the optional tint to the card shape */
+}
+
+/* Optional severity tint — now-card's surface is transparent, so a background set on
+ * the host shows through. */
+.sc-card--tinted.sc-card--critical { background-color: #fee2e2; }
+.sc-card--tinted.sc-card--major { background-color: #ffedd5; }
+.sc-card--tinted.sc-card--moderate { background-color: #fef3c7; }
+.sc-card--tinted.sc-card--minor { background-color: #dcfce7; }
+.sc-card--tinted.sc-card--insignificant { background-color: #f1f5f9; }
+
+.sc-label {
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.2;
+	color: var(--now-color--secondary, #6b7280);
+	margin-bottom: 6px;
+}
+
+.sc-value {
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.sc-card--critical .sc-value { color: #b91c1c; }
+.sc-card--major .sc-value { color: #c2410c; }
+.sc-card--moderate .sc-value { color: #b45309; }
+.sc-card--minor .sc-value { color: #15803d; }
+.sc-card--insignificant .sc-value { color: #475569; }

@@ -1,0 +1,66 @@
+{
+	"components": {
+		"x-gegis-library-stat-card": {
+			"innerComponents": ["now-card"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Stat Card",
+				"tileIcon": "./tile-icon/stat-card-tile-icon.svg",
+				"description": "A compact stat / KPI card: a muted label over a large value, coloured by a severity variant. Optionally tints the card background. Composes now-card.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "label",
+					"label": "Label",
+					"description": "Muted label shown above the value.",
+					"fieldType": "string",
+					"defaultValue": "Total Locations"
+				},
+				{
+					"name": "value",
+					"label": "Value",
+					"description": "The large value shown in the card.",
+					"fieldType": "string",
+					"defaultValue": "72"
+				},
+				{
+					"name": "variant",
+					"label": "Severity variant",
+					"description": "Severity that colours the value (and, when enabled, the card tint).",
+					"fieldType": "choice",
+					"defaultValue": "critical",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Critical (red)", "value": "critical" },
+							{ "label": "Major (orange)", "value": "major" },
+							{ "label": "Moderate (amber)", "value": "moderate" },
+							{ "label": "Minor (green)", "value": "minor" },
+							{ "label": "Insignificant (gray)", "value": "insignificant" }
+						]
+					}
+				},
+				{
+					"name": "useVariantBackground",
+					"label": "Tint background",
+					"description": "When on, tints the card background with the variant's soft colour.",
+					"fieldType": "boolean",
+					"defaultValue": false
+				}
+			],
+			"actions": [
+				{
+					"name": "STAT_CARD_CLICKED",
+					"label": "Stat card clicked",
+					"description": "Fired when the user clicks the card.",
+					"payload": [
+						{ "name": "label", "label": "Label", "description": "The card label.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "The card value.", "fieldType": "string" },
+						{ "name": "variant", "label": "Variant", "description": "The severity variant.", "fieldType": "string" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

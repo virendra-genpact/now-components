@@ -1,0 +1,126 @@
+@import '@servicenow/sass-kit/host';
+
+/* now-card owns the container surface/border + click affordance; now-icon owns the
+ * status glyph. We style ONLY our own light-DOM markup (row layout, title/meta
+ * typography, the LATEST badge) and the now-* host boxes — never piercing a composed
+ * component's shadow DOM. Colours use Now design tokens with hex fallbacks for the
+ * Rome-era local preview (§5). */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+	color: var(--now-color--primary, #20242c);
+
+	/* now-card border theming via GLOBAL design tokens (§5 — sanctioned re-theme; the
+	 * per-component --now-card--* vars are obfuscated and not usable). These thin the
+	 * default Horizon card border (2px, ~rgb(211,214,219), 8px radius) down to the
+	 * legacy flat-row hairline: 1px, #e5e7eb, 6px. The border-color token feeds an
+	 * RGB() function, so it MUST be RGB channels (not hex). Verify on the instance —
+	 * if Horizon's card sets its own obfuscated override these may not fully apply. */
+	--now-container--border-width: 1px;
+	--now-container--border-radius: 6px;
+	--now-color_border--tertiary: 229, 231, 235; /* #e5e7eb */
+}
+
+/* now-card host box — full width, no extra outer margin. */
+.svi-card {
+	display: block;
+	width: 100%;
+}
+
+/* ---- Row layout (owned) ---------------------------------------- */
+.svi-row {
+	display: flex;
+	align-items: center;
+	gap: var(--now-spacing-4, 12px);
+	box-sizing: border-box;
+	width: 100%;
+}
+
+/* Status icon wrapper — now-icon inherits this color. Completed = positive token,
+ * pending = muted secondary token. */
+.svi-status {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	line-height: 0;
+	--now-icon--size: 22px;
+}
+.svi-status--completed {
+	color: var(--now-color--status-positive, #2e8540);
+}
+.svi-status--pending {
+	color: var(--now-color--secondary, #6b7280);
+}
+
+.svi-content {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.svi-title-row {
+	display: flex;
+	align-items: center;
+	gap: var(--now-spacing-3, 8px);
+	flex-wrap: wrap;
+}
+
+.svi-title {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--now-color--primary, #1a1a1a);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ---- LATEST badge (owned — no DS text-status-label) ------------ */
+.svi-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 12px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.6px;
+	text-transform: uppercase;
+	line-height: 1.8;
+	white-space: nowrap;
+	flex-shrink: 0;
+	color: var(--now-color--neutral-0, #ffffff);
+}
+.svi-badge--positive {
+	background: var(--now-color--status-positive, #28a745);
+}
+.svi-badge--info {
+	background: var(--now-color--interactive, #2f6fed);
+}
+.svi-badge--warning {
+	background: var(--now-color--warning, #d9822b);
+}
+.svi-badge--critical {
+	background: var(--now-color--status-critical, #d12b4c);
+}
+.svi-badge--neutral {
+	background: var(--now-color--secondary, #5a6473);
+}
+
+/* ---- Meta line (owned) ----------------------------------------- */
+.svi-meta {
+	font-size: 12px;
+	line-height: 1.5;
+	color: var(--now-color--secondary, #6b7280);
+}
+.svi-meta-label {
+	font-weight: 400;
+}
+.svi-meta-value {
+	font-weight: 500;
+}
+.svi-sep {
+	margin: 0 1px;
+}

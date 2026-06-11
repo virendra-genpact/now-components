@@ -1,0 +1,47 @@
+{
+	"components": {
+		"x-gegis-library-risk-survey-table": {
+			"innerComponents": ["now-icon", "now-button"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Risk Survey Table",
+				"tileIcon": "./tile-icon/risk-survey-table-tile-icon.svg",
+				"description": "A risk-survey results table driven by columns/rows JSON: factor, score badge (low/medium/high), AI-sentiment bullets, and a chevron or per-row action buttons. Handles loading/empty/error states. Composes now-icon + now-button.",
+				"category": "primitives"
+			},
+			"properties": [
+				{ "name": "columnsJson", "label": "Columns", "description": "JSON array of column definitions. Leave empty for the default factor / score / sentiments columns.", "fieldType": "string", "defaultValue": "" },
+				{ "name": "rowsJson", "label": "Rows data", "description": "Rows as a JSON array, or a wrapper object ({loading}|{error}|{data|rows|items}). Drives the loading / empty / error states.", "fieldType": "string", "defaultValue": "" },
+				{ "name": "showChevron", "label": "Show chevron", "description": "Show a chevron affordance at the end of each row (hidden when action buttons are enabled).", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "enableHref", "label": "Enable row href", "description": "When on, clicking a row opens the URL in the href key instead of emitting the row-clicked event.", "fieldType": "boolean", "defaultValue": false },
+				{ "name": "hrefKey", "label": "Href key", "description": "Row property holding the URL to open when Enable row href is on.", "fieldType": "string", "defaultValue": "href" },
+				{ "name": "openInNewWindow", "label": "Open in new window", "description": "Open the href in a new window/tab.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "enableActionButtons", "label": "Enable action buttons", "description": "When on, renders per-row action buttons (from Action buttons JSON) instead of a clickable row + chevron.", "fieldType": "boolean", "defaultValue": false },
+				{ "name": "actionButtonsJson", "label": "Action buttons", "description": "JSON array of up to 3 buttons: { actionKey, label, variant }. variant is primary or secondary.", "fieldType": "string", "defaultValue": "" }
+			],
+			"actions": [
+				{
+					"name": "RISK_SURVEY_ROW_CLICKED",
+					"label": "Row clicked",
+					"description": "Fired when the user clicks a row (when action buttons and href are off).",
+					"payload": [
+						{ "name": "row", "label": "Row", "description": "The clicked row object.", "fieldType": "string" },
+						{ "name": "rowIndex", "label": "Row index", "description": "The clicked row's index.", "fieldType": "number" }
+					]
+				},
+				{
+					"name": "RISK_SURVEY_CONTEXT_BUTTON_CLICKED",
+					"label": "Action button clicked",
+					"description": "Fired when the user clicks a per-row action button.",
+					"payload": [
+						{ "name": "actionKey", "label": "Action key", "description": "The button's actionKey.", "fieldType": "string" },
+						{ "name": "button", "label": "Button", "description": "The full button definition.", "fieldType": "string" },
+						{ "name": "row", "label": "Row", "description": "The button's row object.", "fieldType": "string" },
+						{ "name": "rowIndex", "label": "Row index", "description": "The button's row index.", "fieldType": "number" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

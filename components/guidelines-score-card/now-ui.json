@@ -1,0 +1,82 @@
+{
+	"components": {
+		"x-gegis-library-guidelines-score-card": {
+			"innerComponents": ["now-card"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Guidelines Score Card",
+				"tileIcon": "./tile-icon/guidelines-score-card-tile-icon.svg",
+				"description": "A composite card: guidelines score + risk badge and pass/fail criteria on the left, an embedded review banner on the right. Composes now-card.",
+				"category": "primitives"
+			},
+			"properties": [
+				{ "name": "scoreLabel", "label": "Score label", "description": "Uppercase label above the score.", "fieldType": "string", "defaultValue": "Guidelines Score" },
+				{ "name": "scoreValue", "label": "Score value", "description": "The large score number.", "fieldType": "string", "defaultValue": "8" },
+				{ "name": "riskLabel", "label": "Risk label", "description": "Risk text shown in the badge.", "fieldType": "string", "defaultValue": "Low Risk" },
+				{
+					"name": "riskVariant",
+					"label": "Risk variant",
+					"description": "Severity colour of the risk badge.",
+					"fieldType": "choice",
+					"defaultValue": "low",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Low (green)", "value": "low" },
+							{ "label": "Medium (amber)", "value": "medium" },
+							{ "label": "High (red)", "value": "high" }
+						]
+					}
+				},
+				{ "name": "showScoreMethodology", "label": "Show methodology button", "description": "Show the methodology link button under the score.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "scoreMethodologyLabel", "label": "Methodology label", "description": "Text of the methodology button.", "fieldType": "string", "defaultValue": "Score Methodology" },
+				{ "name": "criteriaLabel", "label": "Criteria label", "description": "Uppercase label above the criteria counts.", "fieldType": "string", "defaultValue": "Criteria Results" },
+				{ "name": "passCount", "label": "Pass count", "description": "Number of passing criteria.", "fieldType": "string", "defaultValue": "12" },
+				{ "name": "passLabel", "label": "Pass label", "description": "Label after the pass count.", "fieldType": "string", "defaultValue": "Pass" },
+				{ "name": "failCount", "label": "Fail count", "description": "Number of failing criteria.", "fieldType": "string", "defaultValue": "3" },
+				{ "name": "failLabel", "label": "Fail label", "description": "Label after the fail count.", "fieldType": "string", "defaultValue": "Fail" },
+				{ "name": "showBanner", "label": "Show banner", "description": "Show the embedded review banner on the right.", "fieldType": "boolean", "defaultValue": true },
+				{
+					"name": "bannerVariant",
+					"label": "Banner variant",
+					"description": "Visual style / severity of the embedded banner.",
+					"fieldType": "choice",
+					"defaultValue": "warning",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Info (blue)", "value": "info" },
+							{ "label": "Warning (amber)", "value": "warning" },
+							{ "label": "Critical (red)", "value": "critical" }
+						]
+					}
+				},
+				{ "name": "bannerTitle", "label": "Banner title", "description": "Bold title of the banner.", "fieldType": "string", "defaultValue": "Review Required – 3 Criteria need attention" },
+				{ "name": "bannerSubtitle", "label": "Banner subtitle", "description": "Secondary banner line.", "fieldType": "string", "defaultValue": "Manual review required before proceeding" },
+				{ "name": "showBannerIcon", "label": "Show banner icon", "description": "Show the banner's icon circle.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "bannerLinkText", "label": "Banner link text", "description": "Clickable link text in the banner; clicking emits an event.", "fieldType": "string", "defaultValue": "" },
+				{ "name": "showBannerLinkText", "label": "Show banner link", "description": "Show the banner link.", "fieldType": "boolean", "defaultValue": false }
+			],
+			"actions": [
+				{
+					"name": "GUIDELINES_SCORE_METHODOLOGY_CLICKED",
+					"label": "Methodology clicked",
+					"description": "Fired when the user clicks the Score Methodology button.",
+					"payload": [
+						{ "name": "scoreValue", "label": "Score value", "description": "The current score.", "fieldType": "string" },
+						{ "name": "riskLabel", "label": "Risk label", "description": "The risk label.", "fieldType": "string" },
+						{ "name": "riskVariant", "label": "Risk variant", "description": "The risk variant.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "GUIDELINES_BANNER_LINK_CLICKED",
+					"label": "Banner link clicked",
+					"description": "Fired when the user clicks the embedded banner's link text.",
+					"payload": [
+						{ "name": "linkText", "label": "Link text", "description": "The clicked link's text.", "fieldType": "string" },
+						{ "name": "variant", "label": "Variant", "description": "The banner variant.", "fieldType": "string" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

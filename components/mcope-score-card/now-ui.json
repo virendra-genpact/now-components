@@ -1,0 +1,133 @@
+{
+	"components": {
+		"x-gegis-library-mcope-score-card": {
+			"innerComponents": ["now-card"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "MCOPE Score Card",
+				"tileIcon": "./tile-icon/mcope-score-card-tile-icon.svg",
+				"description": "An MCOPE-analysis score card: title, score/risk badge (low/medium/high) and a configurable list of AI-generated sentiment bullets. Composes now-card.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "cardTitle",
+					"label": "Card title",
+					"description": "Main title of the card.",
+					"fieldType": "string",
+					"defaultValue": "Overall Score Based on MCOPE Analysis"
+				},
+				{
+					"name": "titleSuffix",
+					"label": "Title suffix",
+					"description": "Muted text appended after the title (e.g. \"(AI Generated)\").",
+					"fieldType": "string",
+					"defaultValue": "(AI Generated)"
+				},
+				{
+					"name": "showTitleSuffix",
+					"label": "Show title suffix",
+					"description": "Show or hide the title suffix.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "scoreValue",
+					"label": "Score value",
+					"description": "Score shown in the badge (e.g. 7/10).",
+					"fieldType": "string",
+					"defaultValue": "7/10"
+				},
+				{
+					"name": "riskLabel",
+					"label": "Risk label",
+					"description": "Risk text shown in the badge (e.g. Medium Risk).",
+					"fieldType": "string",
+					"defaultValue": "Medium Risk"
+				},
+				{
+					"name": "badgeVariant",
+					"label": "Badge variant",
+					"description": "Severity colour of the score badge.",
+					"fieldType": "choice",
+					"defaultValue": "medium",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Low (green)", "value": "low" },
+							{ "label": "Medium (amber)", "value": "medium" },
+							{ "label": "High (red)", "value": "high" }
+						]
+					}
+				},
+				{
+					"name": "sentimentsLabel",
+					"label": "Sentiments label",
+					"description": "Muted label shown above the bullet list.",
+					"fieldType": "string",
+					"defaultValue": "Risk Assessment Report Sentiments (AI Generated)"
+				},
+				{
+					"name": "showSentimentsLabel",
+					"label": "Show sentiments label",
+					"description": "Show or hide the sentiments label.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "bulletPointsJson",
+					"label": "Bullet points",
+					"description": "Bullets as a JSON array, or as text split by the chosen delimiter. Leading -, *, • are stripped.",
+					"fieldType": "string",
+					"defaultValue": ""
+				},
+				{
+					"name": "bulletDelimiter",
+					"label": "Bullet delimiter",
+					"description": "How to split plain-text bullet input.",
+					"fieldType": "choice",
+					"defaultValue": "newline",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "New line", "value": "newline" },
+							{ "label": "Comma", "value": "comma" }
+						]
+					}
+				},
+				{
+					"name": "bulletStyle",
+					"label": "Bullet style",
+					"description": "Marker style for the bullet list.",
+					"fieldType": "choice",
+					"defaultValue": "dash",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Dash", "value": "dash" },
+							{ "label": "Disc", "value": "disc" },
+							{ "label": "Circle", "value": "circle" },
+							{ "label": "Square", "value": "square" },
+							{ "label": "None", "value": "none" },
+							{ "label": "Decimal (1.)", "value": "decimal" },
+							{ "label": "Lower alpha (a.)", "value": "lower-alpha" },
+							{ "label": "Upper alpha (A.)", "value": "upper-alpha" },
+							{ "label": "Lower roman (i.)", "value": "lower-roman" },
+							{ "label": "Upper roman (I.)", "value": "upper-roman" }
+						]
+					}
+				}
+			],
+			"actions": [
+				{
+					"name": "MCOPE_SCORE_CARD_CLICKED",
+					"label": "MCOPE score card clicked",
+					"description": "Fired when the user clicks the card.",
+					"payload": [
+						{ "name": "scoreValue", "label": "Score value", "description": "The score shown in the badge.", "fieldType": "string" },
+						{ "name": "riskLabel", "label": "Risk label", "description": "The risk text in the badge.", "fieldType": "string" },
+						{ "name": "badgeVariant", "label": "Badge variant", "description": "The severity variant.", "fieldType": "string" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

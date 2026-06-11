@@ -1,0 +1,210 @@
+@import '@servicenow/sass-kit/host';
+
+/* Owned custom grid table (no DS now-table exists — see data-table). Composes now-icon
+ * (chevron) + now-button (action buttons); we style our own grid + the now-* host
+ * boxes, never piercing their shadow DOM. Colours documented hex matching the legacy
+ * design; the raw-hex colour props were dropped (defaults baked in here). Ported
+ * verbatim, including the responsive @container card layout. */
+
+:host {
+	display: block;
+	width: 100%;
+	font-family: var(--now-font-family, 'Source Sans Pro', sans-serif);
+}
+
+.rst-wrapper {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	overflow: hidden;
+	box-sizing: border-box;
+	width: 100%;
+	background-color: #ffffff;
+	container-type: inline-size;
+	container-name: rst;
+}
+
+.rst-cell-label { display: none; }
+.rst-cell-label-bold {
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.4;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #111827;
+}
+.rst-cell-label-suffix {
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #6b7280;
+}
+
+.rst-header {
+	display: grid;
+	border-bottom: 1px solid #e5e7eb;
+	background-color: transparent;
+}
+
+.rst-header-cell {
+	padding: 11px 16px;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 3px;
+}
+
+.rst-header-bold {
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.4;
+	color: #111827;
+}
+.rst-header-suffix {
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #6b7280;
+}
+
+.rst-row {
+	display: grid;
+	border-bottom: 1px solid #e5e7eb;
+	cursor: pointer;
+	transition: background-color 0.12s ease;
+
+	&:nth-child(even) { background-color: #f9fafb; }
+	&:hover { background-color: #f9fafb; }
+	&--last { border-bottom: none; }
+	&--static {
+		cursor: default;
+		&:hover { background-color: transparent; }
+		&:nth-child(even):hover { background-color: #f9fafb; }
+	}
+}
+
+.rst-cell {
+	padding: 13px 16px;
+	display: flex;
+	align-items: flex-start;
+}
+.rst-cell--center { align-items: center; }
+
+.rst-col-chevron {
+	align-items: center;
+	justify-content: center;
+	padding: 13px 8px;
+	color: #9ca3af;
+}
+
+.rst-col-actions {
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 10px 12px;
+	flex-wrap: wrap;
+}
+.rst-action-btn-wrap { display: inline-flex; }
+
+.rst-factor-text {
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: #374151;
+}
+
+.rst-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 12px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	line-height: 1.5;
+}
+.rst-badge--low { background-color: #d1fae5; color: #065f46; }
+.rst-badge--medium { background-color: #fef3c7; color: #92400e; }
+.rst-badge--high { background-color: #fee2e2; color: #991b1b; }
+
+.rst-sentiments {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+.rst-sentiment {
+	font-size: 13px;
+	line-height: 1.5;
+	padding-left: 14px;
+	position: relative;
+	color: #374151;
+
+	&::before { content: '-'; position: absolute; left: 0; }
+}
+
+.rst-state {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 40px 16px;
+	font-size: 14px;
+	font-weight: 500;
+	text-align: center;
+	color: #6b7280;
+
+	&--loading { color: #4b5563; }
+	&--error { color: #b91c1c; background-color: #fef2f2; }
+	&--empty { color: #6b7280; }
+}
+.rst-state-message { line-height: 1.4; }
+.rst-state-spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid currentColor;
+	border-top-color: transparent;
+	border-radius: 50%;
+	flex-shrink: 0;
+	animation: rst-spin 0.8s linear infinite;
+}
+@keyframes rst-spin {
+	to { transform: rotate(360deg); }
+}
+
+@container rst (max-width: 640px) {
+	.rst-header { display: none; }
+	.rst-row {
+		display: block;
+		padding: 8px 4px;
+		&:nth-child(even) { background-color: transparent; }
+	}
+	.rst-cell {
+		padding: 8px 12px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+		&--center { align-items: flex-start; }
+		&.rst-col-chevron { display: none; }
+		&.rst-col-actions {
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			padding-top: 12px;
+		}
+	}
+	.rst-cell-label {
+		display: inline-flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 2px;
+	}
+}
+
+@container rst (max-width: 420px) {
+	.rst-action-btn-wrap { flex: 1 1 auto; }
+}

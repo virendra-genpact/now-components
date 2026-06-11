@@ -1,0 +1,136 @@
+{
+	"components": {
+		"x-gegis-library-survey-version-item": {
+			"innerComponents": ["now-card", "now-icon"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "Survey Version Item",
+				"tileIcon": "./tile-icon/survey-version-item-tile-icon.svg",
+				"description": "A survey version-history row: status icon, title, optional LATEST badge, created date and trigger reason. Clicking the row emits an event. Composes now-card + now-icon.",
+				"category": "primitives"
+			},
+			"properties": [
+				{
+					"name": "itemTitle",
+					"label": "Item title",
+					"description": "Title of the version item (e.g. Survey Result -V3).",
+					"fieldType": "string",
+					"defaultValue": "Survey Result -V3"
+				},
+				{
+					"name": "showLatestBadge",
+					"label": "Show latest badge",
+					"description": "Show or hide the badge next to the title.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "latestBadgeLabel",
+					"label": "Latest badge label",
+					"description": "Text displayed inside the badge.",
+					"fieldType": "string",
+					"defaultValue": "LATEST"
+				},
+				{
+					"name": "badgeColor",
+					"label": "Badge colour",
+					"description": "Colour of the badge (token-driven status colours).",
+					"fieldType": "choice",
+					"defaultValue": "positive",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Positive (green)", "value": "positive" },
+							{ "label": "Info (blue)", "value": "info" },
+							{ "label": "Warning (orange)", "value": "warning" },
+							{ "label": "Critical (red)", "value": "critical" },
+							{ "label": "Neutral (gray)", "value": "neutral" }
+						]
+					}
+				},
+				{
+					"name": "createdLabel",
+					"label": "Created label",
+					"description": "Label text before the creation date.",
+					"fieldType": "string",
+					"defaultValue": "Created:"
+				},
+				{
+					"name": "createdDate",
+					"label": "Created date",
+					"description": "Creation date/time string.",
+					"fieldType": "string",
+					"defaultValue": "2026-02-25 16:14:33"
+				},
+				{
+					"name": "triggeredByLabel",
+					"label": "Triggered by label",
+					"description": "Label text before the trigger reason.",
+					"fieldType": "string",
+					"defaultValue": "Triggered by:"
+				},
+				{
+					"name": "triggeredByValue",
+					"label": "Triggered by value",
+					"description": "The reason or cause that triggered this version.",
+					"fieldType": "string",
+					"defaultValue": "Addition of new property"
+				},
+				{
+					"name": "showStatusIcon",
+					"label": "Show status icon",
+					"description": "Show or hide the status icon on the left.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "isCompleted",
+					"label": "Is completed",
+					"description": "When true the row uses the completed icon and positive colour; otherwise the pending icon and muted colour.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "completedIcon",
+					"label": "Completed icon",
+					"description": "now-icon name shown when the item is completed.",
+					"fieldType": "string",
+					"defaultValue": "circle-check-fill"
+				},
+				{
+					"name": "pendingIcon",
+					"label": "Pending icon",
+					"description": "now-icon name shown when the item is not completed.",
+					"fieldType": "string",
+					"defaultValue": "circle-check-outline"
+				},
+				{
+					"name": "clickable",
+					"label": "Clickable",
+					"description": "When on, the row is clickable and emits the Survey version item clicked event.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				},
+				{
+					"name": "hideShadow",
+					"label": "Hide shadow",
+					"description": "When on, the card has no drop shadow (flat row with a hairline border). Turn off for a raised card.",
+					"fieldType": "boolean",
+					"defaultValue": true
+				}
+			],
+			"actions": [
+				{
+					"name": "SURVEY_VERSION_ITEM_CLICKED",
+					"label": "Survey version item clicked",
+					"description": "Fired when the user clicks the version item row (only when Clickable is on).",
+					"payload": [
+						{ "name": "itemTitle", "label": "Item title", "description": "Title of the clicked version item.", "fieldType": "string" },
+						{ "name": "createdDate", "label": "Created date", "description": "Creation date of the clicked item.", "fieldType": "string" },
+						{ "name": "isCompleted", "label": "Is completed", "description": "Whether the item is in the completed state.", "fieldType": "boolean" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

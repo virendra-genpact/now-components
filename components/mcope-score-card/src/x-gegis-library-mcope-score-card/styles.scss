@@ -1,0 +1,117 @@
+@import '@servicenow/sass-kit/host';
+
+/* now-card owns the container; we style our own header/badge/sentiments/bullets. Border
+ * themed to the legacy flat card via GLOBAL design tokens (§5; per-component now-card
+ * vars are obfuscated). Badge severity colours kept as documented hex (legacy design). */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Source Sans Pro', sans-serif);
+
+	--now-container--border-width: 1px;
+	--now-container--border-radius: 8px;
+	--now-color_border--tertiary: 229, 231, 235; /* #e5e7eb */
+}
+
+.msc-card {
+	display: block;
+	width: 100%;
+}
+
+.msc-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px;
+	line-height: 1.4;
+	margin-bottom: 10px;
+}
+
+.msc-title {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--now-color--primary, #111827);
+}
+
+.msc-title-suffix {
+	font-size: 13px;
+	font-weight: 400;
+	color: var(--now-color--secondary, #6b7280);
+}
+
+.msc-badge-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.msc-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 14px;
+	border-radius: 20px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+.msc-badge--low { background-color: #d1fae5; color: #065f46; }
+.msc-badge--medium { background-color: #fef3c7; color: #92400e; }
+.msc-badge--high { background-color: #fee2e2; color: #991b1b; }
+
+.msc-sentiments {
+	margin: 0 0 10px;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var(--now-color--secondary, #6b7280);
+}
+
+.msc-bullets {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.msc-bullet {
+	font-size: 13px;
+	line-height: 1.5;
+	padding-left: 16px;
+	position: relative;
+	color: var(--now-color--primary, #374151);
+
+	&::before {
+		position: absolute;
+		left: 0;
+	}
+}
+
+/* Bullet marker styles (ported verbatim from the legacy design). */
+.msc-bullets--dash .msc-bullet::before { content: '\2013'; }
+.msc-bullets--disc .msc-bullet::before { content: '\2022'; }
+.msc-bullets--circle .msc-bullet::before { content: '\25E6'; }
+.msc-bullets--square .msc-bullet::before { content: '\25AA'; }
+.msc-bullets--none .msc-bullet {
+	padding-left: 0;
+	&::before { content: none; }
+}
+
+.msc-bullets--decimal,
+.msc-bullets--lower-alpha,
+.msc-bullets--upper-alpha,
+.msc-bullets--lower-roman,
+.msc-bullets--upper-roman {
+	counter-reset: msc-counter;
+	.msc-bullet {
+		counter-increment: msc-counter;
+		padding-left: 22px;
+	}
+}
+.msc-bullets--decimal .msc-bullet::before { content: counter(msc-counter, decimal) '.'; }
+.msc-bullets--lower-alpha .msc-bullet::before { content: counter(msc-counter, lower-alpha) '.'; }
+.msc-bullets--upper-alpha .msc-bullet::before { content: counter(msc-counter, upper-alpha) '.'; }
+.msc-bullets--lower-roman .msc-bullet::before { content: counter(msc-counter, lower-roman) '.'; }
+.msc-bullets--upper-roman .msc-bullet::before { content: counter(msc-counter, upper-roman) '.'; }

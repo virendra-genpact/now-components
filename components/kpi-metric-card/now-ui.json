@@ -1,0 +1,71 @@
+{
+	"components": {
+		"x-gegis-library-kpi-metric-card": {
+			"innerComponents": ["now-card", "now-icon"],
+			"uiBuilder": {
+				"associatedTypes": ["global.core", "global.landing-page"],
+				"label": "KPI Metric Card",
+				"tileIcon": "./tile-icon/kpi-metric-card-tile-icon.svg",
+				"description": "A KPI tile: title (optional icon box), refresh control, large score, change badge or subtitle, and an optional sub-metrics breakdown. Composes now-card + now-icon.",
+				"category": "primitives"
+			},
+			"properties": [
+				{ "name": "title", "label": "Title", "description": "Card title.", "fieldType": "string", "defaultValue": "Written Premium" },
+				{ "name": "singleScore", "label": "Score", "description": "The large headline value.", "fieldType": "string", "defaultValue": "$15.2M" },
+				{ "name": "changeValue", "label": "Change value", "description": "Change shown in the badge (e.g. +9.0%).", "fieldType": "string", "defaultValue": "+9.0%" },
+				{ "name": "changeLabel", "label": "Change label", "description": "Text beside the change badge.", "fieldType": "string", "defaultValue": "vs Last Year" },
+				{
+					"name": "variant",
+					"label": "Change variant",
+					"description": "Colour + arrow direction of the change badge.",
+					"fieldType": "choice",
+					"defaultValue": "positive",
+					"typeMetadata": {
+						"choices": [
+							{ "label": "Positive (green ↑)", "value": "positive" },
+							{ "label": "Negative (red ↓)", "value": "negative" },
+							{ "label": "Neutral (gray –)", "value": "neutral" }
+						]
+					}
+				},
+				{ "name": "showRefresh", "label": "Show refresh", "description": "Show the refresh control (spins while loading).", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "subtitle", "label": "Subtitle", "description": "Shown instead of / below the change row when set.", "fieldType": "string", "defaultValue": "" },
+				{ "name": "showChangeRow", "label": "Show change row", "description": "Show the change badge + label row.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "showArrow", "label": "Show arrow", "description": "Show the ↑/↓/– arrow in the change badge.", "fieldType": "boolean", "defaultValue": true },
+				{ "name": "showIcon", "label": "Show icon box", "description": "Show the leading icon box before the title.", "fieldType": "boolean", "defaultValue": false },
+				{ "name": "iconContent", "label": "Icon content", "description": "Text/glyph shown in the icon box (e.g. $).", "fieldType": "string", "defaultValue": "$" },
+				{ "name": "subMetricsJson", "label": "Sub-metrics", "description": "JSON array of { label, value, previousValue } shown as a breakdown row.", "fieldType": "string", "defaultValue": "" }
+			],
+			"actions": [
+				{
+					"name": "KPI_CARD_CLICKED",
+					"label": "KPI card clicked",
+					"description": "Fired when the user clicks the card (ignored while loading).",
+					"payload": [
+						{ "name": "title", "label": "Title", "description": "The card title.", "fieldType": "string" },
+						{ "name": "singleScore", "label": "Score", "description": "The headline value.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "KPI_REFRESH_REQUESTED",
+					"label": "Refresh requested",
+					"description": "Fired when the user clicks refresh. Re-bind/refresh the data; updating singleScore/changeValue/changeLabel/variant clears the loading state.",
+					"payload": [
+						{ "name": "title", "label": "Title", "description": "The card title.", "fieldType": "string" }
+					]
+				},
+				{
+					"name": "KPI_SUBMETRIC_CLICKED",
+					"label": "Sub-metric clicked",
+					"description": "Fired when the user clicks a sub-metric column.",
+					"payload": [
+						{ "name": "label", "label": "Label", "description": "The sub-metric label.", "fieldType": "string" },
+						{ "name": "value", "label": "Value", "description": "The sub-metric value.", "fieldType": "string" },
+						{ "name": "index", "label": "Index", "description": "The sub-metric index.", "fieldType": "number" }
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "x_gegis_library"
+}

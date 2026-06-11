@@ -1,0 +1,172 @@
+@import '@servicenow/sass-kit/host';
+
+/* now-card owns the shell (border/surface); we style the inner tile content. Border
+ * themed to the legacy look via GLOBAL design tokens (§5). Colours documented hex
+ * matching the legacy design; the raw-hex colour props were dropped (defaults baked in
+ * here). Ported from OLDER COMPONENTS/card-tile-visualization. */
+
+:host {
+	display: block;
+	font-family: var(--now-font-family, 'Source Sans Pro', sans-serif);
+
+	--now-container--border-width: 1px;
+	--now-container--border-radius: 12px;
+	--now-color_border--tertiary: 229, 233, 240; /* #e5e9f0 */
+}
+
+.kpi-card { display: block; min-width: 200px; }
+
+/* Inner tile (now-card provides border/surface/padding). */
+.card-tile {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	&--loading {
+		opacity: 0.55;
+		pointer-events: none;
+		cursor: not-allowed;
+	}
+}
+
+.card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	&--with-icon {
+		gap: 10px;
+		justify-content: flex-start;
+
+		.card-refresh { margin-left: auto; }
+	}
+}
+
+.card-header-content {
+	flex: 1;
+	display: flex;
+	align-items: center;
+}
+
+.card-title {
+	font-size: 13px;
+	font-weight: 500;
+	color: #5b6a84;
+}
+
+/* Icon box (default colours baked in — legacy iconBackgroundColor/iconColor props dropped). */
+.card-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	font-weight: 700;
+	flex-shrink: 0;
+	background-color: #dbeafe;
+	color: #2563eb;
+}
+
+.card-refresh {
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	color: #94a3b8;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	transition: background-color 0.15s, color 0.15s;
+
+	&:hover {
+		background-color: #f1f5f9;
+		color: #475569;
+	}
+
+	&:disabled { cursor: not-allowed; }
+}
+
+.card-score {
+	font-size: 28px;
+	font-weight: 700;
+	color: #0f172a;
+	line-height: 1.1;
+	letter-spacing: -0.5px;
+}
+
+.card-change {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.card-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 2px 8px;
+	border-radius: 100px;
+	font-size: 12px;
+	font-weight: 700;
+
+	&--positive { background-color: #dcfce7; color: #16a34a; }
+	&--negative { background-color: #fee2e2; color: #dc2626; }
+	&--neutral { background-color: #f1f5f9; color: #64748b; }
+}
+
+.card-badge-arrow { font-size: 11px; }
+
+.card-change-label {
+	font-size: 12px;
+	color: #94a3b8;
+}
+
+.card-subtitle {
+	font-size: 13px;
+	color: #94a3b8;
+	margin-top: 2px;
+}
+
+.card-sub-metrics {
+	display: flex;
+	margin-top: 10px;
+}
+
+.card-sub-metric {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 10px;
+	border-top: 2px solid #2563eb; /* legacy subMetricsSeparatorColor default */
+	cursor: pointer;
+	transition: background-color 0.12s;
+
+	&:hover { background-color: #f8fafc; }
+}
+
+.card-sub-label {
+	font-size: 11px;
+	font-weight: 500;
+	color: #94a3b8;
+	margin-bottom: 2px;
+}
+
+.card-sub-value {
+	font-size: 20px;
+	font-weight: 700;
+	color: #0f172a;
+	line-height: 1.2;
+}
+
+.card-sub-prev {
+	font-size: 11px;
+	color: #94a3b8;
+	margin-top: 1px;
+}
